@@ -1,0 +1,134 @@
+{
+  "all_rows_pass": true,
+  "conditions": 6,
+  "correction_note": "The initial 84,132-row release contained valid SARN-v2 CNN predictions but described them as raw. This corrected ledger retains those rows, adds the 84,132 authoritative raw rows, and labels preprocessing explicitly.",
+  "models": [
+    "ResNet-18",
+    "EfficientNet-B0",
+    "MobileNetV3-Large"
+  ],
+  "prediction_target_error_recomputed": true,
+  "preprocessing": [
+    "raw",
+    "sarn_v2"
+  ],
+  "rows": 168264,
+  "samples": 1558,
+  "scenes": 14,
+  "schema_version": 1,
+  "seeds": [
+    20262020,
+    20262021,
+    20262022
+  ],
+  "source_ledgers": 18,
+  "status": "pass",
+  "summary": {
+    "raw": {
+      "EfficientNet-B0": {
+        "20262020": {
+          "acc_at_2_percent": 0.7327770646127514,
+          "nmae": 0.020259980193887032,
+          "rows": 9348
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.7357723577235772,
+          "nmae": 0.020488620640679047,
+          "rows": 9348
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.7344886606760804,
+          "nmae": 0.02084287959148995,
+          "rows": 9348
+        }
+      },
+      "MobileNetV3-Large": {
+        "20262020": {
+          "acc_at_2_percent": 0.6588575096277278,
+          "nmae": 0.03117069838274846,
+          "rows": 9348
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.6781129653401797,
+          "nmae": 0.026795300003798584,
+          "rows": 9348
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.6918057338468121,
+          "nmae": 0.026226530244096817,
+          "rows": 9348
+        }
+      },
+      "ResNet-18": {
+        "20262020": {
+          "acc_at_2_percent": 0.7058194266153188,
+          "nmae": 0.024515908756813535,
+          "rows": 9348
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.6911638853230637,
+          "nmae": 0.027832736209304654,
+          "rows": 9348
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.6972614462986735,
+          "nmae": 0.026436569978792703,
+          "rows": 9348
+        }
+      }
+    },
+    "sarn_v2": {
+      "EfficientNet-B0": {
+        "20262020": {
+          "acc_at_2_percent": 0.7908643560119811,
+          "nmae": 0.014565858406183631,
+          "rows": 9348
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.8049850235344459,
+          "nmae": 0.0138829339343396,
+          "rows": 9348
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.8166452717158751,
+          "nmae": 0.01335707144864684,
+          "rows": 9348
+        }
+      },
+      "MobileNetV3-Large": {
+        "20262020": {
+          "acc_at_2_percent": 0.7651904150620453,
+          "nmae": 0.01683617690902329,
+          "rows": 9348
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.751604621309371,
+          "nmae": 0.016654565328546415,
+          "rows": 9348
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.7833761232349166,
+          "nmae": 0.015514471596909931,
+          "rows": 9348
+        }
+      },
+      "ResNet-18": {
+        "20262020": {
+          "acc_at_2_percent": 0.7870132648694907,
+          "nmae": 0.014433013891742265,
+          "rows": 9348
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.7865853658536586,
+          "nmae": 0.015041063088140297,
+          "rows": 9348
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.7863714163457424,
+          "nmae": 0.015021458744469788,
+          "rows": 9348
+        }
+      }
+    }
+  }
+}

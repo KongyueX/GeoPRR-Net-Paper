@@ -12,9 +12,14 @@
       "rows": 168264
     },
     {
-      "bytes": 2131661,
+      "bytes": 4854809,
       "path": "data/syncg/external_cnn_predictions.csv.gz",
-      "rows": 84132
+      "rows": 168264
+    },
+    {
+      "bytes": 3531,
+      "path": "data/syncg/external_cnn_audit.json",
+      "rows": null
     },
     {
       "bytes": 1024578,

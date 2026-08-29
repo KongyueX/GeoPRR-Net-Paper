@@ -13,7 +13,8 @@ paths, runtime logs, or restricted Industrial-1395 per-sample records.
 | File | Rows | Contents |
 |---|---:|---|
 | `syncg/geoprr_predictions.csv.gz` | 168,264 | Three-seed predictions for the five reported EMA variants plus the three full-model terminal-router stability runs; each run has 1,558 images × 6 conditions = 9,348 rows. |
-| `syncg/external_cnn_predictions.csv.gz` | 84,132 | Matched SyncG predictions from Raw ResNet-18, EfficientNet-B0, and MobileNetV3-Large, each with three seeds. |
+| `syncg/external_cnn_predictions.csv.gz` | 168,264 | Matched Raw and SARN-v2 SyncG predictions from ResNet-18, EfficientNet-B0, and MobileNetV3-Large, each with three seeds. The `preprocessing` field distinguishes the two arms. |
+| `syncg/external_cnn_audit.json` | — | Independent 18-ledger validation and aggregate metrics for the corrected CNN release. |
 | `syncg/routing_diagnostics_seed_20262020.csv.gz` | 9,348 | Prespecified-seed candidate predictions, adaptive weights, predicted gains, and polar diagnostics. |
 | `syncg/vdn_matched_predictions.csv.gz` | 28,044 | Three independently trained terminal VDN direction checkpoints on the same full SyncG roster. The progress conversion is annotation-assisted and is not a deployable end-to-end VDN result. |
 | `rf100/predictions.csv.gz` | 13,590 | Public RF100-VL transfer predictions for GeoPRR-Net, its raw/normalized endpoints, and Raw/SARN-v2 EfficientNet-B0 controls. |
@@ -30,10 +31,14 @@ prediction, absolute error, endpoint predictions, relation availability, and
 explicit `geometry_on` / `adaptive_routing_on` indicators. The terminal-router
 stability rows are distinguished by `weight_variant`.
 
-The external CNN and VDN tables use the same sample-condition roster. VDN
-failures, if any, remain in the denominator with an absolute error of `1.0`;
-the current released ledgers are otherwise preserved without high-error sample
-filtering.
+The external CNN table uses explicit `model`, `source_model_name`,
+`preprocessing`, `source_method`, and `source_protocol` fields. The initial
+84,132-row release contained valid SARN-v2 predictions but described them as
+Raw; the corrected table preserves those rows and adds the 84,132 authoritative
+Raw rows. The external CNN and VDN tables use the same sample-condition roster.
+VDN failures, if any, remain in the denominator with an absolute error of
+`1.0`; the current released ledgers are otherwise preserved without high-error
+sample filtering.
 
 RF100-VL targets are annotation-derived normalized progress values. The release
 is an external transfer evaluation, not an official scalar-reading leaderboard.
