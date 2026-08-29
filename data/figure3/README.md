@@ -1,6 +1,6 @@
 # GeoPRR-Net Figure 3 experiment data
 
-This directory contains the complete sample-level ledgers and derived statistics for the Geometry x Routing factorial (Figure 3a) and perspective/fallback scan (Figure 3d).
+This directory contains the complete sample-level ledgers and derived statistics for the Geometry x Routing factorial (Figure 3a) and perspective/fallback scan (Figure 3e).
 
 - `geometry_routing_per_sample.csv.gz`: four cells x three seeds x 9,348 rows (1,558 images x six conditions).
 - `geometry_routing_seed_metrics.csv`: NMAE and Acc@2% for every cell and seed.

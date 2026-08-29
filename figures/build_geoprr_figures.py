@@ -1078,9 +1078,10 @@ def build_ablation_routing(*, png_only: bool = False) -> None:
     ax2.set_xlim(-0.015, 0.59)
     ax2.set_xlabel("Ablation − full NMAE (%FS; positive is worse)")
     title_left(ax2, "Overall ablation effects")
+    panel_label(ax2, "b", -0.08, 1.03)
     quantitative_axis(ax2)
 
-    # Panel b: condition localization across all four individual interventions.
+    # Panel c: condition localization across all four individual interventions.
     effect_lookup = {
         (row["variant"], row["condition"]): row for row in condition_effects
     }
@@ -1144,10 +1145,10 @@ def build_ablation_routing(*, png_only: bool = False) -> None:
             )
     ax3.set_xlabel("Ablation − full NMAE (%FS)")
     title_left(ax3, "Where each component matters")
-    panel_label(ax3, "b", -0.045, 1.03)
+    panel_label(ax3, "c", -0.045, 1.03)
     ax3.spines[:].set_color(COLORS["ink"])
 
-    # Panel c: retain the original prespecified-seed routing mechanism view.
+    # Panel d: retain the original prespecified-seed routing mechanism view.
     ordered_routing = [
         next(row for row in routing if row["condition"] == condition)
         for condition in CONDITION_ORDER
@@ -1192,7 +1193,7 @@ def build_ablation_routing(*, png_only: bool = False) -> None:
     ax4.set_xlim(0, 1)
     ax4.set_xlabel("Mean routing weight")
     title_left(ax4, "Router shifts evidence by condition")
-    panel_label(ax4, "c", -0.10, 1.03)
+    panel_label(ax4, "d", -0.10, 1.03)
     quantitative_axis(ax4)
     ax4.legend(
         loc="upper center",
@@ -1202,10 +1203,10 @@ def build_ablation_routing(*, png_only: bool = False) -> None:
         handlelength=1.3,
     )
 
-    # Panel d: complete angle scan, including the 60-degree collapse to fallback.
+    # Panel e: complete angle scan, including the 60-degree collapse to fallback.
     angles = np.array([0, 15, 25, 35, 45, 60], dtype=float)
     perspective_specs = [
-        ("Full GeoPRR", "Full GeoPRR", COLORS["hero"], "o"),
+        ("Full GeoPRR", "GeoPRR-Net", COLORS["hero"], "o"),
         ("Without geometry-aware fusion", "No geometry", COLORS["warn"], "s"),
         ("Raw EfficientNet-B0", "Raw EfficientNet-B0", COLORS["baseline_dark"], "^"),
     ]
@@ -1232,7 +1233,7 @@ def build_ablation_routing(*, png_only: bool = False) -> None:
     )
     ax5b.set_ylim(0, 112)
     ax5b.set_yticks([0, 50, 100])
-    ax5b.set_ylabel("Identity use (%)", color=COLORS["muted"])
+    ax5b.set_ylabel("Identity fallback (%)", color=COLORS["muted"])
     ax5b.tick_params(axis="y", colors=COLORS["muted"])
     ax5b.spines["top"].set_visible(False)
     ax5b.spines["right"].set_color(COLORS["grid"])
@@ -1265,22 +1266,10 @@ def build_ablation_routing(*, png_only: bool = False) -> None:
     ax5.set_xticks(angles, [f"{int(angle)}°" for angle in angles])
     ax5.set_xlabel("Perspective angle")
     ax5.set_ylabel("NMAE (%FS; base-2 log scale)")
-    title_left(ax5, "Angle robustness and identity fallback")
-    panel_label(ax5, "d", -0.10, 1.03)
+    title_left(ax5, "Angle stress test and identity fallback")
+    panel_label(ax5, "e", -0.10, 1.03)
     quantitative_axis(ax5, grid_axis="y")
     ax5.legend(loc="upper left", ncol=1, handlelength=1.8)
-    ax5.text(
-        0.98,
-        0.06,
-        "60°: all 1,558 images fallback",
-        transform=ax5.transAxes,
-        ha="right",
-        va="bottom",
-        fontsize=FONT_BODY,
-        color=COLORS["warn"],
-        fontweight="bold",
-    )
-
     fig.suptitle(
         "Geometry and conditional routing jointly stabilize projective views",
         fontsize=FONT_HEAD,
