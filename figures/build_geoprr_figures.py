@@ -8,6 +8,9 @@ from __future__ import annotations
 
 import argparse
 import csv
+import gzip
+import hashlib
+from collections import defaultdict
 from pathlib import Path
 from typing import Iterable
 
@@ -17,6 +20,7 @@ import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 from matplotlib.lines import Line2D
 from matplotlib.patches import Circle, FancyArrowPatch, FancyBboxPatch, Polygon, Rectangle, Wedge
+from matplotlib.ticker import FuncFormatter
 
 
 HERE = Path(__file__).resolve().parent
@@ -133,6 +137,143 @@ def configure_style() -> None:
 def read_csv(name: str) -> list[dict[str, str]]:
     with (HERE / name).open("r", encoding="utf-8-sig", newline="") as stream:
         return list(csv.DictReader(stream))
+
+
+def read_gzip_csv(relative_path: str) -> list[dict[str, str]]:
+    """Read a released prediction ledger without creating an expanded copy."""
+    path = HERE.parent / relative_path
+    with gzip.open(path, "rt", encoding="utf-8-sig", newline="") as stream:
+        return list(csv.DictReader(stream))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise ValueError(message)
+
+
+def seed_averaged_syncg_errors() -> list[tuple[str, str, str, float, float]]:
+    """Return matched three-seed SyncG errors using the raw EfficientNet-B0 only."""
+    expected_seeds = {"20262020", "20262021", "20262022"}
+    geo: dict[tuple[str, str, str, str], float] = {}
+    for row in read_gzip_csv("data/syncg/geoprr_predictions.csv.gz"):
+        if row["variant"] != "full" or row["weight_variant"] != "ema":
+            continue
+        key = (row["seed"], row["scene_id"], row["image_id"], row["condition"])
+        require(key not in geo, f"Duplicate GeoPRR-Net SyncG key: {key}")
+        geo[key] = number(row, "absolute_error")
+
+    raw: dict[tuple[str, str, str, str], float] = {}
+    for row in read_gzip_csv("data/syncg/external_cnn_predictions.csv.gz"):
+        if row["model"] != "EfficientNet-B0" or row["preprocessing"] != "raw":
+            continue
+        key = (row["seed"], row["scene_id"], row["image_id"], row["condition"])
+        require(key not in raw, f"Duplicate Raw EfficientNet-B0 SyncG key: {key}")
+        raw[key] = number(row, "absolute_error")
+
+    require(len(geo) == len(raw) == 3 * 1558 * 6, "Unexpected SyncG matched-ledger row count")
+    require(set(key[0] for key in geo) == expected_seeds, "Unexpected GeoPRR-Net SyncG seed roster")
+    require(set(key[0] for key in raw) == expected_seeds, "Unexpected Raw EfficientNet-B0 SyncG seed roster")
+    require(geo.keys() == raw.keys(), "SyncG ledgers are not exactly matched")
+
+    units: dict[tuple[str, str, str], list[tuple[str, float, float]]] = defaultdict(list)
+    for key in geo:
+        seed, scene_id, image_id, condition = key
+        units[(scene_id, image_id, condition)].append((seed, geo[key], raw[key]))
+
+    averaged: list[tuple[str, str, str, float, float]] = []
+    for (scene_id, image_id, condition), values in sorted(units.items()):
+        require({value[0] for value in values} == expected_seeds, "A SyncG unit is missing a prescribed seed")
+        averaged.append(
+            (
+                scene_id,
+                image_id,
+                condition,
+                float(np.mean([value[1] for value in values])),
+                float(np.mean([value[2] for value in values])),
+            )
+        )
+    require(len(averaged) == 1558 * 6, "Unexpected seed-averaged SyncG unit count")
+    errors = np.array([[row[3], row[4]] for row in averaged])
+    require(bool(np.isfinite(errors).all()), "SyncG errors must be finite")
+    require(bool((errors > 0).all()), "Log-scale SyncG errors must be strictly positive")
+    return averaged
+
+
+def seed_averaged_rf100_group_effects() -> list[tuple[str, float]]:
+    """Return RF100 source-group effects against the raw EfficientNet-B0 only."""
+    expected_seeds = {"20262020", "20262021", "20262022"}
+    geo: dict[tuple[str, str, str, str], float] = {}
+    raw: dict[tuple[str, str, str, str], float] = {}
+    for row in read_gzip_csv("data/rf100/predictions.csv.gz"):
+        if row["model"] not in {"GeoPRR-Net", "Raw EfficientNet-B0"}:
+            continue
+        key = (row["seed"], row["group_id"], row["image_id"], row["condition"])
+        target = geo if row["model"] == "GeoPRR-Net" else raw
+        require(key not in target, f"Duplicate RF100 key: {key}")
+        target[key] = number(row, "absolute_error")
+    require(len(geo) == len(raw) == 3 * 151 * 6, "Unexpected RF100 matched-ledger row count")
+    require(geo.keys() == raw.keys(), "RF100 ledgers are not exactly matched")
+    require(set(key[0] for key in geo) == expected_seeds, "Unexpected RF100 seed roster")
+
+    units: dict[tuple[str, str, str], list[tuple[str, float]]] = defaultdict(list)
+    for key in geo:
+        seed, group_id, image_id, condition = key
+        units[(group_id, image_id, condition)].append((seed, 100.0 * (geo[key] - raw[key])))
+    group_values: dict[str, list[float]] = defaultdict(list)
+    for (group_id, _, _), values in units.items():
+        require({value[0] for value in values} == expected_seeds, "An RF100 unit is missing a prescribed seed")
+        group_values[group_id].append(float(np.mean([value[1] for value in values])))
+    effects = [(group_id, float(np.mean(values))) for group_id, values in sorted(group_values.items())]
+    require(len(effects) == 35, "Expected 35 RF100 source groups")
+    return effects
+
+
+def seed_averaged_industrial_group_effects() -> list[tuple[str, float]]:
+    """Return one unified Industrial-1395 cohort, grouped by acquisition cluster."""
+    expected_seeds = {"20262020", "20262021", "20262022"}
+    geo: dict[tuple[str, str], tuple[float, int]] = {}
+    raw: dict[tuple[str, str], tuple[float, int]] = {}
+    for row in read_gzip_csv("data/industrial1395/group_metrics.csv.gz"):
+        if row["scope"] != "all_conditions" or row["method"] not in {"GeoPRR-Net", "Raw EfficientNet-B0"}:
+            continue
+        require(row["cohort"] == "industrial_1395", "Unexpected Industrial cohort label")
+        require(row["cohort_name"] == "Industrial-1395", "Unexpected Industrial display label")
+        require(row["cohort_images"] == "1395", "Unexpected Industrial image count")
+        require(row["group_unit"] == "acquisition cluster", "Unexpected Industrial grouping unit")
+        key = (row["seed"], row["group_id"])
+        target = geo if row["method"] == "GeoPRR-Net" else raw
+        require(key not in target, f"Duplicate Industrial group key: {key}")
+        target[key] = (number(row, "nmae"), int(number(row, "rows")))
+    require(geo.keys() == raw.keys(), "Industrial group ledgers are not exactly matched")
+    require(set(key[0] for key in geo) == expected_seeds, "Unexpected Industrial seed roster")
+    require(len(geo) == 3 * 52, "Expected 52 Industrial groups for each seed")
+
+    per_seed_rows: dict[str, int] = defaultdict(int)
+    group_values: dict[str, list[tuple[str, float]]] = defaultdict(list)
+    for key in geo:
+        seed, group_id = key
+        geo_nmae, geo_rows = geo[key]
+        raw_nmae, raw_rows = raw[key]
+        require(geo_rows == raw_rows, "Industrial group denominators differ")
+        per_seed_rows[seed] += geo_rows
+        group_values[group_id].append((seed, 100.0 * (geo_nmae - raw_nmae)))
+    require(all(rows == 1395 * 6 for rows in per_seed_rows.values()), "Industrial seed denominator differs")
+
+    effects: list[tuple[str, float]] = []
+    for group_id, values in sorted(group_values.items()):
+        require({value[0] for value in values} == expected_seeds, "An Industrial group is missing a prescribed seed")
+        effects.append((group_id, float(np.mean([value[1] for value in values]))))
+    require(len(effects) == 52, "Expected one unified 52-group Industrial cohort")
+    return effects
+
+
+def deterministic_jitter(ids: list[str], width: float = 0.18) -> np.ndarray:
+    order = sorted(range(len(ids)), key=lambda index: hashlib.sha256(ids[index].encode("utf-8")).digest())
+    slots = np.linspace(-width, width, len(ids), dtype=float)
+    jitter = np.empty(len(ids), dtype=float)
+    for slot, index in zip(slots, order):
+        jitter[index] = slot
+    return jitter
 
 
 def number(row: dict[str, str], key: str) -> float:
@@ -507,16 +648,19 @@ def build_syncg(*, png_only: bool = False) -> None:
     syncg_markers = {"GeoPRR-Net": "D", "Raw ResNet-18": "o", "Raw EfficientNet-B0": "o", "Raw MobileNetV3-Large": "o"}
     display_names = {
         "GeoPRR-Net": "GeoPRR-Net",
-        "Raw ResNet-18": "ResNet-18",
-        "Raw EfficientNet-B0": "EfficientNet-B0",
-        "Raw MobileNetV3-Large": "MobileNetV3-L",
+        "Raw ResNet-18": "Raw ResNet-18",
+        "Raw EfficientNet-B0": "Raw EfficientNet-B0",
+        "Raw MobileNetV3-Large": "Raw MobileNetV3-L",
     }
 
-    fig = plt.figure(figsize=(7.20, 5.30), layout="constrained")
-    grid = fig.add_gridspec(2, 2, width_ratios=[1.64, 1.0], height_ratios=[1.42, 1.0])
+    distribution_rows = seed_averaged_syncg_errors()
+
+    fig = plt.figure(figsize=(7.20, 7.25), layout="constrained")
+    grid = fig.add_gridspec(3, 2, width_ratios=[1.64, 1.0], height_ratios=[1.32, 1.0, 0.92])
     ax = fig.add_subplot(grid[0, :])
     ax2 = fig.add_subplot(grid[1, 0])
     ax3 = fig.add_subplot(grid[1, 1])
+    ax4 = fig.add_subplot(grid[2, :])
 
     # Panel a: one dominant six-condition trajectory establishes the separation.
     best_raw_nmae = nmae[1:].min(axis=0)
@@ -698,6 +842,34 @@ def build_syncg(*, png_only: bool = False) -> None:
     panel_label(ax3, "c", -0.16, 1.03)
     quantitative_axis(ax3, grid_axis="x")
     ax3.legend(loc="upper right", ncol=1, labelspacing=0.35, handletextpad=0.5)
+
+    # Panel d: the full matched error distribution exposes tail behavior.
+    n_units = len(distribution_rows)
+    quantiles = np.arange(n_units, dtype=float) / float(n_units - 1)
+    geo_errors = 100.0 * np.sort(np.array([row[3] for row in distribution_rows]))
+    raw_errors = 100.0 * np.sort(np.array([row[4] for row in distribution_rows]))
+    geo_p95 = float(np.quantile(geo_errors, 0.95))
+    raw_p95 = float(np.quantile(raw_errors, 0.95))
+    ax4.axvspan(0.95, 1.0, color="#F7E7E4", zorder=0)
+    ax4.plot(quantiles, raw_errors, color="#8C98A4", linewidth=1.55, label="Raw EfficientNet-B0", zorder=2)
+    ax4.plot(quantiles, geo_errors, color=COLORS["hero"], linewidth=2.25, label="GeoPRR-Net", zorder=3)
+    ax4.axvline(0.95, color="#C78378", linewidth=0.8, linestyle=(0, (3, 2)), zorder=1)
+    ax4.set_yscale("log")
+    ax4.set_xlim(0.0, 1.0)
+    ax4.set_ylim(0.01, 100.0)
+    ax4.set_xticks([0.0, 0.25, 0.50, 0.75, 1.0])
+    ax4.set_yticks([0.01, 0.1, 1.0, 10.0, 100.0])
+    ax4.yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:g}"))
+    ax4.set_xlabel("Absolute-error quantile")
+    ax4.set_ylabel("Absolute error (%FS; log scale)")
+    title_left(ax4, "The full matched distribution retains a wide upper-tail margin")
+    panel_label(ax4, "d", -0.055, 1.03)
+    quantitative_axis(ax4, grid_axis="y")
+    ax4.legend(loc="upper left", bbox_to_anchor=(0.015, 0.985), ncol=2, columnspacing=1.2, handlelength=2.4)
+    print(
+        "Figure 2d caption statistics: "
+        f"n={n_units}; GeoPRR P95={geo_p95:.6f}%FS; Raw EfficientNet-B0 P95={raw_p95:.6f}%FS"
+    )
 
     if png_only:
         save_png(fig, "fig2_syncg_performance")
@@ -1039,7 +1211,11 @@ def build_cross_domain(*, png_only: bool = False) -> None:
         "Raw MobileNetV3-Large": "#947DB4",
     }
     baseline_markers = {"Raw ResNet-18": "o", "Raw EfficientNet-B0": "s", "Raw MobileNetV3-Large": "^"}
-    baseline_labels = {"Raw ResNet-18": "ResNet-18", "Raw EfficientNet-B0": "EfficientNet-B0", "Raw MobileNetV3-Large": "MobileNetV3-L"}
+    baseline_labels = {
+        "Raw ResNet-18": "Raw ResNet-18",
+        "Raw EfficientNet-B0": "Raw EfficientNet-B0",
+        "Raw MobileNetV3-Large": "Raw MobileNetV3-L",
+    }
 
     reductions: dict[tuple[str, str], tuple[float, float, float]] = {}
     for dataset in dataset_labels:
@@ -1058,10 +1234,20 @@ def build_cross_domain(*, png_only: bool = False) -> None:
                 -100.0 * ci_low / baseline,
             )
 
-    fig = plt.figure(figsize=(7.20, 3.72), layout="constrained")
-    grid = fig.add_gridspec(1, 2, width_ratios=[1.36, 1.0])
-    ax = fig.add_subplot(grid[0])
-    ax2 = fig.add_subplot(grid[1])
+    syncg_rows = seed_averaged_syncg_errors()
+    syncg_group_values: dict[str, list[float]] = defaultdict(list)
+    for scene_id, _, _, geo_error, raw_error in syncg_rows:
+        syncg_group_values[scene_id].append(100.0 * (geo_error - raw_error))
+    syncg_effects = [(group_id, float(np.mean(values))) for group_id, values in sorted(syncg_group_values.items())]
+    require(len(syncg_effects) == 14, "Expected 14 held-out SyncG scenes")
+    industrial_effects = seed_averaged_industrial_group_effects()
+    rf100_effects = seed_averaged_rf100_group_effects()
+
+    fig = plt.figure(figsize=(7.20, 6.15), layout="constrained")
+    grid = fig.add_gridspec(2, 2, width_ratios=[1.36, 1.0], height_ratios=[1.0, 0.92])
+    ax = fig.add_subplot(grid[0, 0])
+    ax2 = fig.add_subplot(grid[0, 1])
+    ax3 = fig.add_subplot(grid[1, :])
 
     # Panel a: paired reductions against every raw comparator in every cohort.
     base_y = np.arange(len(dataset_labels))[::-1].astype(float)
@@ -1160,6 +1346,53 @@ def build_cross_domain(*, png_only: bool = False) -> None:
     title_left(ax2, "Both metrics improve across domains")
     panel_label(ax2, "b", -0.14, 1.03)
     quantitative_axis(ax2, grid_axis="both")
+
+    # Panel c: group-level effects show the distribution beneath pooled gains.
+    group_panels = [
+        ("SyncG", syncg_effects),
+        ("Industrial-1395", industrial_effects),
+        ("RF100-VL", rf100_effects),
+    ]
+    ax3.axhline(0.0, color=COLORS["muted"], linewidth=0.9, linestyle=(0, (4, 2)), zorder=1)
+    for x_position, (dataset, effects) in enumerate(group_panels):
+        ids = [group_id for group_id, _ in effects]
+        values = np.array([value for _, value in effects])
+        jitter = deterministic_jitter(ids)
+        ax3.scatter(
+            np.full(len(values), x_position, dtype=float) + jitter,
+            values,
+            s=25,
+            color=dataset_colors[dataset],
+            alpha=0.82,
+            edgecolor=COLORS["paper"],
+            linewidth=0.55,
+            zorder=3,
+        )
+        median = float(np.median(values))
+        ax3.plot(
+            [x_position - 0.27, x_position + 0.27],
+            [median, median],
+            color=COLORS["ink"],
+            linewidth=2.3,
+            solid_capstyle="butt",
+            zorder=4,
+        )
+        print(
+            "Figure 8c caption statistics: "
+            f"{dataset} n={len(values)}; groups_below_zero={int((values < 0).sum())}; "
+            f"median={median:.6f}%FS; range=[{float(values.min()):.6f}, {float(values.max()):.6f}]%FS"
+        )
+    ax3.set_xticks(np.arange(len(group_panels)), [dataset for dataset, _ in group_panels])
+    for tick, dataset in zip(ax3.get_xticklabels(), dataset_labels):
+        tick.set_color(dataset_colors[dataset])
+        tick.set_fontweight("bold")
+    ax3.set_xlim(-0.55, len(group_panels) - 0.45)
+    ax3.set_ylim(-10.1, 4.4)
+    ax3.set_yticks([-10, -8, -6, -4, -2, 0, 2, 4])
+    ax3.set_ylabel("Per-group six-condition ΔNMAE (%FS)\nGeoPRR-Net − Raw EfficientNet-B0")
+    title_left(ax3, "Group-level effects reveal the boundary beneath pooled gains")
+    panel_label(ax3, "c", -0.055, 1.03)
+    quantitative_axis(ax3, grid_axis="y")
 
     fig.suptitle(
         "Cross-domain consistency: lower error and higher near-exact accuracy on every cohort",
