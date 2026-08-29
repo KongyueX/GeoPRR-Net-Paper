@@ -18,6 +18,9 @@ paths, runtime logs, or restricted Industrial-1395 per-sample records.
 | `syncg/routing_diagnostics_seed_20262020.csv.gz` | 9,348 | Prespecified-seed candidate predictions, adaptive weights, predicted gains, and polar diagnostics. |
 | `syncg/vdn_matched_predictions.csv.gz` | 28,044 | Three independently trained terminal VDN direction checkpoints on the same full SyncG roster. The progress conversion is annotation-assisted and is not a deployable end-to-end VDN result. |
 | `rf100/predictions.csv.gz` | 13,590 | Public RF100-VL transfer predictions for GeoPRR-Net, its raw/normalized endpoints, and Raw/SARN-v2 EfficientNet-B0 controls. |
+| `industrial1395/group_metrics.csv.gz` | 6,240 | Group-level metrics for 52 anonymized groups, five GeoPRR/control outputs, three seeds, and eight condition scopes. |
+| `industrial1395/dataset_metrics.csv` | 360 | Full-denominator and group-macro metrics for the three Industrial-1395 subsets. |
+| `industrial1395/group_metrics_audit.json` | — | Denominator, group-macro, anonymization, and test-only evaluation checks. |
 | `training/geoprr_training_history.csv.gz` | 651 | Shared polar and variant-specific router optimization histories for the three GeoPRR-Net seeds. |
 | `training/vdn_training_history.csv.gz` | 600 | The complete 200-epoch history for each of the three matched VDN checkpoints. |
 | `public_results_summary.json` | — | Current SyncG, RF100-VL, VDN, efficiency, and Industrial-1395 aggregate statistics. Industrial data are aggregates only. |
@@ -42,6 +45,11 @@ sample filtering.
 
 RF100-VL targets are annotation-derived normalized progress values. The release
 is an external transfer evaluation, not an official scalar-reading leaderboard.
+
+Industrial-1395 contains 1,395 restricted images in three subsets and 52
+source/capture-session groups. Raw images, original group names, and per-sample
+records are not redistributed. Stable `group_001 ... group_N` aliases preserve
+the group-level analysis without exposing the source identifiers.
 
 ## Reading compressed tables
 

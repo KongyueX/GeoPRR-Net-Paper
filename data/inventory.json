@@ -37,6 +37,21 @@
       "rows": 13590
     },
     {
+      "bytes": 373244,
+      "path": "data/industrial1395/group_metrics.csv.gz",
+      "rows": 6240
+    },
+    {
+      "bytes": 174593,
+      "path": "data/industrial1395/dataset_metrics.csv",
+      "rows": 360
+    },
+    {
+      "bytes": 1162,
+      "path": "data/industrial1395/group_metrics_audit.json",
+      "rows": null
+    },
+    {
       "bytes": 38274,
       "path": "data/training/geoprr_training_history.csv.gz",
       "rows": 651
@@ -53,6 +68,24 @@
     }
   ],
   "publication_model": "GeoPRR-Net",
+  "industrial_1395": {
+    "datasets": {
+      "field_gauge_external_roi": {
+        "groups": 21,
+        "samples": 147
+      },
+      "field_gauge_roi_test_a": {
+        "groups": 11,
+        "samples": 434
+      },
+      "field_gauge_roi_test_b": {
+        "groups": 20,
+        "samples": 814
+      }
+    },
+    "groups": 52,
+    "samples": 1395
+  },
   "rf100": {
     "conditions": [
       "clean",

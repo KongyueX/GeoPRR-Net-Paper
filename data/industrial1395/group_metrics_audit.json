@@ -1,0 +1,51 @@
+{
+  "all_group_macros_recomputed": true,
+  "all_group_rows_recover_full_denominators": true,
+  "cohort": "Industrial-1395",
+  "dataset_summary_rows": 360,
+  "datasets": {
+    "field_gauge_external_roi": {
+      "groups": 21,
+      "samples": 147
+    },
+    "field_gauge_roi_test_a": {
+      "groups": 11,
+      "samples": 434
+    },
+    "field_gauge_roi_test_b": {
+      "groups": 20,
+      "samples": 814
+    }
+  },
+  "group_alias_rule": "sorted within each dataset, then group_001 ... group_N",
+  "group_rows": 6240,
+  "groups": 52,
+  "methods": [
+    "GeoPRR-Net",
+    "GeoPRR raw anchor",
+    "GeoPRR normalized endpoint",
+    "Raw EfficientNet-B0",
+    "SARN-v2 + EfficientNet-B0"
+  ],
+  "original_group_ids_released": false,
+  "restricted_images_or_per_sample_records_released": false,
+  "samples": 1395,
+  "schema_version": 1,
+  "scopes": [
+    "all_conditions",
+    "clean",
+    "blur_moderate",
+    "blur_severe",
+    "perspective_moderate",
+    "perspective_severe",
+    "combined_severe",
+    "projective_pooled"
+  ],
+  "seeds": [
+    20262020,
+    20262021,
+    20262022
+  ],
+  "status": "pass",
+  "training_or_adaptation_during_evaluation": false
+}
