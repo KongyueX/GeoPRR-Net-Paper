@@ -17,6 +17,16 @@ paths, runtime logs, or restricted Industrial-1395 per-sample records.
 | `syncg/external_cnn_audit.json` | — | Independent 18-ledger validation and aggregate metrics for the corrected CNN release. |
 | `syncg/routing_diagnostics_seed_20262020.csv.gz` | 9,348 | Prespecified-seed candidate predictions, adaptive weights, predicted gains, and polar diagnostics. |
 | `syncg/vdn_matched_predictions.csv.gz` | 28,044 | Three independently trained terminal VDN direction checkpoints on the same full SyncG roster. The progress conversion is annotation-assisted and is not a deployable end-to-end VDN result. |
+| `figure3/geometry_routing_per_sample.csv.gz` | 112,176 | Complete four-cell Geometry × Routing factorial: four cells × three seeds × 1,558 images × six conditions. |
+| `figure3/geometry_routing_seed_metrics.csv` | 12 | Per-cell, per-seed pooled NMAE and Acc@2%. |
+| `figure3/geometry_routing_summary.csv` | 4 | Four-cell pooled metrics and seed mean ± sample SD. |
+| `figure3/geometry_routing_conditions.csv` | 24 | Six-condition NMAE and Acc@2% summaries for all four factorial cells. |
+| `figure3/geometry_routing_interaction.json` | — | Difference-in-differences interaction with a 20,000-resample, 14-scene cluster-bootstrap 95% CI. |
+| `figure3/perspective_scan_per_sample.csv.gz` | 84,132 | Three models × three seeds × six angles × 1,558 images, with availability, fallback, and valid-support fields; no high-angle row is filtered. |
+| `figure3/perspective_scan_seed_metrics.csv` | 54 | Per-model, per-angle, per-seed NMAE, Acc@2%, and P95 absolute error. |
+| `figure3/perspective_scan_summary.csv` | 18 | Angle-wise seed summaries plus support-normalization availability and identity-fallback rates. |
+| `figure3/perspective_full_vs_raw.csv` | 6 | Paired Full GeoPRR minus Raw EfficientNet-B0 differences with 20,000-resample scene-bootstrap intervals. |
+| `figure3/figure3_experiment_summary.json` | — | Consolidated machine-readable statistics and the checkpoint/intervention audit. |
 | `rf100/predictions.csv.gz` | 24,462 | Public RF100-VL transfer predictions for GeoPRR-Net, its raw/normalized endpoints, and Raw/SARN-v2 ResNet-18, EfficientNet-B0, and MobileNetV3-Large controls. |
 | `rf100/predictions_audit.json` | — | Cartesian-roster, prior-EfficientNet reproduction, and aggregate-metric checks for all nine released RF100-VL method arms. |
 | `industrial1395/group_metrics.csv.gz` | 11,232 | Group-level metrics for 52 globally anonymized acquisition clusters within one unified Industrial-1395 cohort, nine GeoPRR/CNN outputs, three seeds, and eight condition scopes. |
@@ -44,6 +54,19 @@ VDN failures, if any, remain in the denominator with an absolute error of
 `1.0`; the current released ledgers are otherwise preserved without high-error
 sample filtering.
 
+The Figure 3 factorial table uses one row per
+`(seed, variant, image_id, condition)` and explicitly records `geometry_on` and
+`adaptive_routing_on`. The missing geometry-off/fixed-routing cell is an
+inference-only intervention on the existing fixed-routing checkpoints; the
+machine-readable audit confirms that no joint-specific trained parameters or
+router execution are involved. The perspective table uses one row per
+`(model, seed, image_id, angle)`. All methods and seeds receive identical
+deterministic pixels, including exact reproduction of the formal 25° and 45°
+transforms. The 60° identity-fallback rows remain in the denominator.
+`valid_support_fraction` records the geometric fraction of the warped source
+plane remaining inside the canvas, not the all-ones effective mask supplied to
+the model after identity fallback.
+
 RF100-VL targets are annotation-derived normalized progress values. Its CNN
 rows use the same explicit Raw/SARN-v2 distinction as the SyncG release. The
 release is an external transfer evaluation, not an official scalar-reading
@@ -68,5 +91,5 @@ syncg = pd.read_csv("data/syncg/geoprr_predictions.csv.gz")
 print(syncg.groupby(["variant", "seed"])["absolute_error"].mean())
 ```
 
-The compact CSV files in `../figures/` remain the exact plotting inputs used by
-the manuscript figures and tables.
+The compact CSV files in `../figures/` and `figure3/` are the exact plotting
+inputs used by the repository figures and tables.

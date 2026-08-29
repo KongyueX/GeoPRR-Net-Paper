@@ -1,0 +1,891 @@
+{
+  "factorial_checkpoint_intervention_audit": {
+    "conclusion": "The missing geometry-off/fixed-routing cell is a pure inference intervention on each existing fixed-routing checkpoint. No joint-specific trained parameters are loaded.",
+    "per_seed": {
+      "20262020": {
+        "fixed_checkpoint_router_training": false,
+        "full_and_no_geometry_use_distinct_trained_router_states": true,
+        "joint_cell_uses_fixed_checkpoint": true,
+        "joint_executes_adaptive_router": false,
+        "joint_specific_checkpoint_or_parameters": false,
+        "joint_specific_training_or_adaptation": false,
+        "same_model_construction": true,
+        "same_polar_expert_state": true,
+        "same_source_expert_checkpoint": true,
+        "same_source_expert_metadata": true
+      },
+      "20262021": {
+        "fixed_checkpoint_router_training": false,
+        "full_and_no_geometry_use_distinct_trained_router_states": true,
+        "joint_cell_uses_fixed_checkpoint": true,
+        "joint_executes_adaptive_router": false,
+        "joint_specific_checkpoint_or_parameters": false,
+        "joint_specific_training_or_adaptation": false,
+        "same_model_construction": true,
+        "same_polar_expert_state": true,
+        "same_source_expert_checkpoint": true,
+        "same_source_expert_metadata": true
+      },
+      "20262022": {
+        "fixed_checkpoint_router_training": false,
+        "full_and_no_geometry_use_distinct_trained_router_states": true,
+        "joint_cell_uses_fixed_checkpoint": true,
+        "joint_executes_adaptive_router": false,
+        "joint_specific_checkpoint_or_parameters": false,
+        "joint_specific_training_or_adaptation": false,
+        "same_model_construction": true,
+        "same_polar_expert_state": true,
+        "same_source_expert_checkpoint": true,
+        "same_source_expert_metadata": true
+      }
+    },
+    "status": "pass"
+  },
+  "geometry_routing_factorial": {
+    "cells": {
+      "fixed_routing": {
+        "per_seed": {
+          "20262020": {
+            "acc_at_2_percent": 0.8820068463842533,
+            "nmae": 0.011863520429348955
+          },
+          "20262021": {
+            "acc_at_2_percent": 0.8780487804878049,
+            "nmae": 0.011940907027079546
+          },
+          "20262022": {
+            "acc_at_2_percent": 0.8857509627727856,
+            "nmae": 0.011372574605063464
+          }
+        },
+        "pooled_acc_at_2_percent": 0.8819355298816146,
+        "pooled_nmae": 0.011725667353830654,
+        "seed_acc_at_2_percent_mean": 0.8819355298816146,
+        "seed_acc_at_2_percent_sd": 0.0038515863641400195,
+        "seed_nmae_mean": 0.011725667353830654,
+        "seed_nmae_sd": 0.0003082256288841939
+      },
+      "full": {
+        "per_seed": {
+          "20262020": {
+            "acc_at_2_percent": 0.9053273427471117,
+            "nmae": 0.01033623825461023
+          },
+          "20262021": {
+            "acc_at_2_percent": 0.9078947368421053,
+            "nmae": 0.010112108299816559
+          },
+          "20262022": {
+            "acc_at_2_percent": 0.9201968335472829,
+            "nmae": 0.009591368403216229
+          }
+        },
+        "pooled_acc_at_2_percent": 0.9111396377121666,
+        "pooled_nmae": 0.01001323831921434,
+        "seed_acc_at_2_percent_mean": 0.9111396377121667,
+        "seed_acc_at_2_percent_sd": 0.007948111436466366,
+        "seed_nmae_mean": 0.010013238319214338,
+        "seed_nmae_sd": 0.00038215079311332414
+      },
+      "no_geometry_fixed_routing": {
+        "per_seed": {
+          "20262020": {
+            "acc_at_2_percent": 0.77267864783911,
+            "nmae": 0.01662333659604636
+          },
+          "20262021": {
+            "acc_at_2_percent": 0.7800599058622165,
+            "nmae": 0.016266816238383525
+          },
+          "20262022": {
+            "acc_at_2_percent": 0.7862644415917843,
+            "nmae": 0.016028246814914774
+          }
+        },
+        "pooled_acc_at_2_percent": 0.7796676650977036,
+        "pooled_nmae": 0.01630613321644822,
+        "seed_acc_at_2_percent_mean": 0.7796676650977036,
+        "seed_acc_at_2_percent_sd": 0.006801384975544351,
+        "seed_nmae_mean": 0.01630613321644822,
+        "seed_nmae_sd": 0.0002994867784642833
+      },
+      "no_geometry_fusion": {
+        "per_seed": {
+          "20262020": {
+            "acc_at_2_percent": 0.7939666238767651,
+            "nmae": 0.015403539387789265
+          },
+          "20262021": {
+            "acc_at_2_percent": 0.8016688061617459,
+            "nmae": 0.014939629917194235
+          },
+          "20262022": {
+            "acc_at_2_percent": 0.8124732563115105,
+            "nmae": 0.014660401226738057
+          }
+        },
+        "pooled_acc_at_2_percent": 0.8027028954500072,
+        "pooled_nmae": 0.015001190177240518,
+        "seed_acc_at_2_percent_mean": 0.8027028954500072,
+        "seed_acc_at_2_percent_sd": 0.009296551323515883,
+        "seed_nmae_mean": 0.015001190177240518,
+        "seed_nmae_sd": 0.00037537425433208305
+      }
+    },
+    "conditions": [
+      "clean",
+      "blur_moderate",
+      "blur_severe",
+      "perspective_moderate",
+      "perspective_severe",
+      "combined_severe"
+    ],
+    "interaction": {
+      "definition": "I = (E[geometry on, adaptive] - E[geometry on, fixed]) - (E[geometry off, adaptive] - E[geometry off, fixed])",
+      "error_metric": "absolute error on normalized full-scale target (NMAE)",
+      "per_seed": {
+        "20262020": -0.00030748496648162917,
+        "20262021": -0.0005016124060736979,
+        "20262022": -0.00041336061367051836
+      },
+      "scene_cluster_bootstrap": {
+        "bootstrap_seed": 20260830,
+        "ci_95_lower": -0.0006142038202997049,
+        "ci_95_upper": -0.00021036913111927661,
+        "cluster_unit": "scene_id",
+        "clusters": 14,
+        "point_estimate": -0.0004074859954086152,
+        "replicates": 20000,
+        "row_weighted": true
+      },
+      "seed_handling_in_bootstrap": "paired row differences averaged over the three seeds before scene resampling",
+      "seed_mean": -0.00040748599540861515,
+      "seed_sd": 9.719696011416915e-05,
+      "sign_convention": "positive means the adaptive-routing gain is larger when geometry is off"
+    },
+    "rows": 112176,
+    "samples": 1558,
+    "scenes": 14
+  },
+  "perspective_fallback_scan": {
+    "angles": [
+      0,
+      15,
+      25,
+      35,
+      45,
+      60
+    ],
+    "full_vs_raw_paired_difference": {
+      "0": {
+        "paired_difference": "Full GeoPRR absolute error minus Raw EfficientNet-B0 absolute error",
+        "per_seed": {
+          "20262020": -0.0005168081504434378,
+          "20262021": -0.0003026282262703676,
+          "20262022": -0.00019879093158476166
+        },
+        "scene_cluster_bootstrap": {
+          "bootstrap_seed": 20260830,
+          "ci_95_lower": -0.0003931319703998187,
+          "ci_95_upper": -0.00028215930517234126,
+          "cluster_unit": "scene_id",
+          "clusters": 14,
+          "point_estimate": -0.00033940910276618905,
+          "replicates": 20000,
+          "row_weighted": true
+        },
+        "seed_mean": -0.000339409102766189,
+        "seed_sd": 0.0001621676987858631
+      },
+      "15": {
+        "paired_difference": "Full GeoPRR absolute error minus Raw EfficientNet-B0 absolute error",
+        "per_seed": {
+          "20262020": -0.0030781620318810323,
+          "20262021": -0.002879647377597581,
+          "20262022": -0.003493900329253433
+        },
+        "scene_cluster_bootstrap": {
+          "bootstrap_seed": 20260830,
+          "ci_95_lower": -0.003516355545977549,
+          "ci_95_upper": -0.002810254387633649,
+          "cluster_unit": "scene_id",
+          "clusters": 14,
+          "point_estimate": -0.0031505699129106817,
+          "replicates": 20000,
+          "row_weighted": true
+        },
+        "seed_mean": -0.003150569912910682,
+        "seed_sd": 0.0003134626741430062
+      },
+      "25": {
+        "paired_difference": "Full GeoPRR absolute error minus Raw EfficientNet-B0 absolute error",
+        "per_seed": {
+          "20262020": -0.006965822652702666,
+          "20262021": -0.006830153101524889,
+          "20262022": -0.006880115312700426
+        },
+        "scene_cluster_bootstrap": {
+          "bootstrap_seed": 20260830,
+          "ci_95_lower": -0.0074256090411987654,
+          "ci_95_upper": -0.006299368313046372,
+          "cluster_unit": "scene_id",
+          "clusters": 14,
+          "point_estimate": -0.006892030355642661,
+          "replicates": 20000,
+          "row_weighted": true
+        },
+        "seed_mean": -0.006892030355642661,
+        "seed_sd": 6.861510741397529e-05
+      },
+      "35": {
+        "paired_difference": "Full GeoPRR absolute error minus Raw EfficientNet-B0 absolute error",
+        "per_seed": {
+          "20262020": -0.012181963028620263,
+          "20262021": -0.012968439664167684,
+          "20262022": -0.012321349887823128
+        },
+        "scene_cluster_bootstrap": {
+          "bootstrap_seed": 20260830,
+          "ci_95_lower": -0.013490829609113178,
+          "ci_95_upper": -0.011310312140176304,
+          "cluster_unit": "scene_id",
+          "clusters": 14,
+          "point_estimate": -0.012490584193537024,
+          "replicates": 20000,
+          "row_weighted": true
+        },
+        "seed_mean": -0.012490584193537026,
+        "seed_sd": 0.00041966243844111957
+      },
+      "45": {
+        "paired_difference": "Full GeoPRR absolute error minus Raw EfficientNet-B0 absolute error",
+        "per_seed": {
+          "20262020": -0.02501875417580703,
+          "20262021": -0.02676121539361119,
+          "20262022": -0.028823529614667224
+        },
+        "scene_cluster_bootstrap": {
+          "bootstrap_seed": 20260830,
+          "ci_95_lower": -0.030324848175472357,
+          "ci_95_upper": -0.023124784450101257,
+          "cluster_unit": "scene_id",
+          "clusters": 14,
+          "point_estimate": -0.02686783306136182,
+          "replicates": 20000,
+          "row_weighted": true
+        },
+        "seed_mean": -0.026867833061361812,
+        "seed_sd": 0.0019046271368291178
+      },
+      "60": {
+        "paired_difference": "Full GeoPRR absolute error minus Raw EfficientNet-B0 absolute error",
+        "per_seed": {
+          "20262020": 0.0016004589283325924,
+          "20262021": 0.00021613643946333095,
+          "20262022": -0.00020061883619260226
+        },
+        "scene_cluster_bootstrap": {
+          "bootstrap_seed": 20260830,
+          "ci_95_lower": 0.00040217037871764105,
+          "ci_95_upper": 0.000674157968121434,
+          "cluster_unit": "scene_id",
+          "clusters": 14,
+          "point_estimate": 0.0005386588438677737,
+          "replicates": 20000,
+          "row_weighted": true
+        },
+        "seed_mean": 0.0005386588438677737,
+        "seed_sd": 0.000942860437431694
+      }
+    },
+    "models": [
+      "Full GeoPRR",
+      "Without geometry-aware fusion",
+      "Raw EfficientNet-B0"
+    ],
+    "rows": 84132,
+    "samples": 1558,
+    "scenes": 14,
+    "summary": {
+      "Full GeoPRR": {
+        "0": {
+          "identity_fallback_rate": 1.0,
+          "mean_valid_support_fraction": 1.0,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.9403080872913993,
+              "nmae": 0.007949568043976729,
+              "p95_absolute_error": 0.02185003870598074
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.9351732991014121,
+              "nmae": 0.00794264311309143,
+              "p95_absolute_error": 0.022930576950484532
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.9460847240051348,
+              "nmae": 0.007592945324712918,
+              "p95_absolute_error": 0.020550807748007608
+            }
+          },
+          "pooled_acc_at_2_percent": 0.9405220367993153,
+          "pooled_nmae": 0.007828385493927026,
+          "pooled_p95_absolute_error": 0.022170934689276063,
+          "seed_acc_at_2_percent_mean": 0.9405220367993153,
+          "seed_acc_at_2_percent_sd": 0.005458857861434744,
+          "seed_nmae_mean": 0.007828385493927026,
+          "seed_nmae_sd": 0.00020392656429856602,
+          "seed_p95_absolute_error_mean": 0.021777141134824294,
+          "seed_p95_absolute_error_sd": 0.0011915581841331947,
+          "support_normalization_availability_rate": 0.0
+        },
+        "15": {
+          "identity_fallback_rate": 0.050706033376123234,
+          "mean_valid_support_fraction": 0.7781601965962999,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.9216944801026957,
+              "nmae": 0.009731084822911224,
+              "p95_absolute_error": 0.02597260471202459
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.9223363286264442,
+              "nmae": 0.009750284155135415,
+              "p95_absolute_error": 0.025809923455017297
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.9332477535301669,
+              "nmae": 0.008772797639253264,
+              "p95_absolute_error": 0.023573340943521277
+            }
+          },
+          "pooled_acc_at_2_percent": 0.9257595207531023,
+          "pooled_nmae": 0.009418055539099968,
+          "pooled_p95_absolute_error": 0.02543354701933772,
+          "seed_acc_at_2_percent_mean": 0.9257595207531022,
+          "seed_acc_at_2_percent_sd": 0.006492935774708386,
+          "seed_nmae_mean": 0.009418055539099968,
+          "seed_nmae_sd": 0.0005588921824246587,
+          "seed_p95_absolute_error_mean": 0.025118623036854387,
+          "seed_p95_absolute_error_sd": 0.0013407232595980942,
+          "support_normalization_availability_rate": 0.9492939666238768
+        },
+        "25": {
+          "identity_fallback_rate": 0.03530166880616174,
+          "mean_valid_support_fraction": 0.6901355066715676,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.8998716302952503,
+              "nmae": 0.010192786007358762,
+              "p95_absolute_error": 0.027746346765866493
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.9127086007702182,
+              "nmae": 0.01020431457353846,
+              "p95_absolute_error": 0.02824930592241285
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.9281129653401797,
+              "nmae": 0.00935041182582681,
+              "p95_absolute_error": 0.025775440903212907
+            }
+          },
+          "pooled_acc_at_2_percent": 0.9135643988018828,
+          "pooled_nmae": 0.00991583746890801,
+          "pooled_p95_absolute_error": 0.027705881414513914,
+          "seed_acc_at_2_percent_mean": 0.9135643988018828,
+          "seed_acc_at_2_percent_sd": 0.014140104100862923,
+          "seed_nmae_mean": 0.009915837468908012,
+          "seed_nmae_sd": 0.0004897068973885118,
+          "seed_p95_absolute_error_mean": 0.02725703119716408,
+          "seed_p95_absolute_error_sd": 0.0013075069130357227,
+          "support_normalization_availability_rate": 0.9646983311938383
+        },
+        "35": {
+          "identity_fallback_rate": 0.03209242618741977,
+          "mean_valid_support_fraction": 0.5930275375331933,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.8953786906290115,
+              "nmae": 0.01103541489244143,
+              "p95_absolute_error": 0.03105460296590402
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.8979460847240052,
+              "nmae": 0.010748718435755403,
+              "p95_absolute_error": 0.031534776056456305
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.9075738125802311,
+              "nmae": 0.009992935681034902,
+              "p95_absolute_error": 0.027582056704330126
+            }
+          },
+          "pooled_acc_at_2_percent": 0.9002995293110826,
+          "pooled_nmae": 0.010592356336410579,
+          "pooled_p95_absolute_error": 0.029788295840527917,
+          "seed_acc_at_2_percent_mean": 0.9002995293110826,
+          "seed_acc_at_2_percent_sd": 0.006429173813143652,
+          "seed_nmae_mean": 0.010592356336410577,
+          "seed_nmae_sd": 0.000538542065336901,
+          "seed_p95_absolute_error_mean": 0.03005714524223015,
+          "seed_p95_absolute_error_sd": 0.0021568933682627185,
+          "support_normalization_availability_rate": 0.9679075738125802
+        },
+        "45": {
+          "identity_fallback_rate": 0.03915275994865212,
+          "mean_valid_support_fraction": 0.4900527426229362,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.8645699614890886,
+              "nmae": 0.01282352548607922,
+              "p95_absolute_error": 0.03809740966871015
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.8703465982028241,
+              "nmae": 0.012709396979422923,
+              "p95_absolute_error": 0.03765795152123741
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.8825417201540436,
+              "nmae": 0.011715884876814242,
+              "p95_absolute_error": 0.03316254482693814
+            }
+          },
+          "pooled_acc_at_2_percent": 0.8724860932819855,
+          "pooled_nmae": 0.012416269114105462,
+          "pooled_p95_absolute_error": 0.03663465659196567,
+          "seed_acc_at_2_percent_mean": 0.8724860932819855,
+          "seed_acc_at_2_percent_sd": 0.009174917262469636,
+          "seed_nmae_mean": 0.012416269114105462,
+          "seed_nmae_sd": 0.0006092289297894526,
+          "seed_p95_absolute_error_mean": 0.036305968672295234,
+          "seed_p95_absolute_error_sd": 0.0027311382186763684,
+          "support_normalization_availability_rate": 0.9608472400513479
+        },
+        "60": {
+          "identity_fallback_rate": 1.0,
+          "mean_valid_support_fraction": 0.3293784263810389,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.12387676508344031,
+              "nmae": 0.13397319262041615,
+              "p95_absolute_error": 0.4536138111152241
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.15532734274711169,
+              "nmae": 0.1295012779001026,
+              "p95_absolute_error": 0.457950993480819
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.14890885750962773,
+              "nmae": 0.13762270314207756,
+              "p95_absolute_error": 0.4949151853289257
+            }
+          },
+          "pooled_acc_at_2_percent": 0.1427043217800599,
+          "pooled_nmae": 0.1336990578875321,
+          "pooled_p95_absolute_error": 0.4663211116317228,
+          "seed_acc_at_2_percent_mean": 0.1427043217800599,
+          "seed_acc_at_2_percent_sd": 0.01661796938736105,
+          "seed_nmae_mean": 0.1336990578875321,
+          "seed_nmae_sd": 0.004067646663499308,
+          "seed_p95_absolute_error_mean": 0.4688266633083229,
+          "seed_p95_absolute_error_sd": 0.02269715893306282,
+          "support_normalization_availability_rate": 0.0
+        }
+      },
+      "Raw EfficientNet-B0": {
+        "0": {
+          "identity_fallback_rate": 1.0,
+          "mean_valid_support_fraction": 1.0,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.938382541720154,
+              "nmae": 0.008466376194420167,
+              "p95_absolute_error": 0.02180455786924306
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.9345314505776636,
+              "nmae": 0.008245271339361798,
+              "p95_absolute_error": 0.023045812622747908
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.9454428754813864,
+              "nmae": 0.00779173625629768,
+              "p95_absolute_error": 0.02101632291192046
+            }
+          },
+          "pooled_acc_at_2_percent": 0.9394522892597347,
+          "pooled_nmae": 0.008167794596693215,
+          "pooled_p95_absolute_error": 0.021806923884109382,
+          "seed_acc_at_2_percent_mean": 0.9394522892597347,
+          "seed_acc_at_2_percent_sd": 0.005533811363447846,
+          "seed_nmae_mean": 0.008167794596693215,
+          "seed_nmae_sd": 0.00034392840209610296,
+          "seed_p95_absolute_error_mean": 0.02195556446797048,
+          "seed_p95_absolute_error_sd": 0.001023137022217961,
+          "support_normalization_availability_rate": 0.0
+        },
+        "15": {
+          "identity_fallback_rate": 0.050706033376123234,
+          "mean_valid_support_fraction": 0.7781601965962999,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.8639281129653402,
+              "nmae": 0.012809246854792256,
+              "p95_absolute_error": 0.03131697757972531
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.8729139922978177,
+              "nmae": 0.012629931532732997,
+              "p95_absolute_error": 0.03179713559035136
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.8761232349165597,
+              "nmae": 0.012266697968506697,
+              "p95_absolute_error": 0.02954022469604966
+            }
+          },
+          "pooled_acc_at_2_percent": 0.8709884467265725,
+          "pooled_nmae": 0.01256862545201065,
+          "pooled_p95_absolute_error": 0.0308653824351073,
+          "seed_acc_at_2_percent_mean": 0.8709884467265726,
+          "seed_acc_at_2_percent_sd": 0.006321474840690698,
+          "seed_nmae_mean": 0.012568625452010651,
+          "seed_nmae_sd": 0.0002764211463556585,
+          "seed_p95_absolute_error_mean": 0.03088477928870878,
+          "seed_p95_absolute_error_sd": 0.001188910517353025,
+          "support_normalization_availability_rate": 0.9492939666238768
+        },
+        "25": {
+          "identity_fallback_rate": 0.03530166880616174,
+          "mean_valid_support_fraction": 0.6901355066715676,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.748395378690629,
+              "nmae": 0.01715860866006143,
+              "p95_absolute_error": 0.041400500016657314
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.7586649550706034,
+              "nmae": 0.01703446767506335,
+              "p95_absolute_error": 0.04464807168981542
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.7541720154043645,
+              "nmae": 0.016230527138527236,
+              "p95_absolute_error": 0.03971563898140614
+            }
+          },
+          "pooled_acc_at_2_percent": 0.7537441163885323,
+          "pooled_nmae": 0.01680786782455067,
+          "pooled_p95_absolute_error": 0.04146809786979881,
+          "seed_acc_at_2_percent_mean": 0.7537441163885323,
+          "seed_acc_at_2_percent_sd": 0.0051481426681711726,
+          "seed_nmae_mean": 0.01680786782455067,
+          "seed_nmae_sd": 0.0005038297796305638,
+          "seed_p95_absolute_error_mean": 0.041921403562626296,
+          "seed_p95_absolute_error_sd": 0.002507135513668678,
+          "support_normalization_availability_rate": 0.9646983311938383
+        },
+        "35": {
+          "identity_fallback_rate": 0.03209242618741977,
+          "mean_valid_support_fraction": 0.5930275375331933,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.5924261874197689,
+              "nmae": 0.023217377921061693,
+              "p95_absolute_error": 0.0602949918466192
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.6026957637997432,
+              "nmae": 0.023717158099923086,
+              "p95_absolute_error": 0.06427706230594178
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.6065468549422336,
+              "nmae": 0.02231428556885803,
+              "p95_absolute_error": 0.060295394297160555
+            }
+          },
+          "pooled_acc_at_2_percent": 0.600556268720582,
+          "pooled_nmae": 0.023082940529947606,
+          "pooled_p95_absolute_error": 0.06086706779934174,
+          "seed_acc_at_2_percent_mean": 0.6005562687205819,
+          "seed_acc_at_2_percent_sd": 0.007299410401896416,
+          "seed_nmae_mean": 0.0230829405299476,
+          "seed_nmae_sd": 0.0007110329765217583,
+          "seed_p95_absolute_error_mean": 0.06162248281657384,
+          "seed_p95_absolute_error_sd": 0.0022989332829643646,
+          "support_normalization_availability_rate": 0.9679075738125802
+        },
+        "45": {
+          "identity_fallback_rate": 0.03915275994865212,
+          "mean_valid_support_fraction": 0.4900527426229362,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.4274711168164313,
+              "nmae": 0.037842279661886254,
+              "p95_absolute_error": 0.1155435158592713
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.43517329910141206,
+              "nmae": 0.03947061237303411,
+              "p95_absolute_error": 0.12266708185389981
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.40949935815147626,
+              "nmae": 0.04053941449148147,
+              "p95_absolute_error": 0.12368650200918155
+            }
+          },
+          "pooled_acc_at_2_percent": 0.4240479246897732,
+          "pooled_nmae": 0.039284102175467274,
+          "pooled_p95_absolute_error": 0.1220329694457241,
+          "seed_acc_at_2_percent_mean": 0.4240479246897732,
+          "seed_acc_at_2_percent_sd": 0.013174843233496485,
+          "seed_nmae_mean": 0.039284102175467274,
+          "seed_nmae_sd": 0.0013582060273026394,
+          "seed_p95_absolute_error_mean": 0.12063236657411756,
+          "seed_p95_absolute_error_sd": 0.0044364519113523635,
+          "support_normalization_availability_rate": 0.9608472400513479
+        },
+        "60": {
+          "identity_fallback_rate": 1.0,
+          "mean_valid_support_fraction": 0.3293784263810389,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.12708600770218229,
+              "nmae": 0.13237273369208355,
+              "p95_absolute_error": 0.45335931828177634
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.15468549422336328,
+              "nmae": 0.1292851414606393,
+              "p95_absolute_error": 0.4592758974458154
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.14505776636713735,
+              "nmae": 0.13782332197827016,
+              "p95_absolute_error": 0.49693108743091946
+            }
+          },
+          "pooled_acc_at_2_percent": 0.14227642276422764,
+          "pooled_nmae": 0.13316039904366433,
+          "pooled_p95_absolute_error": 0.46838840547942395,
+          "seed_acc_at_2_percent_mean": 0.14227642276422764,
+          "seed_acc_at_2_percent_sd": 0.014008383855259604,
+          "seed_nmae_mean": 0.13316039904366433,
+          "seed_nmae_sd": 0.0043232446342386715,
+          "seed_p95_absolute_error_mean": 0.46985543438617033,
+          "seed_p95_absolute_error_sd": 0.023634079590726765,
+          "support_normalization_availability_rate": 0.0
+        }
+      },
+      "Without geometry-aware fusion": {
+        "0": {
+          "identity_fallback_rate": 1.0,
+          "mean_valid_support_fraction": 1.0,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.9403080872913993,
+              "nmae": 0.007932397828256832,
+              "p95_absolute_error": 0.021540213935404458
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.9345314505776636,
+              "nmae": 0.00791712327630124,
+              "p95_absolute_error": 0.02297573640959861
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.9460847240051348,
+              "nmae": 0.0075972175540676415,
+              "p95_absolute_error": 0.020507318696545505
+            }
+          },
+          "pooled_acc_at_2_percent": 0.9403080872913993,
+          "pooled_nmae": 0.007815579552875238,
+          "pooled_p95_absolute_error": 0.021964075953312318,
+          "seed_acc_at_2_percent_mean": 0.9403080872913993,
+          "seed_acc_at_2_percent_sd": 0.005776636713735572,
+          "seed_nmae_mean": 0.007815579552875238,
+          "seed_nmae_sd": 0.00018926119485197592,
+          "seed_p95_absolute_error_mean": 0.02167442301384952,
+          "seed_p95_absolute_error_sd": 0.0012396695362399542,
+          "support_normalization_availability_rate": 0.0
+        },
+        "15": {
+          "identity_fallback_rate": 0.050706033376123234,
+          "mean_valid_support_fraction": 0.7781601965962999,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.8992297817715019,
+              "nmae": 0.011046225429361302,
+              "p95_absolute_error": 0.0277892651252589
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.9030808729139923,
+              "nmae": 0.011332924679888248,
+              "p95_absolute_error": 0.02811329858064663
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.9127086007702182,
+              "nmae": 0.01012809470339383,
+              "p95_absolute_error": 0.025584147964438225
+            }
+          },
+          "pooled_acc_at_2_percent": 0.9050064184852374,
+          "pooled_nmae": 0.010835748270881128,
+          "pooled_p95_absolute_error": 0.02713113757104275,
+          "seed_acc_at_2_percent_mean": 0.9050064184852374,
+          "seed_acc_at_2_percent_sd": 0.006942653290367103,
+          "seed_nmae_mean": 0.010835748270881128,
+          "seed_nmae_sd": 0.0006293880311431902,
+          "seed_p95_absolute_error_mean": 0.02716223722344792,
+          "seed_p95_absolute_error_sd": 0.001376235336744392,
+          "support_normalization_availability_rate": 0.9492939666238768
+        },
+        "25": {
+          "identity_fallback_rate": 0.03530166880616174,
+          "mean_valid_support_fraction": 0.6901355066715676,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.8292682926829268,
+              "nmae": 0.014227584168979535,
+              "p95_absolute_error": 0.03453326270841981
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.8517329910141207,
+              "nmae": 0.014372196796877368,
+              "p95_absolute_error": 0.03533115911337534
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.8639281129653402,
+              "nmae": 0.012694732441010267,
+              "p95_absolute_error": 0.031448124404339535
+            }
+          },
+          "pooled_acc_at_2_percent": 0.8483097988874626,
+          "pooled_nmae": 0.013764837802289055,
+          "pooled_p95_absolute_error": 0.03405934596344587,
+          "seed_acc_at_2_percent_mean": 0.8483097988874625,
+          "seed_acc_at_2_percent_sd": 0.017581651479719136,
+          "seed_nmae_mean": 0.013764837802289057,
+          "seed_nmae_sd": 0.0009295549022059355,
+          "seed_p95_absolute_error_mean": 0.0337708487420449,
+          "seed_p95_absolute_error_sd": 0.0020507183936335186,
+          "support_normalization_availability_rate": 0.9646983311938383
+        },
+        "35": {
+          "identity_fallback_rate": 0.03209242618741977,
+          "mean_valid_support_fraction": 0.5930275375331933,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.7163029525032092,
+              "nmae": 0.018495088035556415,
+              "p95_absolute_error": 0.04452089042340168
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.733632862644416,
+              "nmae": 0.01773365572086332,
+              "p95_absolute_error": 0.0451924383406052
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.7541720154043645,
+              "nmae": 0.01638633206630994,
+              "p95_absolute_error": 0.039626647505446484
+            }
+          },
+          "pooled_acc_at_2_percent": 0.7347026101839966,
+          "pooled_nmae": 0.017538358607576555,
+          "pooled_p95_absolute_error": 0.043145181183351526,
+          "seed_acc_at_2_percent_mean": 0.7347026101839965,
+          "seed_acc_at_2_percent_sd": 0.018957182045381736,
+          "seed_nmae_mean": 0.01753835860757656,
+          "seed_nmae_sd": 0.0010678570392621697,
+          "seed_p95_absolute_error_mean": 0.043113325423151126,
+          "seed_p95_absolute_error_sd": 0.0030381633148387458,
+          "support_normalization_availability_rate": 0.9679075738125802
+        },
+        "45": {
+          "identity_fallback_rate": 0.03915275994865212,
+          "mean_valid_support_fraction": 0.4900527426229362,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.5750962772785623,
+              "nmae": 0.025619997613226645,
+              "p95_absolute_error": 0.06412430851874365
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.5885750962772786,
+              "nmae": 0.02484030511382651,
+              "p95_absolute_error": 0.06693594871374994
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.5994865211810013,
+              "nmae": 0.02499905806386344,
+              "p95_absolute_error": 0.06875045020208183
+            }
+          },
+          "pooled_acc_at_2_percent": 0.5877192982456141,
+          "pooled_nmae": 0.025153120263638865,
+          "pooled_p95_absolute_error": 0.06663265219508445,
+          "seed_acc_at_2_percent_mean": 0.587719298245614,
+          "seed_acc_at_2_percent_sd": 0.01221762219535237,
+          "seed_nmae_mean": 0.025153120263638865,
+          "seed_nmae_sd": 0.0004120454701303479,
+          "seed_p95_absolute_error_mean": 0.06660356914485847,
+          "seed_p95_absolute_error_sd": 0.00233091266501817,
+          "support_normalization_availability_rate": 0.9608472400513479
+        },
+        "60": {
+          "identity_fallback_rate": 1.0,
+          "mean_valid_support_fraction": 0.3293784263810389,
+          "per_seed": {
+            "20262020": {
+              "acc_at_2_percent": 0.1245186136071887,
+              "nmae": 0.13313544949860218,
+              "p95_absolute_error": 0.453236650804479
+            },
+            "20262021": {
+              "acc_at_2_percent": 0.1540436456996149,
+              "nmae": 0.1294281833096392,
+              "p95_absolute_error": 0.4570298866487859
+            },
+            "20262022": {
+              "acc_at_2_percent": 0.14826700898587933,
+              "nmae": 0.1376600197009725,
+              "p95_absolute_error": 0.49643414860626583
+            }
+          },
+          "pooled_acc_at_2_percent": 0.14227642276422764,
+          "pooled_nmae": 0.13340788416973795,
+          "pooled_p95_absolute_error": 0.46715802063692047,
+          "seed_acc_at_2_percent_mean": 0.14227642276422764,
+          "seed_acc_at_2_percent_sd": 0.015647594782393283,
+          "seed_nmae_mean": 0.13340788416973795,
+          "seed_nmae_sd": 0.0041226748696625865,
+          "seed_p95_absolute_error_mean": 0.46890022868651027,
+          "seed_p95_absolute_error_sd": 0.023920382922379583,
+          "support_normalization_availability_rate": 0.0
+        }
+      }
+    }
+  },
+  "protocol": "geoprr_figure3_public_results_v1",
+  "schema_version": 1,
+  "scope": {
+    "all_high_angle_rows_retained": true,
+    "bootstrap_replicates": 20000,
+    "formal_syncg_images": 1558,
+    "formal_syncg_scenes": 14,
+    "seeds": [
+      20262020,
+      20262021,
+      20262022
+    ],
+    "training_or_adaptation_during_evaluation": false
+  },
+  "status": "complete"
+}

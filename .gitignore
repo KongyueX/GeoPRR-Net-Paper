@@ -1,5 +1,9 @@
 .DS_Store
 
+# Python build products
+__pycache__/
+*.py[cod]
+
 # LaTeX build products
 *.aux
 *.bbl

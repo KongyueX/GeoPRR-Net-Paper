@@ -32,6 +32,61 @@
       "rows": 28044
     },
     {
+      "bytes": 3891761,
+      "path": "data/figure3/geometry_routing_per_sample.csv.gz",
+      "rows": 112176
+    },
+    {
+      "bytes": 1040,
+      "path": "data/figure3/geometry_routing_seed_metrics.csv",
+      "rows": 12
+    },
+    {
+      "bytes": 826,
+      "path": "data/figure3/geometry_routing_summary.csv",
+      "rows": 4
+    },
+    {
+      "bytes": 4238,
+      "path": "data/figure3/geometry_routing_conditions.csv",
+      "rows": 24
+    },
+    {
+      "bytes": 936,
+      "path": "data/figure3/geometry_routing_interaction.json",
+      "rows": null
+    },
+    {
+      "bytes": 2089142,
+      "path": "data/figure3/perspective_scan_per_sample.csv.gz",
+      "rows": 84132
+    },
+    {
+      "bytes": 5309,
+      "path": "data/figure3/perspective_scan_seed_metrics.csv",
+      "rows": 54
+    },
+    {
+      "bytes": 5059,
+      "path": "data/figure3/perspective_scan_summary.csv",
+      "rows": 18
+    },
+    {
+      "bytes": 1380,
+      "path": "data/figure3/perspective_full_vs_raw.csv",
+      "rows": 6
+    },
+    {
+      "bytes": 35552,
+      "path": "data/figure3/figure3_experiment_summary.json",
+      "rows": null
+    },
+    {
+      "bytes": 1905,
+      "path": "data/figure3/README.md",
+      "rows": null
+    },
+    {
       "bytes": 687970,
       "path": "data/rf100/predictions.csv.gz",
       "rows": 24462
@@ -73,6 +128,20 @@
     }
   ],
   "publication_model": "GeoPRR-Net",
+  "figure3": {
+    "factorial_cells": 4,
+    "factorial_rows": 112176,
+    "perspective_angles_degrees": [
+      0,
+      15,
+      25,
+      35,
+      45,
+      60
+    ],
+    "perspective_models": 3,
+    "perspective_rows": 84132
+  },
   "industrial_1395": {
     "groups": 52,
     "reporting": "one unified cohort; no source-partition statistics",

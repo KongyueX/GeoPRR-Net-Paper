@@ -10,6 +10,7 @@ import argparse
 import csv
 import gzip
 import hashlib
+import json
 from collections import defaultdict
 from pathlib import Path
 from typing import Iterable
@@ -276,6 +277,14 @@ def deterministic_jitter(ids: list[str], width: float = 0.18) -> np.ndarray:
     return jitter
 
 
+def read_json(name: str) -> dict[str, object]:
+    with (HERE / name).open("r", encoding="utf-8-sig") as stream:
+        value = json.load(stream)
+    if not isinstance(value, dict):
+        raise ValueError(f"expected a JSON object: {name}")
+    return value
+
+
 def number(row: dict[str, str], key: str) -> float:
     return float(row[key])
 
@@ -302,6 +311,18 @@ def save_all(fig: plt.Figure, stem: str) -> None:
 
 def save_png(fig: plt.Figure, stem: str) -> None:
     """Export only the PNG review asset without creating a PDF."""
+    fig.savefig(
+        HERE / f"{stem}.png",
+        dpi=300,
+        bbox_inches="tight",
+        pad_inches=0.03,
+    )
+    plt.close(fig)
+
+
+def save_pdf_png(fig: plt.Figure, stem: str) -> None:
+    """Export the two manuscript assets tracked by this repository."""
+    fig.savefig(HERE / f"{stem}.pdf", bbox_inches="tight", pad_inches=0.03)
     fig.savefig(
         HERE / f"{stem}.png",
         dpi=300,
@@ -908,68 +929,210 @@ def stacked_candidate_bars(
 
 
 def build_ablation_routing(*, png_only: bool = False) -> None:
+    factorial = read_csv("../data/figure3/geometry_routing_summary.csv")
+    interaction = read_json("../data/figure3/geometry_routing_interaction.json")
     ablation = read_csv("ablation.csv")
     condition_effects = read_csv("ablation_condition_effects.csv")
     routing = read_csv("routing_conditions.csv")
+    perspective = read_csv("../data/figure3/perspective_scan_summary.csv")
     variant_order = ["no_geometry_fusion", "fixed_routing", "no_relational_transport", "no_polar_evidence"]
+    factorial_by_variant = {row["variant"]: row for row in factorial}
     ablation_by_variant = {row["variant"]: row for row in ablation}
-    interventions = [ablation_by_variant[variant] for variant in variant_order]
 
-    fig = plt.figure(figsize=(7.20, 4.85), layout="constrained")
-    grid = fig.add_gridspec(2, 2, width_ratios=[1.0, 1.60], height_ratios=[1.02, 1.0])
-    ax = fig.add_subplot(grid[:, 0])
+    fig = plt.figure(figsize=(7.20, 8.35), layout="constrained")
+    grid = fig.add_gridspec(3, 2, height_ratios=[0.92, 0.82, 1.06])
+    ax = fig.add_subplot(grid[0, 0])
     ax2 = fig.add_subplot(grid[0, 1])
-    ax3 = fig.add_subplot(grid[1, 1])
+    ax3 = fig.add_subplot(grid[1, :])
+    ax4 = fig.add_subplot(grid[2, 0])
+    ax5 = fig.add_subplot(grid[2, 1])
 
-    labels = [
+    # Panel a: the complete Geometry x Routing factorial.
+    route_x = np.array([0.0, 1.0])
+    factorial_series = [
+        (
+            "Geometry on",
+            [factorial_by_variant["fixed_routing"], factorial_by_variant["full"]],
+            COLORS["hero"],
+            "o",
+        ),
+        (
+            "Geometry off",
+            [
+                factorial_by_variant["no_geometry_fixed_routing"],
+                factorial_by_variant["no_geometry_fusion"],
+            ],
+            COLORS["warn"],
+            "s",
+        ),
+    ]
+    for label, rows, color, marker in factorial_series:
+        values = 100 * np.array([number(row, "seed_nmae_mean") for row in rows])
+        errors = 100 * np.array([number(row, "seed_nmae_sd") for row in rows])
+        ax.errorbar(
+            route_x,
+            values,
+            yerr=errors,
+            color=color,
+            marker=marker,
+            markersize=5.8,
+            linewidth=1.7,
+            capsize=2.5,
+            label=label,
+            zorder=3,
+        )
+        for xx, value in zip(route_x, values):
+            ax.text(
+                xx,
+                value + 0.035,
+                f"{value:.3f}",
+                ha="center",
+                va="bottom",
+                fontsize=FONT_BODY,
+                color=color,
+                fontweight="bold",
+            )
+    bootstrap = interaction["scene_cluster_bootstrap"]
+    if not isinstance(bootstrap, dict):
+        raise ValueError("invalid Figure 3 interaction bootstrap object")
+    interaction_mean = 100 * float(interaction["seed_mean"])
+    interaction_low = 100 * float(bootstrap["ci_95_lower"])
+    interaction_high = 100 * float(bootstrap["ci_95_upper"])
+    ax.text(
+        0.04,
+        0.06,
+        f"Interaction I = {interaction_mean:+.4f}%FS\n95% CI [{interaction_low:+.4f}, {interaction_high:+.4f}]",
+        transform=ax.transAxes,
+        ha="left",
+        va="bottom",
+        fontsize=FONT_BODY,
+        color=COLORS["ink"],
+        bbox={
+            "boxstyle": "round,pad=0.28",
+            "facecolor": COLORS["neutral_soft"],
+            "edgecolor": COLORS["muted"],
+            "linewidth": 0.65,
+        },
+    )
+    ax.set_xticks(route_x, ["Fixed routing", "Adaptive routing"])
+    ax.set_xlim(-0.18, 1.18)
+    ax.set_ylim(0.88, 1.75)
+    ax.set_ylabel("NMAE (%FS; lower is better)")
+    title_left(ax, "Geometry × routing factorial")
+    panel_label(ax, "a", -0.10, 1.03)
+    quantitative_axis(ax, grid_axis="y")
+    ax.legend(loc="upper right")
+
+    # Panel b: pooled effects retain the relational and polar interventions.
+    overall_rows = [ablation_by_variant[variant] for variant in variant_order]
+    overall_labels = [
         "No geometry-aware fusion",
         "Fixed routing",
         "No relational transport",
         "No polar evidence",
     ]
-    penalties = 100 * np.array([number(row, "penalty") for row in interventions])
-    lows = 100 * np.array([number(row, "penalty_ci_low") for row in interventions])
-    highs = 100 * np.array([number(row, "penalty_ci_high") for row in interventions])
-    y = np.arange(len(labels))[::-1]
-    effect_colors = [COLORS["warn"], COLORS["efficient"], COLORS["rel"], COLORS["polar"]]
-    ax.axvline(0, color=COLORS["ink"], linewidth=0.8, zorder=1)
-    for yy, value, low, high, color in zip(y, penalties, lows, highs, effect_colors):
-        ax.errorbar(value, yy, xerr=[[value - low], [high - value]], fmt="o", color=color, ecolor=color, markersize=5.7, capsize=3, linewidth=1.4, zorder=3)
-        ax.text(high + 0.013, yy, f"+{value:.4f}", va="center", fontsize=FONT_BODY, color=color, fontweight="bold")
-    ax.set_yticks(y, labels)
-    ax.set_xlim(-0.015, 0.59)
-    ax.set_xlabel("Ablation − full NMAE (%FS; positive is worse)")
-    title_left(ax, "Overall intervention effects")
-    panel_label(ax, "a", -0.11, 1.02)
-    quantitative_axis(ax)
-    ax.text(0.002, -0.82, "Full: 1.0013 ± 0.0382%FS NMAE", fontsize=FONT_BODY, fontweight="bold", color=COLORS["hero"])
+    penalties = 100 * np.array([number(row, "penalty") for row in overall_rows])
+    lows = 100 * np.array(
+        [number(row, "penalty_ci_low") for row in overall_rows]
+    )
+    highs = 100 * np.array(
+        [number(row, "penalty_ci_high") for row in overall_rows]
+    )
+    overall_y = np.arange(len(overall_labels))[::-1]
+    overall_colors = [
+        COLORS["warn"],
+        COLORS["efficient"],
+        COLORS["rel"],
+        COLORS["polar"],
+    ]
+    ax2.axvline(0, color=COLORS["ink"], linewidth=0.8, zorder=1)
+    for yy, value, low, high, color in zip(
+        overall_y,
+        penalties,
+        lows,
+        highs,
+        overall_colors,
+    ):
+        ax2.errorbar(
+            value,
+            yy,
+            xerr=[[value - low], [high - value]],
+            fmt="o",
+            color=color,
+            ecolor=color,
+            markersize=5.7,
+            capsize=3,
+            linewidth=1.4,
+            zorder=3,
+        )
+        ax2.text(
+            high + 0.013,
+            yy,
+            f"+{value:.4f}",
+            va="center",
+            fontsize=FONT_BODY,
+            color=color,
+            fontweight="bold",
+        )
+    ax2.set_yticks(overall_y, overall_labels)
+    ax2.set_xlim(-0.015, 0.59)
+    ax2.set_xlabel("Ablation − full NMAE (%FS; positive is worse)")
+    title_left(ax2, "Overall ablation effects")
+    quantitative_axis(ax2)
 
-    effect_lookup = {(row["variant"], row["condition"]): row for row in condition_effects}
+    # Panel b: condition localization across all four individual interventions.
+    effect_lookup = {
+        (row["variant"], row["condition"]): row for row in condition_effects
+    }
     heat = np.array(
         [
-            [100 * number(effect_lookup[(variant, condition)], "penalty_mean") for condition in CONDITION_ORDER]
+            [
+                100 * number(
+                    effect_lookup[(variant, condition)], "penalty_mean"
+                )
+                for condition in CONDITION_ORDER
+            ]
             for variant in variant_order
         ]
     )
-    condition_labels = [CONDITION_SHORT[effect_lookup[(variant_order[0], condition)]["label"]] for condition in CONDITION_ORDER]
+    condition_labels = [
+        "Clean",
+        "Blur M",
+        "Blur S",
+        "Persp. M",
+        "Persp. S",
+        "Persp. + blur",
+    ]
     heat_labels = ["No geometry", "Fixed routing", "No relational", "No polar"]
     penalty_cmap = LinearSegmentedColormap.from_list(
         "geoprr_penalty",
         [COLORS["hero_soft"], COLORS["paper"], COLORS["warn_soft"], COLORS["warn"]],
     )
     norm = TwoSlopeNorm(vmin=-0.04, vcenter=0.0, vmax=1.35)
-    ax2.imshow(heat, cmap=penalty_cmap, norm=norm, aspect="auto", interpolation="nearest")
-    ax2.axvline(2.5, color=COLORS["ink"], linewidth=1.0)
-    ax2.set_xticks(np.arange(len(condition_labels)), condition_labels, rotation=25, ha="right", rotation_mode="anchor")
-    for tick, label in zip(ax2.get_xticklabels(), condition_labels):
+    ax3.imshow(
+        heat,
+        cmap=penalty_cmap,
+        norm=norm,
+        aspect="auto",
+        interpolation="nearest",
+    )
+    ax3.axvline(2.5, color=COLORS["ink"], linewidth=1.0)
+    ax3.set_xticks(
+        np.arange(len(condition_labels)),
+        condition_labels,
+        rotation=24,
+        ha="right",
+        rotation_mode="anchor",
+    )
+    for tick, label in zip(ax3.get_xticklabels(), condition_labels):
         tick.set_color(condition_color(label))
         tick.set_fontweight("bold" if condition_color(label) != COLORS["ink"] else "normal")
-    ax2.set_yticks(np.arange(len(heat_labels)), heat_labels)
+    ax3.set_yticks(np.arange(len(heat_labels)), heat_labels)
     for row_index in range(heat.shape[0]):
         for column_index in range(heat.shape[1]):
             value = heat[row_index, column_index]
             display = "0.000" if abs(value) < 0.0005 else f"{value:+.3f}"
-            ax2.text(
+            ax3.text(
                 column_index,
                 row_index,
                 display,
@@ -979,36 +1142,154 @@ def build_ablation_routing(*, png_only: bool = False) -> None:
                 fontweight="bold",
                 color="white" if value > 0.7 else COLORS["ink"],
             )
-    ax2.set_xlabel("Ablation − full NMAE (%FS)")
-    title_left(ax2, "Where each component matters")
-    panel_label(ax2, "b", -0.08, 1.03)
-    ax2.spines[:].set_color(COLORS["ink"])
+    ax3.set_xlabel("Ablation − full NMAE (%FS)")
+    title_left(ax3, "Where each component matters")
+    panel_label(ax3, "b", -0.045, 1.03)
+    ax3.spines[:].set_color(COLORS["ink"])
 
-    ordered_routing = [next(row for row in routing if row["condition"] == condition) for condition in CONDITION_ORDER]
-    routing_labels = [CONDITION_SHORT[row["label"]] for row in ordered_routing]
+    # Panel c: retain the original prespecified-seed routing mechanism view.
+    ordered_routing = [
+        next(row for row in routing if row["condition"] == condition)
+        for condition in CONDITION_ORDER
+    ]
+    routing_labels = [
+        CONDITION_SHORT[row["label"]] for row in ordered_routing
+    ]
     routing_y = np.arange(len(ordered_routing))[::-1]
     left = np.zeros(len(ordered_routing))
-    for key, color, candidate in zip(("base", "polar", "relational"), CANDIDATE_COLORS, CANDIDATE_LABELS):
+    for key, color, candidate in zip(
+        ("base", "polar", "relational"),
+        CANDIDATE_COLORS,
+        CANDIDATE_LABELS,
+    ):
         values = np.array([number(row, key) for row in ordered_routing])
-        ax3.barh(routing_y, values, left=left, height=0.58, color=color, edgecolor="white", linewidth=0.45, label=candidate, zorder=3)
+        ax4.barh(
+            routing_y,
+            values,
+            left=left,
+            height=0.58,
+            color=color,
+            edgecolor="white",
+            linewidth=0.45,
+            label=candidate,
+            zorder=3,
+        )
         for yy, start, value in zip(routing_y, left, values):
             if value >= 0.16:
-                ax3.text(start + value / 2, yy, f"{value:.2f}", ha="center", va="center", fontsize=FONT_BODY, color="white", fontweight="bold")
+                ax4.text(
+                    start + value / 2,
+                    yy,
+                    f"{value:.2f}",
+                    ha="center",
+                    va="center",
+                    fontsize=FONT_BODY,
+                    color="white",
+                    fontweight="bold",
+                )
         left += values
-    ax3.set_yticks(routing_y, routing_labels)
-    style_condition_ticks(ax3, routing_labels)
-    ax3.set_xlim(0, 1)
-    ax3.set_xlabel("Mean routing weight")
-    title_left(ax3, "Router shifts evidence by condition")
-    panel_label(ax3, "c", -0.08, 1.03)
-    quantitative_axis(ax3)
-    ax3.legend(loc="upper center", bbox_to_anchor=(0.5, -0.27), ncol=3, columnspacing=0.9, handlelength=1.4)
+    ax4.set_yticks(routing_y, routing_labels)
+    style_condition_ticks(ax4, routing_labels)
+    ax4.set_xlim(0, 1)
+    ax4.set_xlabel("Mean routing weight")
+    title_left(ax4, "Router shifts evidence by condition")
+    panel_label(ax4, "c", -0.10, 1.03)
+    quantitative_axis(ax4)
+    ax4.legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.20),
+        ncol=3,
+        columnspacing=0.8,
+        handlelength=1.3,
+    )
 
-    fig.suptitle("Blur preserves polar evidence; perspective shifts routing toward relational transport", fontsize=FONT_HEAD, fontweight="bold")
+    # Panel d: complete angle scan, including the 60-degree collapse to fallback.
+    angles = np.array([0, 15, 25, 35, 45, 60], dtype=float)
+    perspective_specs = [
+        ("Full GeoPRR", "Full GeoPRR", COLORS["hero"], "o"),
+        ("Without geometry-aware fusion", "No geometry", COLORS["warn"], "s"),
+        ("Raw EfficientNet-B0", "Raw EfficientNet-B0", COLORS["baseline_dark"], "^"),
+    ]
+    perspective_by_model_angle = {
+        (row["model"], int(row["angle"])): row for row in perspective
+    }
+    fallback_rows = [
+        perspective_by_model_angle[("Full GeoPRR", int(angle))]
+        for angle in angles
+    ]
+    fallback_rate = 100 * np.array(
+        [number(row, "identity_fallback_rate") for row in fallback_rows]
+    )
+    ax5b = ax5.twinx()
+    ax5b.bar(
+        angles,
+        fallback_rate,
+        width=6.0,
+        color=COLORS["neutral_soft"],
+        edgecolor=COLORS["grid"],
+        linewidth=0.6,
+        alpha=0.78,
+        zorder=0,
+    )
+    ax5b.set_ylim(0, 112)
+    ax5b.set_yticks([0, 50, 100])
+    ax5b.set_ylabel("Identity use (%)", color=COLORS["muted"])
+    ax5b.tick_params(axis="y", colors=COLORS["muted"])
+    ax5b.spines["top"].set_visible(False)
+    ax5b.spines["right"].set_color(COLORS["grid"])
+    ax5b.grid(False)
+    ax5.set_zorder(ax5b.get_zorder() + 1)
+    ax5.patch.set_visible(False)
+    for model, label, color, marker in perspective_specs:
+        rows = [perspective_by_model_angle[(model, int(angle))] for angle in angles]
+        values = 100 * np.array([number(row, "seed_nmae_mean") for row in rows])
+        errors = 100 * np.array([number(row, "seed_nmae_sd") for row in rows])
+        ax5.errorbar(
+            angles,
+            values,
+            yerr=errors,
+            color=color,
+            marker=marker,
+            markersize=4.7,
+            linewidth=1.55,
+            capsize=2.0,
+            label=label,
+            zorder=4,
+        )
+    ax5.set_yscale("log", base=2)
+    ax5.set_yticks(
+        [0.8, 1, 2, 4, 8, 16],
+        ["0.8", "1", "2", "4", "8", "16"],
+    )
+    ax5.set_ylim(0.70, 16)
+    ax5.set_xlim(-4, 64)
+    ax5.set_xticks(angles, [f"{int(angle)}°" for angle in angles])
+    ax5.set_xlabel("Perspective angle")
+    ax5.set_ylabel("NMAE (%FS; base-2 log scale)")
+    title_left(ax5, "Angle robustness and identity fallback")
+    panel_label(ax5, "d", -0.10, 1.03)
+    quantitative_axis(ax5, grid_axis="y")
+    ax5.legend(loc="upper left", ncol=1, handlelength=1.8)
+    ax5.text(
+        0.98,
+        0.06,
+        "60°: all 1,558 images fallback",
+        transform=ax5.transAxes,
+        ha="right",
+        va="bottom",
+        fontsize=FONT_BODY,
+        color=COLORS["warn"],
+        fontweight="bold",
+    )
+
+    fig.suptitle(
+        "Geometry and conditional routing jointly stabilize projective views",
+        fontsize=FONT_HEAD,
+        fontweight="bold",
+    )
     if png_only:
         save_png(fig, "fig3_ablation_routing")
     else:
-        save_all(fig, "fig3_ablation_routing")
+        save_pdf_png(fig, "fig3_ablation_routing")
 
 
 def build_industrial(*, png_only: bool = False) -> None:

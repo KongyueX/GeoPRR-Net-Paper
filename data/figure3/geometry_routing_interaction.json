@@ -1,0 +1,23 @@
+{
+  "definition": "I = (E[geometry on, adaptive] - E[geometry on, fixed]) - (E[geometry off, adaptive] - E[geometry off, fixed])",
+  "error_metric": "absolute error on normalized full-scale target (NMAE)",
+  "per_seed": {
+    "20262020": -0.00030748496648162917,
+    "20262021": -0.0005016124060736979,
+    "20262022": -0.00041336061367051836
+  },
+  "scene_cluster_bootstrap": {
+    "bootstrap_seed": 20260830,
+    "ci_95_lower": -0.0006142038202997049,
+    "ci_95_upper": -0.00021036913111927661,
+    "cluster_unit": "scene_id",
+    "clusters": 14,
+    "point_estimate": -0.0004074859954086152,
+    "replicates": 20000,
+    "row_weighted": true
+  },
+  "seed_handling_in_bootstrap": "paired row differences averaged over the three seeds before scene resampling",
+  "seed_mean": -0.00040748599540861515,
+  "seed_sd": 9.719696011416915e-05,
+  "sign_convention": "positive means the adaptive-routing gain is larger when geometry is off"
+}
