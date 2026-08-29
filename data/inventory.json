@@ -1,0 +1,81 @@
+{
+  "excluded": [
+    "model checkpoints and third-party weights",
+    "raw SyncG and RF100 images",
+    "Industrial-1395 images and per-sample ledgers",
+    "local absolute paths and runtime logs"
+  ],
+  "files": [
+    {
+      "bytes": 9024205,
+      "path": "data/syncg/geoprr_predictions.csv.gz",
+      "rows": 168264
+    },
+    {
+      "bytes": 2131661,
+      "path": "data/syncg/external_cnn_predictions.csv.gz",
+      "rows": 84132
+    },
+    {
+      "bytes": 1024578,
+      "path": "data/syncg/routing_diagnostics_seed_20262020.csv.gz",
+      "rows": 9348
+    },
+    {
+      "bytes": 1059890,
+      "path": "data/syncg/vdn_matched_predictions.csv.gz",
+      "rows": 28044
+    },
+    {
+      "bytes": 325639,
+      "path": "data/rf100/predictions.csv.gz",
+      "rows": 13590
+    },
+    {
+      "bytes": 38274,
+      "path": "data/training/geoprr_training_history.csv.gz",
+      "rows": 651
+    },
+    {
+      "bytes": 67345,
+      "path": "data/training/vdn_training_history.csv.gz",
+      "rows": 600
+    },
+    {
+      "bytes": 166885,
+      "path": "data/public_results_summary.json",
+      "rows": null
+    }
+  ],
+  "publication_model": "GeoPRR-Net",
+  "rf100": {
+    "conditions": [
+      "clean",
+      "blur_moderate",
+      "blur_severe",
+      "perspective_moderate",
+      "perspective_severe",
+      "combined_severe"
+    ],
+    "samples": 151
+  },
+  "schema_version": 1,
+  "status": "complete",
+  "syncg": {
+    "conditions": [
+      "clean",
+      "blur_moderate",
+      "blur_severe",
+      "perspective_moderate",
+      "perspective_severe",
+      "combined_severe"
+    ],
+    "samples": 1558,
+    "scenes": 14
+  },
+  "training_seeds": [
+    20262020,
+    20262021,
+    20262022
+  ]
+}

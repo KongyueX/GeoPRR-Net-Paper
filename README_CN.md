@@ -9,6 +9,7 @@
 - `Definitions/`：仓库内的 MDPI *Electronics* 模板文件；
 - `figures/`：正文图件、生成图件所用的汇总 CSV 与脚本；图 1 正文直接引用 PNG，中文审阅稿也只引用 PNG。
 - `figures/assets/`：图 1 所用公开 RF100-VL 示例 ROI 及其来源说明。
+- `data/`：当前公开的 SyncG、RF100-VL、VDN 逐样本预测表、训练历史、详细汇总统计与机器可读清单；不含模型权重、原始图像或 Industrial-1395 私有逐样本记录。
 
 当前稿件已按投稿稿口径完成以下处理：
 
