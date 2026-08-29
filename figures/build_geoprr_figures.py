@@ -550,7 +550,9 @@ def build_syncg(*, png_only: bool = False) -> None:
         )
     ax.set_xticks(x, condition_labels)
     ax.set_xlim(-0.25, 5.25)
-    ax.set_ylim(0.65, 3.03)
+    nmae_upper = float(np.max(nmae + nmae_sd))
+    axis_upper = max(3.05, 0.5 * np.ceil(2.0 * (nmae_upper + 0.15)))
+    ax.set_ylim(0.65, axis_upper)
     ax.set_ylabel("NMAE (%FS)")
     title_left(ax, "GeoPRR-Net separates from raw CNNs as projective severity increases")
     panel_label(ax, "a", -0.055, 1.03)
@@ -577,7 +579,15 @@ def build_syncg(*, png_only: bool = False) -> None:
         "geoprr_reduction",
         ["#F2F6F9", "#C9DEEC", "#7EAFD3", "#2E75B6", "#0B5EA8"],
     )
-    image = ax2.imshow(reduction_matrix, cmap=reduction_cmap, vmin=0, vmax=65, aspect="auto", interpolation="nearest")
+    reduction_upper = max(65.0, 10.0 * np.ceil(float(np.max(reduction_matrix)) / 10.0))
+    image = ax2.imshow(
+        reduction_matrix,
+        cmap=reduction_cmap,
+        vmin=0,
+        vmax=reduction_upper,
+        aspect="auto",
+        interpolation="nearest",
+    )
     heatmap_labels = condition_labels + ["All six"]
     ax2.set_xticks(np.arange(len(heatmap_labels)), heatmap_labels)
     ax2.set_yticks(np.arange(len(baselines)), [display_names[method] for method in baselines])
@@ -617,7 +627,7 @@ def build_syncg(*, png_only: bool = False) -> None:
     title_left(ax2, "Condition-specific and pooled reduction versus each comparator")
     panel_label(ax2, "b", -0.09, 1.03)
     colorbar = fig.colorbar(image, ax=ax2, orientation="horizontal", fraction=0.08, pad=0.10, aspect=30)
-    colorbar.set_ticks([0, 20, 40, 60])
+    colorbar.set_ticks(np.arange(0.0, reduction_upper + 0.1, 20.0))
     colorbar.set_label("GeoPRR-Net relative NMAE reduction (%)")
     colorbar.outline.set_visible(False)
 
@@ -681,7 +691,7 @@ def build_syncg(*, png_only: bool = False) -> None:
         label_text = lookup[("GeoPRR-Net", condition)]["label"]
         tick.set_color(condition_color(label_text))
         tick.set_fontweight("bold" if condition_color(label_text) != COLORS["ink"] else "normal")
-    ax3.set_xlim(0.65, 3.05)
+    ax3.set_xlim(0.65, axis_upper)
     ax3.set_ylim(-0.45, 5.45)
     ax3.set_xlabel("NMAE (%FS; lower is better)")
     title_left(ax3, "Matched gaps to every raw CNN")

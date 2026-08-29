@@ -32,22 +32,27 @@
       "rows": 28044
     },
     {
-      "bytes": 325639,
+      "bytes": 687970,
       "path": "data/rf100/predictions.csv.gz",
-      "rows": 13590
+      "rows": 24462
     },
     {
-      "bytes": 373244,
+      "bytes": 3491,
+      "path": "data/rf100/predictions_audit.json",
+      "rows": null
+    },
+    {
+      "bytes": 662342,
       "path": "data/industrial1395/group_metrics.csv.gz",
-      "rows": 6240
+      "rows": 11232
     },
     {
-      "bytes": 174593,
-      "path": "data/industrial1395/dataset_metrics.csv",
-      "rows": 360
+      "bytes": 101139,
+      "path": "data/industrial1395/cohort_metrics.csv",
+      "rows": 216
     },
     {
-      "bytes": 1162,
+      "bytes": 1260,
       "path": "data/industrial1395/group_metrics_audit.json",
       "rows": null
     },
@@ -62,28 +67,15 @@
       "rows": 600
     },
     {
-      "bytes": 166885,
+      "bytes": 154548,
       "path": "data/public_results_summary.json",
       "rows": null
     }
   ],
   "publication_model": "GeoPRR-Net",
   "industrial_1395": {
-    "datasets": {
-      "field_gauge_external_roi": {
-        "groups": 21,
-        "samples": 147
-      },
-      "field_gauge_roi_test_a": {
-        "groups": 11,
-        "samples": 434
-      },
-      "field_gauge_roi_test_b": {
-        "groups": 20,
-        "samples": 814
-      }
-    },
     "groups": 52,
+    "reporting": "one unified cohort; no source-partition statistics",
     "samples": 1395
   },
   "rf100": {

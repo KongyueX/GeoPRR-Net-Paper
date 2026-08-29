@@ -1,6 +1,6 @@
 {
   "bootstrap": {
-    "industrial_unit": "dataset-prefixed acquisition group",
+    "industrial_unit": "Industrial-1395 acquisition cluster",
     "replicates": 20000,
     "seed": 20260826,
     "seed_handling": "average per-row errors over training seeds before scene resampling",
@@ -234,6 +234,14 @@
     }
   },
   "industrial_1395_aggregates_only": {
+    "cohort": {
+      "acquisition_groups": 52,
+      "conditions": 6,
+      "images": 1395,
+      "name": "Industrial-1395",
+      "reporting": "one unified cohort; no source-partition statistics",
+      "rows_per_seed": 8370
+    },
     "methods": {
       "EfficientNet-B0": {
         "acc_at_2_percent": {
@@ -259,125 +267,6 @@
           ],
           "range": 0.0,
           "sample_sd": 0.0
-        },
-        "datasets": {
-          "FieldGauge-External-ROI": {
-            "acc_at_2_percent": {
-              "maximum": 0.0963718820861678,
-              "mean": 0.056689342403628114,
-              "minimum": 0.024943310657596373,
-              "per_seed": [
-                0.0963718820861678,
-                0.048752834467120185,
-                0.024943310657596373
-              ],
-              "range": 0.07142857142857142,
-              "sample_sd": 0.036369648372665396
-            },
-            "coverage": {
-              "maximum": 1.0,
-              "mean": 1.0,
-              "minimum": 1.0,
-              "per_seed": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "range": 0.0,
-              "sample_sd": 0.0
-            },
-            "input_variant": "raw",
-            "nmae": {
-              "maximum": 0.2515595537464635,
-              "mean": 0.19509179585171935,
-              "minimum": 0.12604953603972474,
-              "per_seed": [
-                0.12604953603972474,
-                0.20766629776896986,
-                0.2515595537464635
-              ],
-              "range": 0.12551001770673875,
-              "sample_sd": 0.06369285446607548
-            }
-          },
-          "FieldGauge-ROI Test-A": {
-            "acc_at_2_percent": {
-              "maximum": 0.22542242703533025,
-              "mean": 0.18817204301075266,
-              "minimum": 0.16474654377880185,
-              "per_seed": [
-                0.17434715821812596,
-                0.22542242703533025,
-                0.16474654377880185
-              ],
-              "range": 0.060675883256528396,
-              "sample_sd": 0.03261497021134646
-            },
-            "coverage": {
-              "maximum": 1.0,
-              "mean": 1.0,
-              "minimum": 1.0,
-              "per_seed": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "range": 0.0,
-              "sample_sd": 0.0
-            },
-            "input_variant": "raw",
-            "nmae": {
-              "maximum": 0.16588823616558174,
-              "mean": 0.14515218813282846,
-              "minimum": 0.13054275700368112,
-              "per_seed": [
-                0.13054275700368112,
-                0.13902557122922246,
-                0.16588823616558174
-              ],
-              "range": 0.03534547916190062,
-              "sample_sd": 0.018452026997290854
-            }
-          },
-          "FieldGauge-ROI Test-B": {
-            "acc_at_2_percent": {
-              "maximum": 0.13615888615888616,
-              "mean": 0.12694512694512694,
-              "minimum": 0.10995085995085994,
-              "per_seed": [
-                0.13615888615888616,
-                0.13472563472563473,
-                0.10995085995085994
-              ],
-              "range": 0.026208026208026217,
-              "sample_sd": 0.014734903644817427
-            },
-            "coverage": {
-              "maximum": 1.0,
-              "mean": 1.0,
-              "minimum": 1.0,
-              "per_seed": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "range": 0.0,
-              "sample_sd": 0.0
-            },
-            "input_variant": "raw",
-            "nmae": {
-              "maximum": 0.1672451246801297,
-              "mean": 0.1488114874876518,
-              "minimum": 0.12846574449625375,
-              "per_seed": [
-                0.12846574449625375,
-                0.15072359328657195,
-                0.1672451246801297
-              ],
-              "range": 0.038779380183875944,
-              "sample_sd": 0.019460272179522453
-            }
-          }
         },
         "input_variant": "raw",
         "nmae": {
@@ -418,125 +307,6 @@
           "range": 0.0,
           "sample_sd": 0.0
         },
-        "datasets": {
-          "FieldGauge-External-ROI": {
-            "acc_at_2_percent": {
-              "maximum": 0.09750566893424037,
-              "mean": 0.07180650037792895,
-              "minimum": 0.05782312925170068,
-              "per_seed": [
-                0.060090702947845805,
-                0.05782312925170068,
-                0.09750566893424037
-              ],
-              "range": 0.03968253968253969,
-              "sample_sd": 0.0222849931788444
-            },
-            "coverage": {
-              "maximum": 1.0,
-              "mean": 1.0,
-              "minimum": 1.0,
-              "per_seed": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "range": 0.0,
-              "sample_sd": 0.0
-            },
-            "input_variant": "raw",
-            "nmae": {
-              "maximum": 0.18037439395510962,
-              "mean": 0.1650478297405923,
-              "minimum": 0.1469634096803128,
-              "per_seed": [
-                0.18037439395510962,
-                0.16780568558635445,
-                0.1469634096803128
-              ],
-              "range": 0.03341098427479683,
-              "sample_sd": 0.016875360565101524
-            }
-          },
-          "FieldGauge-ROI Test-A": {
-            "acc_at_2_percent": {
-              "maximum": 0.11789554531490015,
-              "mean": 0.10215053763440861,
-              "minimum": 0.0837173579109063,
-              "per_seed": [
-                0.0837173579109063,
-                0.10483870967741936,
-                0.11789554531490015
-              ],
-              "range": 0.03417818740399385,
-              "sample_sd": 0.01724693669192444
-            },
-            "coverage": {
-              "maximum": 1.0,
-              "mean": 1.0,
-              "minimum": 1.0,
-              "per_seed": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "range": 0.0,
-              "sample_sd": 0.0
-            },
-            "input_variant": "raw",
-            "nmae": {
-              "maximum": 0.2241077721282874,
-              "mean": 0.2020246544315604,
-              "minimum": 0.16023105065409274,
-              "per_seed": [
-                0.22173514051230112,
-                0.2241077721282874,
-                0.16023105065409274
-              ],
-              "range": 0.06387672147419465,
-              "sample_sd": 0.036213758887020615
-            }
-          },
-          "FieldGauge-ROI Test-B": {
-            "acc_at_2_percent": {
-              "maximum": 0.16216216216216217,
-              "mean": 0.1294021294021294,
-              "minimum": 0.07964782964782965,
-              "per_seed": [
-                0.1463963963963964,
-                0.07964782964782965,
-                0.16216216216216217
-              ],
-              "range": 0.08251433251433252,
-              "sample_sd": 0.04380362542730661
-            },
-            "coverage": {
-              "maximum": 1.0,
-              "mean": 1.0,
-              "minimum": 1.0,
-              "per_seed": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "range": 0.0,
-              "sample_sd": 0.0
-            },
-            "input_variant": "raw",
-            "nmae": {
-              "maximum": 0.21648461793485593,
-              "mean": 0.1839293891255643,
-              "minimum": 0.15626886858896372,
-              "per_seed": [
-                0.17903468085287322,
-                0.21648461793485593,
-                0.15626886858896372
-              ],
-              "range": 0.06021574934589222,
-              "sample_sd": 0.030404814489285944
-            }
-          }
-        },
         "input_variant": "raw",
         "nmae": {
           "maximum": 0.21372665798124987,
@@ -563,50 +333,6 @@
           ],
           "range": 0.049820788530465954,
           "sample_sd": 0.02491328306493072
-        },
-        "datasets": {
-          "FieldGauge-External-ROI": {
-            "nmae": {
-              "maximum": 0.24100148848215017,
-              "mean": 0.19992149714738927,
-              "minimum": 0.13598327081557574,
-              "per_seed": [
-                0.13598327081557574,
-                0.22277973214444194,
-                0.24100148848215017
-              ],
-              "range": 0.10501821766657443,
-              "sample_sd": 0.056116670347155874
-            }
-          },
-          "FieldGauge-ROI Test-A": {
-            "nmae": {
-              "maximum": 0.12644332180490586,
-              "mean": 0.1171504544842241,
-              "minimum": 0.10358934549212644,
-              "per_seed": [
-                0.10358934549212644,
-                0.12141869615564,
-                0.12644332180490586
-              ],
-              "range": 0.022853976312779425,
-              "sample_sd": 0.012009973919641922
-            }
-          },
-          "FieldGauge-ROI Test-B": {
-            "nmae": {
-              "maximum": 0.12413377088949505,
-              "mean": 0.11336579332594986,
-              "minimum": 0.09636556296787369,
-              "per_seed": [
-                0.09636556296787369,
-                0.12413377088949505,
-                0.11959804612048083
-              ],
-              "range": 0.027768207921621366,
-              "sample_sd": 0.014896277184780204
-            }
-          }
         },
         "nmae": {
           "maximum": 0.13452073836005496,
@@ -646,125 +372,6 @@
           "range": 0.0,
           "sample_sd": 0.0
         },
-        "datasets": {
-          "FieldGauge-External-ROI": {
-            "acc_at_2_percent": {
-              "maximum": 0.06575963718820861,
-              "mean": 0.044217687074829926,
-              "minimum": 0.022675736961451247,
-              "per_seed": [
-                0.04421768707482993,
-                0.06575963718820861,
-                0.022675736961451247
-              ],
-              "range": 0.043083900226757364,
-              "sample_sd": 0.021541950113378682
-            },
-            "coverage": {
-              "maximum": 1.0,
-              "mean": 1.0,
-              "minimum": 1.0,
-              "per_seed": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "range": 0.0,
-              "sample_sd": 0.0
-            },
-            "input_variant": "raw",
-            "nmae": {
-              "maximum": 0.1958648899035389,
-              "mean": 0.18562513805195616,
-              "minimum": 0.1735924997333316,
-              "per_seed": [
-                0.1958648899035389,
-                0.1735924997333316,
-                0.18741802451899803
-              ],
-              "range": 0.022272390170207296,
-              "sample_sd": 0.011243917128219285
-            }
-          },
-          "FieldGauge-ROI Test-A": {
-            "acc_at_2_percent": {
-              "maximum": 0.13709677419354838,
-              "mean": 0.11315924219150025,
-              "minimum": 0.10061443932411675,
-              "per_seed": [
-                0.10061443932411675,
-                0.10176651305683564,
-                0.13709677419354838
-              ],
-              "range": 0.03648233486943163,
-              "sample_sd": 0.02073851241611157
-            },
-            "coverage": {
-              "maximum": 1.0,
-              "mean": 1.0,
-              "minimum": 1.0,
-              "per_seed": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "range": 0.0,
-              "sample_sd": 0.0
-            },
-            "input_variant": "raw",
-            "nmae": {
-              "maximum": 0.30317546676869533,
-              "mean": 0.2853442681273927,
-              "minimum": 0.2526808330017026,
-              "per_seed": [
-                0.30317546676869533,
-                0.30017650461178014,
-                0.2526808330017026
-              ],
-              "range": 0.05049463376699276,
-              "sample_sd": 0.02832707960878207
-            }
-          },
-          "FieldGauge-ROI Test-B": {
-            "acc_at_2_percent": {
-              "maximum": 0.13042588042588044,
-              "mean": 0.11930111930111931,
-              "minimum": 0.10053235053235053,
-              "per_seed": [
-                0.13042588042588044,
-                0.10053235053235053,
-                0.12694512694512694
-              ],
-              "range": 0.029893529893529905,
-              "sample_sd": 0.016347138037591684
-            },
-            "coverage": {
-              "maximum": 1.0,
-              "mean": 1.0,
-              "minimum": 1.0,
-              "per_seed": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "range": 0.0,
-              "sample_sd": 0.0
-            },
-            "input_variant": "raw",
-            "nmae": {
-              "maximum": 0.23598313555970518,
-              "mean": 0.21839633277840628,
-              "minimum": 0.18700859033744127,
-              "per_seed": [
-                0.23219727243807237,
-                0.23598313555970518,
-                0.18700859033744127
-              ],
-              "range": 0.04897454522226391,
-              "sample_sd": 0.027248412275749232
-            }
-          }
-        },
         "input_variant": "raw",
         "nmae": {
           "maximum": 0.2504508036975089,
@@ -780,11 +387,11 @@
         }
       }
     },
-    "note": "Restricted images and per-sample ledgers are intentionally excluded.",
+    "note": "Restricted images and per-sample ledgers are excluded; all published statistics pool the complete Industrial-1395 cohort.",
     "paired": {
       "Proposed_minus_EfficientNet-B0": {
         "delta_nmae_candidate_minus_comparator": -0.028885721405488292,
-        "group_unit": "dataset-prefixed acquisition group",
+        "group_unit": "acquisition cluster",
         "groups": 52,
         "paired_group_bootstrap_ci95": {
           "high": -0.02204314585443232,
@@ -797,7 +404,7 @@
       },
       "Proposed_minus_MobileNetV3-Large": {
         "delta_nmae_candidate_minus_comparator": -0.06390519042955624,
-        "group_unit": "dataset-prefixed acquisition group",
+        "group_unit": "acquisition cluster",
         "groups": 52,
         "paired_group_bootstrap_ci95": {
           "high": -0.048488672072977045,
@@ -810,7 +417,7 @@
       },
       "Proposed_minus_ResNet-18": {
         "delta_nmae_candidate_minus_comparator": -0.11210710354724446,
-        "group_unit": "dataset-prefixed acquisition group",
+        "group_unit": "acquisition cluster",
         "groups": 52,
         "paired_group_bootstrap_ci95": {
           "high": -0.0799633860580856,

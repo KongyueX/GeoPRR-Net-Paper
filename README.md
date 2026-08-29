@@ -22,9 +22,11 @@ The implementation and reproducibility scripts are maintained in the companion
 Upload the repository contents to Overleaf and select `manuscript.tex` as the
 main document, or compile it with a compatible local TeX distribution.
 
-Rebuild the quantitative figures from the included aggregate data with:
+Re-derive the condition summaries from the public release tables, then rebuild
+the quantitative figures with:
 
 ```bash
+python figures/derive_condition_summaries.py
 python figures/build_geoprr_figures.py
 ```
 

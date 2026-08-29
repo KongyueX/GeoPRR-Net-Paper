@@ -1,0 +1,139 @@
+{
+  "cohort": "RF100-VL gauge subset",
+  "conditions": 6,
+  "methods": [
+    "GeoPRR-Net",
+    "GeoPRR raw anchor",
+    "GeoPRR normalized endpoint",
+    "Raw ResNet-18",
+    "Raw EfficientNet-B0",
+    "Raw MobileNetV3-Large",
+    "SARN-v2 + ResNet-18",
+    "SARN-v2 + EfficientNet-B0",
+    "SARN-v2 + MobileNetV3-Large"
+  ],
+  "prediction_target_error_recomputed": true,
+  "preprocessing": [
+    "raw",
+    "sarn_v2"
+  ],
+  "prior_efficientnet_rows_reproduced": true,
+  "rows": 24462,
+  "samples": 151,
+  "schema_version": 1,
+  "seeds": [
+    20262020,
+    20262021,
+    20262022
+  ],
+  "source_groups": 35,
+  "status": "pass",
+  "summary": {
+    "raw": {
+      "EfficientNet-B0": {
+        "20262020": {
+          "acc_at_2_percent": 0.4105960264900662,
+          "nmae": 0.05949384300001639,
+          "rows": 906
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.3730684326710817,
+          "nmae": 0.07882497063691522,
+          "rows": 906
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.4470198675496689,
+          "nmae": 0.05610867284115574,
+          "rows": 906
+        }
+      },
+      "MobileNetV3-Large": {
+        "20262020": {
+          "acc_at_2_percent": 0.40618101545253865,
+          "nmae": 0.08742704620805047,
+          "rows": 906
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.2891832229580574,
+          "nmae": 0.078052818656998,
+          "rows": 906
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.35209713024282563,
+          "nmae": 0.05821126963059308,
+          "rows": 906
+        }
+      },
+      "ResNet-18": {
+        "20262020": {
+          "acc_at_2_percent": 0.24503311258278146,
+          "nmae": 0.10629489986699966,
+          "rows": 906
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.30022075055187636,
+          "nmae": 0.0867065319838303,
+          "rows": 906
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.271523178807947,
+          "nmae": 0.09628733274221624,
+          "rows": 906
+        }
+      }
+    },
+    "sarn_v2": {
+      "EfficientNet-B0": {
+        "20262020": {
+          "acc_at_2_percent": 0.4746136865342163,
+          "nmae": 0.045993168115507944,
+          "rows": 906
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.41832229580573954,
+          "nmae": 0.06931137022448569,
+          "rows": 906
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.4988962472406181,
+          "nmae": 0.0393406125115212,
+          "rows": 906
+        }
+      },
+      "MobileNetV3-Large": {
+        "20262020": {
+          "acc_at_2_percent": 0.48013245033112584,
+          "nmae": 0.04742166994312031,
+          "rows": 906
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.30242825607064017,
+          "nmae": 0.05511133325280436,
+          "rows": 906
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.40397350993377484,
+          "nmae": 0.04019809695249479,
+          "rows": 906
+        }
+      },
+      "ResNet-18": {
+        "20262020": {
+          "acc_at_2_percent": 0.24944812362030905,
+          "nmae": 0.09427691587126488,
+          "rows": 906
+        },
+        "20262021": {
+          "acc_at_2_percent": 0.33112582781456956,
+          "nmae": 0.07098826858638581,
+          "rows": 906
+        },
+        "20262022": {
+          "acc_at_2_percent": 0.31015452538631344,
+          "nmae": 0.0801831322842238,
+          "rows": 906
+        }
+      }
+    }
+  }
+}

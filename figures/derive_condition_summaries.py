@@ -1,32 +1,30 @@
-"""Derive compact condition-wise CSVs for the GeoPRR-Net paper figures.
+"""Derive compact condition-wise CSVs from the public GeoPRR-Net data release.
 
-The source ledgers contain every sample, condition, and training seed.  This
-script keeps the published six-condition rosters intact, averages paired row
-errors across the three fitted seeds, and bootstraps the declared scene/source
-groups for GeoPRR-Net-minus-Raw-EfficientNet-B0 effects.
+The public ledgers contain every SyncG sample, condition, and training seed.
+Industrial-1395 is reconstructed from its anonymized group summaries.  The
+script keeps the published rosters intact, averages paired errors across the
+three fitted seeds, and bootstraps the declared scene/source groups.
 """
 from __future__ import annotations
 
 import csv
+import gzip
 import json
+import math
+import random
 import statistics
-import sys
 from pathlib import Path
 from typing import Any, Iterable
 
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-REPO = HERE.parents[2]
-sys.path.insert(0, str(REPO))
-
-from experiments.evaluate_paper_syncg_only_lightweight_baselines import (
-    _paired_group_bootstrap_fast,
-)
-
-
-RUN_ROOT = REPO / "artifacts" / "runs" / "unified_pointer_reader"
-REPORT_PATH = REPO / "artifacts" / "reports" / "unified_pointer_reader" / "paper_results.json"
+PAPER_ROOT = HERE.parent
+DATA_ROOT = PAPER_ROOT / "data"
+REPORT_PATH = DATA_ROOT / "public_results_summary.json"
+SYNCG_GEOPRR_PATH = DATA_ROOT / "syncg" / "geoprr_predictions.csv.gz"
+SYNCG_EXTERNAL_PATH = DATA_ROOT / "syncg" / "external_cnn_predictions.csv.gz"
+INDUSTRIAL_GROUP_PATH = DATA_ROOT / "industrial1395" / "group_metrics.csv.gz"
 SEEDS = (20262020, 20262021, 20262022)
 CONDITIONS = (
     "clean",
@@ -46,11 +44,95 @@ CONDITION_LABELS = {
 }
 BOOTSTRAP_REPLICATES = 20_000
 BOOTSTRAP_SEED = 20260828
+SYNCG_ROWS_PER_SEED = 9_348
+SYNCG_ROWS_PER_CONDITION = 1_558
+SYNCG_SCENES = 14
+INDUSTRIAL_IMAGES = 1_395
+INDUSTRIAL_GROUPS = 52
 
 
 def load_json(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8") as stream:
         return json.load(stream)
+
+
+def read_gzip_csv(path: Path) -> list[dict[str, str]]:
+    with gzip.open(path, "rt", encoding="utf-8-sig", newline="") as stream:
+        return list(csv.DictReader(stream))
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise ValueError(message)
+
+
+def quantile(values: Iterable[float], probability: float) -> float:
+    ordered = sorted(float(value) for value in values)
+    require(bool(ordered), "cannot calculate a quantile of an empty sample")
+    position = (len(ordered) - 1) * probability
+    lower = math.floor(position)
+    upper = math.ceil(position)
+    if lower == upper:
+        return ordered[lower]
+    fraction = position - lower
+    return ordered[lower] * (1.0 - fraction) + ordered[upper] * fraction
+
+
+def paired_group_bootstrap_fast(
+    candidate_errors: Iterable[float],
+    comparator_errors: Iterable[float],
+    groups: Iterable[str],
+    *,
+    replicates: int,
+    seed: int,
+) -> dict[str, Any]:
+    candidate = np.asarray(list(candidate_errors), dtype=np.float64)
+    comparator = np.asarray(list(comparator_errors), dtype=np.float64)
+    group_values = list(groups)
+    require(
+        len(candidate) == len(comparator) == len(group_values) and bool(group_values),
+        "paired bootstrap arrays are misaligned",
+    )
+    group_ids = sorted(set(group_values))
+    require(len(group_ids) >= 2, "paired bootstrap needs at least two groups")
+    group_index = {group_id: index for index, group_id in enumerate(group_ids)}
+    deltas = candidate - comparator
+    group_sums = np.zeros(len(group_ids), dtype=np.float64)
+    group_sizes = np.zeros(len(group_ids), dtype=np.int64)
+    for row_index, group_id in enumerate(group_values):
+        index = group_index[group_id]
+        group_sums[index] += deltas[row_index]
+        group_sizes[index] += 1
+
+    rng = random.Random(seed)
+    draws: list[float] = []
+    batch_size = 4_096
+    completed = 0
+    while completed < replicates:
+        batch = min(batch_size, replicates - completed)
+        choices = np.fromiter(
+            (rng.randrange(len(group_ids)) for _ in range(batch * len(group_ids))),
+            dtype=np.int64,
+            count=batch * len(group_ids),
+        ).reshape(batch, len(group_ids))
+        counts = np.zeros((batch, len(group_ids)), dtype=np.int32)
+        np.add.at(
+            counts,
+            (np.repeat(np.arange(batch), len(group_ids)), choices.reshape(-1)),
+            1,
+        )
+        draws.extend(((counts @ group_sums) / (counts @ group_sizes)).tolist())
+        completed += batch
+    return {
+        "delta_nmae_candidate_minus_comparator": float(np.mean(deltas)),
+        "paired_group_bootstrap_ci95": {
+            "low": quantile(draws, 0.025),
+            "high": quantile(draws, 0.975),
+        },
+        "groups": len(group_ids),
+        "replicates": replicates,
+        "seed": seed,
+    }
 
 
 def distribution(values: Iterable[float]) -> tuple[float, float]:
@@ -77,7 +159,7 @@ def summarize_condition(
     baseline_seed_nmae = [float(values.mean()) for values in baseline_seed_errors]
     proposed_mean, proposed_sd = distribution(proposed_seed_nmae)
     baseline_mean, baseline_sd = distribution(baseline_seed_nmae)
-    paired = _paired_group_bootstrap_fast(
+    paired = paired_group_bootstrap_fast(
         np.asarray(proposed_seed_errors, dtype=np.float64).mean(axis=0),
         np.asarray(baseline_seed_errors, dtype=np.float64).mean(axis=0),
         groups,
@@ -102,34 +184,80 @@ def summarize_condition(
     }
 
 
-def derive_syncg() -> list[dict[str, Any]]:
-    payloads = [load_json(RUN_ROOT / f"seed_{seed}" / "full" / "syncg.json") for seed in SEEDS]
-    reference_rows = payloads[0]["per_sample_condition"]
-    reference_keys = [(row["sample_id"], row["condition"]) for row in reference_rows]
-    for payload in payloads[1:]:
-        observed = [(row["sample_id"], row["condition"]) for row in payload["per_sample_condition"]]
-        if observed != reference_keys:
-            raise ValueError("SyncG row roster differs across GeoPRR-Net seeds")
+def load_syncg_sources() -> tuple[
+    list[tuple[str, str, str]],
+    dict[int, dict[tuple[str, str, str], float]],
+    dict[str, dict[int, dict[tuple[str, str, str], float]]],
+]:
+    """Load the full-EMA GeoPRR and explicitly raw CNN public ledgers."""
+    geoprr = {seed: {} for seed in SEEDS}
+    targets: dict[tuple[str, str, str], float] = {}
+    for row in read_gzip_csv(SYNCG_GEOPRR_PATH):
+        if row["variant"] != "full" or row["weight_variant"] != "ema":
+            continue
+        seed = int(row["seed"])
+        require(seed in geoprr, "unexpected GeoPRR-Net seed")
+        key = (row["scene_id"], row["image_id"], row["condition"])
+        require(key not in geoprr[seed], "duplicate GeoPRR-Net SyncG key")
+        geoprr[seed][key] = float(row["absolute_error"])
+        target = float(row["target"])
+        if key in targets:
+            require(abs(targets[key] - target) <= 1e-12, "GeoPRR-Net target differs across seeds")
+        else:
+            targets[key] = target
 
+    raw = {
+        model: {seed: {} for seed in SEEDS}
+        for model in ("ResNet-18", "EfficientNet-B0", "MobileNetV3-Large")
+    }
+    for row in read_gzip_csv(SYNCG_EXTERNAL_PATH):
+        if row["preprocessing"] != "raw":
+            continue
+        model = row["model"]
+        seed = int(row["seed"])
+        require(model in raw and seed in raw[model], "unexpected Raw CNN arm")
+        key = (row["scene_id"], row["image_id"], row["condition"])
+        require(key not in raw[model][seed], "duplicate Raw CNN SyncG key")
+        require(key in targets, "Raw CNN row is absent from the GeoPRR-Net roster")
+        require(abs(targets[key] - float(row["target"])) <= 1e-12, "Raw CNN target differs")
+        raw[model][seed][key] = float(row["absolute_error"])
+
+    reference_keys = sorted(geoprr[SEEDS[0]])
+    require(len(reference_keys) == SYNCG_ROWS_PER_SEED, "GeoPRR-Net SyncG denominator differs")
+    require(len({key[0] for key in reference_keys}) == SYNCG_SCENES, "SyncG scene count differs")
+    for condition in CONDITIONS:
+        require(
+            sum(key[2] == condition for key in reference_keys) == SYNCG_ROWS_PER_CONDITION,
+            f"SyncG condition denominator differs: {condition}",
+        )
+    reference_set = set(reference_keys)
+    for seed in SEEDS:
+        require(set(geoprr[seed]) == reference_set, "GeoPRR-Net SyncG roster differs across seeds")
+    for model in raw:
+        for seed in SEEDS:
+            require(set(raw[model][seed]) == reference_set, f"Raw {model} SyncG roster differs")
+    return reference_keys, geoprr, raw
+
+
+def derive_syncg() -> list[dict[str, Any]]:
+    reference_keys, geoprr, raw = load_syncg_sources()
     output: list[dict[str, Any]] = []
     for index, condition in enumerate(CONDITIONS):
-        selected = [position for position, row in enumerate(reference_rows) if row["condition"] == condition]
+        selected = [key for key in reference_keys if key[2] == condition]
         proposed = [
-            np.asarray([payload["per_sample_condition"][position]["mett"]["absolute_error"] for position in selected], dtype=np.float64)
-            for payload in payloads
+            np.asarray([geoprr[seed][key] for key in selected], dtype=np.float64)
+            for seed in SEEDS
         ]
-        baseline_matrix = np.asarray(
-            [reference_rows[position]["external"]["EfficientNet-B0"]["absolute_errors"] for position in selected],
-            dtype=np.float64,
-        )
-        baseline = [baseline_matrix[:, seed_index] for seed_index in range(len(SEEDS))]
-        groups = [str(reference_rows[position]["scene_stem"]) for position in selected]
+        baseline = [
+            np.asarray([raw["EfficientNet-B0"][seed][key] for key in selected], dtype=np.float64)
+            for seed in SEEDS
+        ]
         output.append(
             summarize_condition(
                 condition=condition,
                 proposed_seed_errors=proposed,
                 baseline_seed_errors=baseline,
-                groups=groups,
+                groups=[key[0] for key in selected],
                 bootstrap_seed=BOOTSTRAP_SEED + index,
             )
         )
@@ -137,22 +265,21 @@ def derive_syncg() -> list[dict[str, Any]]:
 
 
 def derive_syncg_all_models() -> list[dict[str, Any]]:
-    """Summarize every paper model on the identical six-condition SyncG roster."""
-    payloads = [load_json(RUN_ROOT / f"seed_{seed}" / "full" / "syncg.json") for seed in SEEDS]
-    reference_rows = payloads[0]["per_sample_condition"]
+    """Summarize GeoPRR-Net and every truly raw CNN on one paired roster."""
+    reference_keys, geoprr, raw = load_syncg_sources()
     model_keys = (
         ("GeoPRR-Net", None),
-        ("Raw ResNet-18", "Direct-ResNet18"),
+        ("Raw ResNet-18", "ResNet-18"),
         ("Raw EfficientNet-B0", "EfficientNet-B0"),
         ("Raw MobileNetV3-Large", "MobileNetV3-Large"),
     )
     output: list[dict[str, Any]] = []
     for condition_index, condition in enumerate(CONDITIONS):
-        selected = [position for position, row in enumerate(reference_rows) if row["condition"] == condition]
-        groups = [str(reference_rows[position]["scene_stem"]) for position in selected]
+        selected = [key for key in reference_keys if key[2] == condition]
+        groups = [key[0] for key in selected]
         proposed = [
-            np.asarray([payload["per_sample_condition"][position]["mett"]["absolute_error"] for position in selected], dtype=np.float64)
-            for payload in payloads
+            np.asarray([geoprr[seed][key] for key in selected], dtype=np.float64)
+            for seed in SEEDS
         ]
         proposed_seed_nmae = [float(values.mean()) for values in proposed]
         proposed_mean, proposed_sd = distribution(proposed_seed_nmae)
@@ -164,15 +291,12 @@ def derive_syncg_all_models() -> list[dict[str, Any]]:
                 delta, ci_low, ci_high = 0.0, 0.0, 0.0
             else:
                 seed_errors = [
-                    np.asarray(
-                        [reference_rows[position]["external"][external_key]["absolute_errors"][seed_index] for position in selected],
-                        dtype=np.float64,
-                    )
-                    for seed_index in range(len(SEEDS))
+                    np.asarray([raw[external_key][seed][key] for key in selected], dtype=np.float64)
+                    for seed in SEEDS
                 ]
                 seed_nmae = [float(values.mean()) for values in seed_errors]
                 mean, sd = distribution(seed_nmae)
-                paired = _paired_group_bootstrap_fast(
+                paired = paired_group_bootstrap_fast(
                     np.asarray(proposed, dtype=np.float64).mean(axis=0),
                     np.asarray(seed_errors, dtype=np.float64).mean(axis=0),
                     groups,
@@ -206,38 +330,56 @@ def derive_syncg_all_models() -> list[dict[str, Any]]:
     return output
 
 
-def industrial_rows(payload: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
-    rows: list[tuple[str, dict[str, Any]]] = []
-    for dataset_name in sorted(payload["datasets"]):
-        rows.extend((dataset_name, row) for row in payload["datasets"][dataset_name]["per_sample_condition"])
-    return rows
-
-
 def derive_industrial() -> list[dict[str, Any]]:
-    payloads = [load_json(RUN_ROOT / f"seed_{seed}" / "full" / "industrial.json") for seed in SEEDS]
-    rosters = [industrial_rows(payload) for payload in payloads]
-    reference = rosters[0]
-    reference_keys = [(dataset, row["sample_id"], row["condition"]) for dataset, row in reference]
-    for roster in rosters[1:]:
-        observed = [(dataset, row["sample_id"], row["condition"]) for dataset, row in roster]
-        if observed != reference_keys:
-            raise ValueError("Industrial row roster differs across GeoPRR-Net seeds")
-
+    rows = read_gzip_csv(INDUSTRIAL_GROUP_PATH)
+    cells: dict[tuple[str, int, str], dict[str, dict[str, str]]] = {}
+    for row in rows:
+        key = (row["method"], int(row["seed"]), row["scope"])
+        cells.setdefault(key, {})[row["group_id"]] = row
     output: list[dict[str, Any]] = []
     for index, condition in enumerate(CONDITIONS):
-        selected = [position for position, (_dataset, row) in enumerate(reference) if row["condition"] == condition]
-        proposed = [
-            np.asarray([roster[position][1]["candidate"]["mett"]["absolute_error"] for position in selected], dtype=np.float64)
-            for roster in rosters
-        ]
-        baseline = [
-            np.asarray(
-                [reference[position][1]["efficientnet_b0"]["raw"][str(seed)]["absolute_error"] for position in selected],
-                dtype=np.float64,
+        reference = cells[("GeoPRR-Net", SEEDS[0], condition)]
+        group_ids = sorted(reference)
+        require(len(group_ids) == INDUSTRIAL_GROUPS, "Industrial public group count differs")
+        group_sizes = {group_id: int(reference[group_id]["rows"]) for group_id in group_ids}
+        require(sum(group_sizes.values()) == INDUSTRIAL_IMAGES, "Industrial public denominator differs")
+
+        proposed: list[np.ndarray] = []
+        baseline: list[np.ndarray] = []
+        for seed in SEEDS:
+            proposed_cell = cells[("GeoPRR-Net", seed, condition)]
+            baseline_cell = cells[("Raw EfficientNet-B0", seed, condition)]
+            require(set(proposed_cell) == set(group_ids), "Industrial GeoPRR group roster differs")
+            require(set(baseline_cell) == set(group_ids), "Industrial baseline group roster differs")
+            require(
+                all(int(proposed_cell[group]["rows"]) == group_sizes[group] for group in group_ids),
+                "Industrial GeoPRR group sizes differ",
             )
-            for seed in SEEDS
+            require(
+                all(int(baseline_cell[group]["rows"]) == group_sizes[group] for group in group_ids),
+                "Industrial baseline group sizes differ",
+            )
+            proposed.append(
+                np.concatenate(
+                    [
+                        np.full(group_sizes[group], float(proposed_cell[group]["nmae"]), dtype=np.float64)
+                        for group in group_ids
+                    ]
+                )
+            )
+            baseline.append(
+                np.concatenate(
+                    [
+                        np.full(group_sizes[group], float(baseline_cell[group]["nmae"]), dtype=np.float64)
+                        for group in group_ids
+                    ]
+                )
+            )
+        groups = [
+            group
+            for group in group_ids
+            for _ in range(group_sizes[group])
         ]
-        groups = [f"{reference[position][0]}:{reference[position][1]['group_id']}" for position in selected]
         output.append(
             summarize_condition(
                 condition=condition,
@@ -258,9 +400,9 @@ def derive_ablation(report: dict[str, Any]) -> list[dict[str, Any]]:
         ("no_polar_evidence", "No polar evidence"),
     )
     output: list[dict[str, Any]] = []
-    full = report["syncg_ablation"]["full"]["conditions"]
+    full = report["syncg"]["ablation"]["full"]["conditions"]
     for variant, variant_label in variants:
-        conditions = report["syncg_ablation"][variant]["conditions"]
+        conditions = report["syncg"]["ablation"][variant]["conditions"]
         for condition in CONDITIONS:
             penalties = np.asarray(conditions[condition]["per_seed"], dtype=np.float64) - np.asarray(
                 full[condition]["per_seed"], dtype=np.float64
@@ -278,11 +420,11 @@ def derive_ablation(report: dict[str, Any]) -> list[dict[str, Any]]:
     return output
 
 
-def derive_routing() -> list[dict[str, Any]]:
-    payload = load_json(RUN_ROOT / f"seed_{SEEDS[0]}" / "full" / "routing.json")
+def derive_routing(report: dict[str, Any]) -> list[dict[str, Any]]:
+    payload = report["syncg"]["routing_mechanism_summary"]
     output: list[dict[str, Any]] = []
     for condition in CONDITIONS:
-        summary = payload["summary"][condition]
+        summary = payload[condition]
         weights = summary["mean_routing_weights"]
         oracle = summary["oracle_candidate_fraction"]
         output.append(
@@ -360,7 +502,7 @@ def main() -> None:
             "routing_gain",
             "seed",
         ],
-        derive_routing(),
+        derive_routing(report),
     )
     print("Derived all-model SyncG, Industrial-1395, ablation, and routing condition summaries.")
 
