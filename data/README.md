@@ -26,6 +26,7 @@ paths, runtime logs, or restricted Industrial-1395 per-sample records.
 | `figure3/perspective_scan_seed_metrics.csv` | 54 | Per-model, per-angle, per-seed NMAE, Acc@2%, and P95 absolute error. |
 | `figure3/perspective_scan_summary.csv` | 18 | Angle-wise seed summaries plus support-normalization availability and identity-fallback rates. |
 | `figure3/perspective_full_vs_raw.csv` | 6 | Paired Full GeoPRR minus Raw EfficientNet-B0 differences with 20,000-resample scene-bootstrap intervals. |
+| `figure3/perspective_scan_audit.json` | — | Standalone Raw EfficientNet-B0 checkpoint provenance, FP32 external-ledger cross-check, Cartesian-roster checks, fallback counts, hashes, and deterministic summary reproduction. |
 | `figure3/figure3_experiment_summary.json` | — | Consolidated machine-readable statistics and the checkpoint/intervention audit. |
 | `rf100/predictions.csv.gz` | 24,462 | Public RF100-VL transfer predictions for GeoPRR-Net, its raw/normalized endpoints, and Raw/SARN-v2 ResNet-18, EfficientNet-B0, and MobileNetV3-Large controls. |
 | `rf100/predictions_audit.json` | — | Cartesian-roster, prior-EfficientNet reproduction, and aggregate-metric checks for all nine released RF100-VL method arms. |
@@ -62,7 +63,11 @@ machine-readable audit confirms that no joint-specific trained parameters or
 router execution are involved. The perspective table uses one row per
 `(model, seed, image_id, angle)`. All methods and seeds receive identical
 deterministic pixels, including exact reproduction of the formal 25° and 45°
-transforms. The 60° identity-fallback rows remain in the denominator.
+transforms. All three models use FP32 inference. Raw EfficientNet-B0 is loaded
+standalone from the three scene-disjoint baseline checkpoints rather than read
+from a GeoPRR output; the accompanying audit verifies its 0° predictions
+against the separately released Raw EfficientNet-B0 clean ledger. The 60°
+identity-fallback rows remain in the denominator.
 `valid_support_fraction` records the geometric fraction of the warped source
 plane remaining inside the canvas, not the all-ones effective mask supplied to
 the model after identity fallback.

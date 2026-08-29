@@ -37,37 +37,37 @@
       "rows": 112176
     },
     {
-      "bytes": 1040,
+      "bytes": 1053,
       "path": "data/figure3/geometry_routing_seed_metrics.csv",
       "rows": 12
     },
     {
-      "bytes": 826,
+      "bytes": 831,
       "path": "data/figure3/geometry_routing_summary.csv",
       "rows": 4
     },
     {
-      "bytes": 4238,
+      "bytes": 4263,
       "path": "data/figure3/geometry_routing_conditions.csv",
       "rows": 24
     },
     {
-      "bytes": 936,
+      "bytes": 959,
       "path": "data/figure3/geometry_routing_interaction.json",
       "rows": null
     },
     {
-      "bytes": 2089142,
+      "bytes": 2330775,
       "path": "data/figure3/perspective_scan_per_sample.csv.gz",
       "rows": 84132
     },
     {
-      "bytes": 5309,
+      "bytes": 5318,
       "path": "data/figure3/perspective_scan_seed_metrics.csv",
       "rows": 54
     },
     {
-      "bytes": 5059,
+      "bytes": 5060,
       "path": "data/figure3/perspective_scan_summary.csv",
       "rows": 18
     },
@@ -77,12 +77,17 @@
       "rows": 6
     },
     {
-      "bytes": 35552,
+      "bytes": 3935,
+      "path": "data/figure3/perspective_scan_audit.json",
+      "rows": null
+    },
+    {
+      "bytes": 35562,
       "path": "data/figure3/figure3_experiment_summary.json",
       "rows": null
     },
     {
-      "bytes": 1905,
+      "bytes": 2611,
       "path": "data/figure3/README.md",
       "rows": null
     },

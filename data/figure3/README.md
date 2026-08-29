@@ -11,8 +11,11 @@ This directory contains the complete sample-level ledgers and derived statistics
 - `perspective_scan_seed_metrics.csv`: per-angle, per-model, per-seed metrics.
 - `perspective_scan_summary.csv`: NMAE, Acc@2%, P95 error, support-normalization availability, identity fallback, and support fraction.
 - `perspective_full_vs_raw.csv`: paired Full GeoPRR minus Raw EfficientNet-B0 error differences with scene-bootstrap 95% CIs.
+- `perspective_scan_audit.json`: Cartesian-roster checks, standalone external-checkpoint provenance and hashes, FP32 cross-checks, fallback counts, and deterministic summary-reproduction evidence.
 - `figure3_experiment_summary.json`: machine-readable consolidated results and intervention audit.
 
 NMAE is mean absolute error on the normalized full-scale target. Acc@2% counts absolute error <= 0.02. SD is the sample SD over seeds. Bootstrap resampling treats each of the 14 scenes as a cluster and retains the complete image/condition denominator. The 25- and 45-degree pixels use the same deterministic axis/sign assignment and exact projective transform as the existing formal SyncG conditions.
 
 `valid_support_fraction` is the geometric fraction of the projectively warped source plane remaining inside the canvas. It is reported independently of the all-ones effective model mask used when identity fallback is active.
+
+The perspective scan uses FP32 inference for every model. Raw EfficientNet-B0 is loaded directly from the three independently trained `syncg_lightweight_regression_baselines_v1` terminal checkpoints; its predictions are not read from a GeoPRR checkpoint output. At 0 degrees, all 4,674 seed-image predictions reproduce the separately released Raw EfficientNet-B0 clean ledger within `1e-4`. At 60 degrees, all 1,558 images enter identity fallback and remain in every model and seed denominator.

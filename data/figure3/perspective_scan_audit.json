@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "protocol": "geoprr_perspective_external_baseline_audit_v1",
+  "status": "pass",
+  "run": {
+    "models": [
+      "Full GeoPRR",
+      "Without geometry-aware fusion",
+      "Raw EfficientNet-B0"
+    ],
+    "seeds": [
+      20262020,
+      20262021,
+      20262022
+    ],
+    "angles_degrees": [
+      0,
+      15,
+      25,
+      35,
+      45,
+      60
+    ],
+    "samples": 1558,
+    "scenes": 14,
+    "rows": 84132,
+    "inference_precision": "float32",
+    "training_or_adaptation_during_evaluation": false,
+    "all_high_angle_rows_retained": true
+  },
+  "raw_efficientnet_provenance": {
+    "architecture": "efficientnet_b0",
+    "training_protocol": "syncg_lightweight_regression_baselines_v1",
+    "checkpoint_selection": "terminal_fixed_epoch",
+    "standalone_checkpoint_load": true,
+    "predictions_read_from_geoprr_outputs": false,
+    "train_samples": 14442,
+    "holdout_samples": 1558,
+    "scene_disjoint": true,
+    "epochs": 30,
+    "checkpoints": [
+      {
+        "seed": 20262020,
+        "checkpoint": "seed_20262020/terminal.pt",
+        "sha256": "8b4b7f760c977a30ebfe85b9e915fa1ed6ee42a2256743c83a5b2be5186f3d49"
+      },
+      {
+        "seed": 20262021,
+        "checkpoint": "seed_20262021/terminal.pt",
+        "sha256": "9f9dac9217a9c6b39583b94eb23ac04b6117dbc7fd1c144953930ef4c6594e6f"
+      },
+      {
+        "seed": 20262022,
+        "checkpoint": "seed_20262022/terminal.pt",
+        "sha256": "edf48addaa261f452c5ddc2d61243856f1026c7268efdcd8dbfc62ce67cf5559"
+      }
+    ]
+  },
+  "cartesian_audit": {
+    "unique_keys": 84132,
+    "duplicate_keys": 0,
+    "model_seed_angle_cells": 54,
+    "rows_per_cell": 1558,
+    "identical_roster_for_every_cell": true,
+    "finite_targets_predictions_and_errors": true,
+    "maximum_absolute_error_identity_residual": 0.0
+  },
+  "external_clean_crosscheck": {
+    "reference": "data/syncg/external_cnn_predictions.csv.gz",
+    "filter": {
+      "model": "EfficientNet-B0",
+      "preprocessing": "raw",
+      "condition": "clean"
+    },
+    "rows": 4674,
+    "identical_keys": true,
+    "mean_absolute_prediction_difference": 5.064336690616547e-06,
+    "maximum_absolute_prediction_difference": 9.703636169433594e-05,
+    "acceptance_tolerance": 0.0001,
+    "pass": true
+  },
+  "old_internal_endpoint_crosscheck": {
+    "reference": "existing GeoPRR full-checkpoint raw_anchor predictions at clean",
+    "rows": 4674,
+    "mean_absolute_prediction_difference": 0.0008844330355526611,
+    "maximum_absolute_prediction_difference": 0.08614641427993774,
+    "rows_with_difference_below_1e-6": 6,
+    "conclusion": "The FP32 external-baseline ledger does not reproduce the previously released internal raw-anchor predictions row by row."
+  },
+  "input_geometry": {
+    "0": {
+      "availability": 0,
+      "identity_fallback": 1558
+    },
+    "15": {
+      "availability": 1479,
+      "identity_fallback": 79
+    },
+    "25": {
+      "availability": 1503,
+      "identity_fallback": 55
+    },
+    "35": {
+      "availability": 1508,
+      "identity_fallback": 50
+    },
+    "45": {
+      "availability": 1497,
+      "identity_fallback": 61
+    },
+    "60": {
+      "availability": 0,
+      "identity_fallback": 1558
+    }
+  },
+  "statistics": {
+    "bootstrap_replicates": 20000,
+    "scene_clusters": 14,
+    "two_independent_summary_runs_byte_identical": true
+  },
+  "published_file_sha256": {
+    "figure3_experiment_summary.json": "792fa6aa3596344c2d3ebac46283c844e3c86aa2cb10800f1ecdbb59b30e6338",
+    "perspective_full_vs_raw.csv": "e2c998ab2592c29331bc2209c5f24fda0f7e5b256049e75b1b50c4d7c27c1a4f",
+    "perspective_scan_per_sample.csv.gz": "b053ca021506dbfbfb77be520c474a62a38742b7c73b28e4e2fca98a96095000",
+    "perspective_scan_seed_metrics.csv": "de0be5652e08450440ab0404853d0f69525b297300d24535ebd55d427ccf1530",
+    "perspective_scan_summary.csv": "ad51fe452da3c213783948e07a4a0ed2091355186efd23281345634049f69480"
+  }
+}
