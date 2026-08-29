@@ -9,10 +9,11 @@ The implementation and reproducibility scripts are maintained in the companion
 ## Contents
 
 - `manuscript.tex`: MDPI *Electronics* manuscript source.
-- `GeoPRR-Net_中文翻译版V4.docx`: Chinese author-review translation synchronized
+- `GeoPRR-Net_中文翻译版V4.1.docx`: Chinese author-review translation synchronized
   with the manuscript figures and captions; it is not the submission source.
-  Chinese review DOCX revisions use an incrementing `V<N>` filename suffix;
-  the current version is V4.
+  Chinese review DOCX revisions use versioned filename suffixes: minor updates
+  increment the decimal suffix, while major updates increment the integer. The
+  current version is V4.1.
 - `references.bib`: bibliography database.
 - `Definitions/`: bundled MDPI class, styles, bibliography styles, and assets.
 - `figures/`: manuscript figures, figure-building scripts, and compact aggregate
