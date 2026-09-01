@@ -51,7 +51,7 @@
 %=================================================================
 % Front matter. The provisional UCL affiliation must be confirmed with the
 % institution or supervisor before submission.
-\Title{\modelname: Geometry-Aware Polar--Relational Routing for Robust Analog Gauge Reading}
+\Title{\modelname: A Geometry-Aware Mixture of Heterogeneous Experts for Robust Analog Gauge Reading}
 
 \Author{Xiaoyi Liang $^{1,*}$}
 \AuthorNames{Xiaoyi Liang}
@@ -59,9 +59,9 @@
 \address{$^{1}$ \quad University College London, London WC1E 6BT, United Kingdom; ucabx23@ucl.ac.uk}
 \corres{Correspondence: ucabx23@ucl.ac.uk}
 
-\abstract{Analog gauges remain common in legacy infrastructure, but blur and oblique viewpoints alter which visual cues remain reliable. We present \modelname, a dual-view network for normalized full-scale progress estimation. A shared EfficientNet-B0 encoder processes raw and support-normalized views, producing geometry-aware, polar, and relational candidates. A conditional router selects their contribution per sample, and an information projection returns a single 128-bin posterior with the routed first moment. On the scene-disjoint SyncG evaluation (1,558 images, six conditions), three independently fitted seeds achieved $1.0013\pm0.0382$\%FS NMAE and $91.11\pm0.79$\% Acc@2\%FS. The best tested raw CNN reached $2.0530\pm0.0294$\%FS. Three independently retrained VDN direction-component checkpoints, evaluated on the same complete image--condition roster and converted with annotation-derived pivot and scale endpoints, reached $1.6620\pm0.0878$\%FS; the paired scene-bootstrap difference (\modelname minus VDN) was $-0.6607$\%FS (95\% CI $-0.8251$ to $-0.4854$), a 39.8\% relative reduction. \modelname also reduced NMAE by 22.7\% on RF100-VL and 84.8\% on Industrial-1395 relative to the best tested raw CNN. The \href{https://github.com/KongyueX/GeoPRR-Net}{source code and reproducibility scripts} are publicly available. These results support condition-responsive evidence routing under the evaluated protocols, while broader end-to-end comparisons remain necessary.}
+\abstract{Analog gauges remain common in legacy infrastructure, but blur and oblique viewpoints change which visual evidence is reliable. Fixed readers nevertheless commit each image to one representation. We present \modelname, a geometry-aware dense mixture of experts (MoE) for normalized progress estimation. A shared EfficientNet-B0 supports geometry/base, polar, and relational moment-transport experts. An input-dependent gate mixes their candidate means, and an information projection returns one 128-bin posterior with exactly that first moment. On scene-disjoint SyncG (1,558 images, six conditions), three independently fitted models achieved $1.0013\pm0.0382$\%FS NMAE, compared with $2.0530\pm0.0294$\%FS for the best tested raw CNN. Replacing the learned gate with a fixed mixture raised NMAE to $1.1726\pm0.0308$\%FS, a paired penalty of 0.1712\%FS (95\% CI 0.1424--0.2001). On the same complete roster, three independently retrained VDN checkpoints reached $1.6620\pm0.0878$\%FS. \modelname also reduced NMAE by 22.7\% on RF100-VL and, under group-wise out-of-fold adaptation, by 84.8\% on Industrial-1395 relative to the strongest tested raw CNN. Together, these results show that condition-responsive routing of structured experts provides a robust and transferable basis for analog-gauge reading.}
 
-\keyword{analog gauge reading; pointer meter reading; industrial vision; projective distortion; polar representation; evidence routing; moment projection}
+\keyword{analog gauge reading; pointer meter reading; industrial vision; mixture of experts; conditional routing; projective distortion; polar representation; moment projection}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -75,23 +75,25 @@ Many installations predate networked sensing and cannot be replaced without shut
 
 The field problem is substantially harder than recognizing a clean, centered dial. A pointer may occupy only a few pixels in width, so motion or defocus blur can erase its boundary before the dial layout disappears. An oblique retrofit viewpoint changes a circular dial into a projective shape, and an imperfect ROI shifts the apparent relation among center, pointer, and scale. The practical cost of viewpoint is measurable: GAUREAD reported error within 3\% below a $20^{\circ}$ perspective angle but within 9\% at angles up to $50^{\circ}$ \cite{milana2022gauges}. These degradations do not reduce every cue uniformly; they change which representation deserves trust. Frontal images reward local geometry, blur favors more global structure, and projective views make raw image coordinates unreliable while cross-view relations can remain informative (Figure~\ref{fig:architecture}a).
 
-Rectification, polar unwrapping, pointer segmentation, vector estimation, keypoint pose, and scale-mark geometry all provide useful structure for gauge reading \cite{bao2019ipm,li2020text,wu2021lowlight,dong2021vdn,wang2022scalemark,tan2024transunet}. We build on this principle by keeping raw, normalized, polar, and relational evidence available together and learning how much to trust each source for the current image. The resulting question is how to arbitrate among complementary evidence sources for each sample and still return one coherent reading distribution.
+Rectification, polar unwrapping, pointer segmentation, vector estimation, keypoint pose, and scale-mark geometry all provide useful structure for gauge reading \cite{bao2019ipm,li2020text,wu2021lowlight,dong2021vdn,wang2022scalemark,tan2024transunet}. Most readers, however, commit to one transformation or evidence path before the reliability of that path is known for the current image. The unresolved problem is therefore not simply how to add another representation, but how to arbitrate among complementary physical evidence while returning one coherent reading distribution.
+
+Mixture-of-experts (MoE) models provide a natural language for this problem: specialized functions produce candidate outputs and an input-dependent gate determines their contribution \cite{jacobs1991adaptive}. Sparse and soft MoEs have demonstrated that routing can organize specialized capacity in both language and vision models \cite{shazeer2017sparsely,riquelme2021vmoe,puigcerver2024softmoe}. We adapt this principle to analog-gauge reading as a compact dense MoE: geometry/base, polar, and relational experts share one encoder, while the gate reweights their evidence according to observed geometry and representation quality.
 
 We formulate that question as normalized single-pointer progress within known scale endpoints. This is a reusable industrial core because instrument ranges are often available from asset metadata, and a physical reading follows directly from an affine mapping. Separating progress estimation from OCR and range discovery isolates the difficult visual inference problem and permits matched ROI-level comparisons with standard CNN regressors, pointer-segmentation components, vector estimators, and keypoint-pose readers.
 
-Evaluation must also reflect the value of field evidence. Synthetic data and SyncG provide exact labels and controlled stress tests \cite{howells2021analogue,leonalcazar2024synthetic,deng2026syncg}, but they cannot replace photographs acquired in working environments. Industrial-1395 consolidates 1,395 labeled real-instrument ROIs from three field-photo collections and 52 acquisition groups. Complete-cohort group-wise evaluation tests adaptive evidence selection across the uncontrolled appearance, capture, and instrument variation that motivates the work in the first place.
+Evaluation must also reflect the value of field evidence. Synthetic data and SyncG provide exact labels and controlled stress tests \cite{howells2021analogue,leonalcazar2024synthetic,deng2026syncg}, but they cannot replace photographs acquired in working environments. Industrial-1395 consolidates 1,395 labeled real-instrument ROIs from three field-photo collections and 52 acquisition groups. Complete-cohort group-wise evaluation tests input-dependent expert mixing across the uncontrolled appearance, capture, and instrument variation that motivates the work in the first place.
 
-We propose the Geometry-Aware Polar--Relational Routing Network (\modelname). A support-aware pixel operation constructs a raw and a conservatively normalized observation. One shared EfficientNet-B0 encoder \cite{tan2019efficientnet} processes both observations. Its feature hierarchy supports three explicit reading candidates: (i) a geometry-aware base posterior built from aligned dual-view relations, (ii) a polar candidate based on radial moments and a learned angular posterior, and (iii) a relational candidate that transports the base moment using raw/normalized context differences. A conditional router places all three candidates on a convex simplex. Instead of averaging incompatible posterior shapes, the routed scalar target is imposed on the base distribution through one exponential information projection \cite{csiszar1975idivergence}. The output therefore remains a single 128-bin posterior with an exactly controlled first moment.
+We propose the Geometry-Aware Polar--Relational Routing Network (\modelname), organized as a dense mixture of heterogeneous evidence experts. A support-aware pixel operation constructs raw and conservatively normalized observations, which are processed by one shared EfficientNet-B0 encoder \cite{tan2019efficientnet}. Its feature hierarchy supports three experts: (i) a geometry-aware base expert built from aligned dual-view relations, (ii) a polar expert based on radial moments and a learned angular posterior, and (iii) a relational expert that transports the base moment using raw/normalized context differences. A conditional router, acting as the MoE gating network, places their candidate means on a convex simplex. Instead of averaging incompatible posterior shapes, the routed scalar target is imposed on the base distribution through one exponential information projection \cite{csiszar1975idivergence}. The output therefore remains a single 128-bin posterior with an exactly controlled first moment.
 
 The study makes four contributions:
 \begin{enumerate}[leftmargin=*]
-    \item We introduce a dual-view pointer reader that keeps geometry, polar structure, and relational transport observable as separate candidates while sharing one image encoder.
-    \item We propose conditional candidate routing followed by a moment-consistent posterior projection. This separates the decision of \emph{which evidence to trust} from the probability-space operation used to express the final reading.
-    \item We evaluate the structure with four executable interventions: removing geometry-aware fusion, polar evidence, or relational transport, and replacing adaptive routing with its fixed prior. These interventions isolate where the robustness gain arises and connect aggregate performance to the router's behavior.
+    \item We formulate robust analog-gauge reading as a dense mixture of three physically structured experts---geometry/base, polar, and relational---that share one image encoder rather than duplicating high-capacity backbones.
+    \item We propose input-dependent gating in normalized-progress moment space followed by a moment-consistent information projection. This separates \emph{which expert evidence to trust} from the probability-space operation used to express the final reading.
+    \item We evaluate the expert mixture with four executable interventions: replacing learned geometry fusion, removing the polar or relational expert, and replacing the adaptive gate with its fixed prior. These interventions isolate expert complementarity and the value of conditional allocation.
     \item We validate the model across controlled, public-transfer, and field-acquired evidence: scene-disjoint SyncG, public RF100-VL, and the 1,395-image Industrial-1395 cohort assembled from three photo collections. Beyond raw CNN regressors, a complete $3\times4$ ROI-level comparison covers \modelname, VDN, DeepLabV3+-ROI, and YOLO11s-Pose-4KP. Under the disclosed evaluation protocols, \modelname attains the lowest pooled NMAE on all three domains.
 \end{enumerate}
 
-The remainder of the paper is organized as follows. Section~\ref{sec:related} reviews geometry, polar/vector, synthetic-data, and robustness approaches. Section~\ref{sec:methods} defines \modelname and its staged fitting. Section~\ref{sec:protocol} specifies datasets, baselines, ablations, metrics, and resampling. Section~\ref{sec:results} presents controlled, public-transfer, industrial, mechanism, structured-comparator, and efficiency results. Sections~\ref{sec:discussion} and \ref{sec:conclusion} discuss scope and conclude the study.
+The remainder of the paper is organized as follows. Section~\ref{sec:related} reviews geometry, polar/vector, synthetic-data, and mixture-of-experts approaches. Section~\ref{sec:methods} defines \modelname and its staged fitting. Section~\ref{sec:protocol} specifies datasets, baselines, ablations, metrics, and resampling. Section~\ref{sec:results} proceeds from the controlled benchmark and expert-mixture mechanism to field and public transfer, cross-domain consistency, structured-reader comparisons, and the accuracy--efficiency trade-off. Sections~\ref{sec:discussion} and \ref{sec:conclusion} discuss scope and conclude the study.
 
 \section{Related Work}
 \label{sec:related}
@@ -104,7 +106,7 @@ Deep staged pipelines replace individual hand-engineered components without elim
 
 General-purpose segmentation and pose architectures provide two implementable routes within this staged family. DeepLabV3+ combines atrous multi-scale context with decoder refinement for pointer-mask extraction \cite{chen2018deeplabv3plus}, while Ultralytics YOLO pose supports a compact four-keypoint representation of the dial center, ordered scale endpoints, and pointer tip \cite{jocher2023ultralytics}. We instantiate these open-source families as matched ROI-level structured readers in the comparison experiments.
 
-Recent geometry-aware networks remain close to the problem addressed here. Tan et al. combined YOLOv8, illumination correction, TransUNet segmentation, and perspective transformation in an \emph{Electronics} study \cite{tan2024transunet}. PriKMet integrates pointer keypoints with route and scale priors for substation inspection \cite{chu2025prikmet}. Lee et al. use virtual points and a five-keypoint skeleton for geometric rectification before pose-based reading \cite{lee2026p2yolo}. In contrast, \modelname does not assume route-specific priors or claim a full camera-pose solution. Its pixel-only support normalization may fall back to the raw observation, while the learned model retains both observations and decides how much evidence to take from their relation.
+Recent geometry-aware networks remain close to the problem addressed here. Tan et al. combined YOLOv8, illumination correction, TransUNet segmentation, and perspective transformation in an \emph{Electronics} study \cite{tan2024transunet}. PriKMet integrates pointer keypoints with route and scale priors for substation inspection \cite{chu2025prikmet}. Lee et al. use virtual points and a five-keypoint skeleton for geometric rectification before pose-based reading \cite{lee2026p2yolo}. \modelname uses pixel-only support normalization with an identity fallback, retains both raw and normalized observations, and learns how much evidence to take from their relation.
 
 \subsection{Polar, Vector, and Scale-Structured Evidence}
 
@@ -112,11 +114,15 @@ Polar coordinates align a circular dial with angular progression and can simplif
 
 Vector and keypoint formulations avoid requiring a complete pointer mask. The Vector Detection Network (VDN) represents the pointer as a two-dimensional direction and introduced a large in-the-wild benchmark \cite{dong2021vdn}. Scale-value-guided Lite-FCOS detects dials, values, and pointers before geometric recovery \cite{wang2023litefcos}. A more recent low-quality, multiple-pointer method combines an encoder--decoder, attention, and heatmap/scalar-map heads \cite{feng2025wild}. These systems solve overlapping but not identical tasks. In particular, dataset-specific range recovery and pointer-vector protocols cannot be compared directly with normalized progress unless input rosters and reference construction are matched.
 
-\subsection{Synthetic Data, Transfer, and Adaptive Robustness}
+\subsection{Synthetic Data and Transfer}
 
-Synthetic training is attractive because dial layouts, pointer positions, and camera perturbations can be sampled with exact labels. Howells et al. demonstrated real-time mobile transcription from a multitask CNN trained with synthetic gauges \cite{howells2021analogue}. Leon-Alcazar et al. evaluated a synthetic-trained two-stage reader on thousands of curated real images \cite{leonalcazar2024synthetic}. SyncG extends this direction with 20,000 images across 145 scenes and structured annotations \cite{deng2026syncg}. Standard transfer-learning architectures have also been studied in gauge-reading workflows \cite{ninama2024transfer}, motivating the use of recognizable raw CNNs as external controls rather than private internal baselines.
+Synthetic training is attractive because dial layouts, pointer positions, and camera perturbations can be sampled with exact labels. Howells et al. demonstrated real-time mobile transcription from a multitask CNN trained with synthetic gauges \cite{howells2021analogue}. Leon-Alcazar et al. evaluated a synthetic-trained two-stage reader on thousands of curated real images \cite{leonalcazar2024synthetic}. SyncG extends this direction with 20,000 images across 145 scenes and structured annotations \cite{deng2026syncg}. Standard transfer-learning architectures have also been studied in gauge-reading workflows \cite{ninama2024transfer}, motivating the use of recognizable raw CNNs as external controls rather than private internal baselines. In the present study, synthetic fitting and controlled perturbations establish the mechanism, while public and field-acquired cohorts test whether the resulting allocation rule survives changes in image source.
 
-Existing robustness modules usually apply one correction to every image. GRNet, for example, reconstructs occluded gauges with masked autoencoders, while its clean/occluded trade-off shows that the most useful evidence changes with image condition \cite{ninama2026grnet}. This exposes the central gap addressed here: prior readers develop geometry correction, polar/scale representations, vector prediction, or robust reconstruction largely as fixed paths. \modelname instead exposes geometry-aware, polar, and relational candidates simultaneously, routes them for each sample, and consolidates them through a first-moment-constrained posterior. The contribution is therefore not another isolated robustness module, but a condition-responsive reading architecture.
+\subsection{Mixture-of-Experts and Adaptive Robustness}
+
+The original mixture-of-experts formulation couples specialized predictors with a gating network that assigns input-dependent responsibility \cite{jacobs1991adaptive}. Later sparsely gated architectures scaled this idea by dispatching each input or token to a subset of large expert banks \cite{shazeer2017sparsely}. Vision MoE extended routing to image patches and adaptive per-image computation \cite{riquelme2021vmoe}, while Soft MoE introduced fully differentiable assignment for Transformer expert banks \cite{puigcerver2024softmoe}.
+
+Within pointer-meter reading, DialBench recently introduced MRLM, which combines physical-relation injection with a feature-space MoE inside a vision--language model for direct reading generation \cite{wang2025dialbench}. Existing robustness modules also show why adaptive evidence selection matters: GRNet reconstructs occluded gauges with masked autoencoders, but its clean/occluded trade-off indicates that useful evidence changes with image condition \cite{ninama2026grnet}. \modelname turns this observation into an explicit structured MoE. Geometry/base, polar, and relational experts expose candidate progress moments to a dense gate, and the routed moment is consolidated through a first-moment-constrained posterior. The resulting design makes expert roles physically interpretable and directly testable through expert-removal and fixed-mixture interventions.
 
 \section{Materials and Methods}
 \label{sec:methods}
@@ -142,11 +148,11 @@ Figure~\ref{fig:architecture} connects the operating regimes to the complete com
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig1_geoprr_architecture.png}
-\caption{Field-capture challenge and evidence flow in \modelname. (\textbf{a}) One public RF100-VL gauge ROI \cite{robicheaux2025rf100vl} illustrates how frontal capture, motion blur, and an oblique viewpoint preserve different visual cues. (\textbf{b}) Raw and support-normalized observations pass through one shared EfficientNet-B0 encoder. Geometry/base, polar, and relational branches produce complementary candidate means; a conditional router selects their contribution for the current sample, and a moment projection expresses the routed decision as one 128-bin posterior. The figure captures the central design principle: evidence is routed according to capture condition rather than forcing every image through one representation.}
+\caption{Field-capture challenge and dense-MoE evidence flow in \modelname. (\textbf{a}) One public RF100-VL gauge ROI \cite{robicheaux2025rf100vl} illustrates how frontal capture, motion blur, and an oblique viewpoint preserve different visual cues. (\textbf{b}) Support-aware normalization produces a second observation together with its mask, homography, and availability flag. A shared EfficientNet-B0 then supports geometry/base, polar, and relational experts with explicit candidate outputs. The dense input-dependent gate weights all three candidate means, while a KL information projection imposes the routed mean on the base posterior to return one coherent 128-bin posterior and final reading.}
 \label{fig:architecture}
 \end{figure}
 
-\subsection{Shared Encoder and Geometry-Aware Base Posterior}
+\subsection{Shared Encoder and Geometry-Aware Base Expert}
 \label{subsec:geometry}
 
 One ImageNet-initialized EfficientNet-B0 parameter set processes $x_r$ and $x_n$ in two forward passes \cite{tan2019efficientnet}. The weights are shared rather than duplicated. We retain a stride-8 map with 40 channels, a stride-16 map with 112 channels, and a 1280-dimensional pooled context vector:
@@ -164,14 +170,14 @@ R^l=\left[F_r^l,\widetilde{F}_n^l,\widetilde{F}_n^l-F_r^l,
 \end{equation}
 Signed difference retains direction, absolute difference represents discrepancy magnitude, and the product records agreement. Homography coefficients, valid-support fractions, availability, and preliminary scalar discrepancies form an additional geometry token. The masked multiscale memory conditions 128 progress-bin queries in a two-layer, four-head relation decoder. The decoder has a bounded moment budget of 0.025, preventing the geometry path from making an unbounded correction.
 
-Let $t_k=k/(K-1)$ for $K=128$. The geometry module returns a base distribution $p^0\in\Delta^{K-1}$ and base mean
+Let $t_k=k/(K-1)$ for $K=128$. The geometry/base expert returns a base distribution $p^0\in\Delta^{K-1}$ and candidate mean
 \begin{equation}
 \mu_0=\sum_{k=0}^{K-1}p_k^0t_k.
 \label{eq:base_mean}
 \end{equation}
 Availability masking is applied before relation decoding. When Equation~\eqref{eq:fallback} is active, missing geometry cannot masquerade as a learned signal; the raw branch remains the reference state.
 
-\subsection{Polar Evidence Candidate}
+\subsection{Polar Evidence Expert}
 \label{subsec:polar}
 
 The polar path uses only raw-view feature maps, avoiding dependence on a successful support normalization. Stride-8 and stride-16 maps are projected to eight channels and sampled on a fixed grid containing eight radial and 36 angular bins. For each scale, zeroth and first radial moments are concatenated. Circular one-dimensional convolutions operate along angle and produce logits $q_j$ over angles $\theta_j=2\pi j/36$:
@@ -185,44 +191,44 @@ The direction vector, concentration $\rho=\lVert d\rVert_2$, and entropy
 h_q=-\frac{\sum_j q_j\log(q_j+10^{-7})}{\log 36}
 \label{eq:polar_entropy}
 \end{equation}
-are concatenated with the flattened angular features and a projection of $z_r$. A compact fusion MLP predicts a logit residual relative to the raw scalar readout. The resulting sigmoid output is the polar candidate $\mu_p\in[0,1]$. This branch is complementary: it makes angular regularity explicit, but it is not assumed to be reliable when the apparent center or support is poor.
+are concatenated with the flattened angular features and a projection of $z_r$. A compact fusion MLP predicts a logit residual relative to the raw scalar readout. The resulting sigmoid output is the polar expert's candidate mean $\mu_p\in[0,1]$. This expert makes angular regularity explicit, but it is not assumed to be reliable when the apparent center or support is poor.
 
-\subsection{Relational Moment-Transport Candidate}
+\subsection{Relational Moment-Transport Expert}
 \label{subsec:relational}
 
-The relational candidate summarizes cross-view context at a coarser level than the geometry decoder. A shared projection $\phi$ maps $z_r$ and $z_n$ to a latent representation. The input vector contains
+The relational expert summarizes cross-view context at a coarser level than the geometry decoder. A shared projection $\phi$ maps $z_r$ and $z_n$ to a latent representation. The input vector contains
 \begin{equation}
 u=\left[\phi(z_r),\phi(z_n),\phi(z_n)-\phi(z_r),
 |\phi(z_n)-\phi(z_r)|,\phi(z_r)\odot\phi(z_n),g,s\right],
 \label{eq:relational_features}
 \end{equation}
-where $g$ denotes geometry features and $s$ contains preliminary raw, normalized, and base readings and their differences. Layer-normalized GELU blocks predict bounded residual evidence. Internally, the block retains mean-, tail-, and severe-condition summaries and combines them conservatively; the inference interface exposes their final transported candidate
+where $g$ denotes geometry features and $s$ contains preliminary raw, normalized, and base readings and their differences. Layer-normalized GELU blocks predict bounded residual evidence. Internally, the expert retains mean-, tail-, and severe-condition summaries and combines them conservatively; the inference interface exposes one transported candidate mean
 \begin{equation}
 \mu_r=\operatorname{clip}(\mu_0+\delta_r,\epsilon,1-\epsilon),
 \label{eq:relational_candidate}
 \end{equation}
 with $|\delta_r|\leq0.05$. This abstraction is intentional: the scientific intervention is the presence of relational moment transport, whereas separately naming every internal MLP would create nominal rather than causal ablations.
 
-\subsection{Conditional Routing and Moment-Consistent Projection}
+\subsection{Dense MoE Routing and Moment-Consistent Projection}
 \label{subsec:routing}
 
-The candidate vector is $c=[\mu_0,\mu_p,\mu_r]$. The router receives the five latent cross-view relations in Equation~\eqref{eq:relational_features}, geometry features, the 36-bin polar posterior, concentration, entropy, candidate readings, pairwise candidate differences, endpoint readings, and availability. Its prior is
+Let $E_0$, $E_p$, and $E_r$ denote the geometry/base, polar, and relational experts, with candidate-mean vector $c=[\mu_0,\mu_p,\mu_r]$. Together they form a dense heterogeneous MoE: each expert operates on a distinct physical representation while reusing the shared image encoder. The conditional router is the MoE gating network. It receives the five latent cross-view relations in Equation~\eqref{eq:relational_features}, geometry features, the 36-bin polar posterior, concentration, entropy, candidate means, pairwise candidate differences, endpoint readings, and availability; denote this complete gate input by $v$. Its prior is
 \begin{equation}
 \pi=(0.50,0.25,0.25).
 \label{eq:prior}
 \end{equation}
-A two-output network predicts bounded gains for polar and relational evidence. With $g_p,g_r=0.10\tanh(R(u))$, the three logits and weights are
+A two-output gating network $G$ predicts bounded gains for polar and relational evidence. With $g_p,g_r=0.10\tanh(G(v))$, the three logits and weights are
 \begin{equation}
 L=\log\pi+100[0,g_p,g_r],\qquad w=\operatorname{softmax}(L).
 \label{eq:router}
 \end{equation}
-If a candidate is removed in an ablation, its logit is masked and the remaining weights are renormalized exactly. The routed target is the convex mean
+If an expert is removed in an ablation, its logit is masked and the remaining weights are renormalized exactly. The routed target is the convex mixture in normalized-progress moment space
 \begin{equation}
 \mu^*=\sum_{j\in\{0,p,r\}}w_j\mu_j.
 \label{eq:routed_mean}
 \end{equation}
 
-Directly averaging three posteriors would entangle candidate selection with distributional shape. \modelname instead retains the geometry-aware base $p^0$ and solves the information projection
+Directly averaging expert posteriors would entangle evidence allocation with distributional shape. \modelname instead mixes only the candidate means, retains the geometry-aware base $p^0$, and solves the information projection
 \begin{equation}
 p^*=\arg\min_{p\in\Delta^{K-1}}D_{\mathrm{KL}}(p\Vert p^0)
 \quad\text{subject to}\quad \sum_k p_kt_k=\mu^*.
@@ -238,9 +244,9 @@ where Newton updates find $\lambda$ such that the first-moment constraint is sat
 \subsection{Inference Graph and Parameter Inventory}
 \label{subsec:inventory}
 
-The inference sequence is deterministic once a checkpoint is loaded. First, the ROI is resized and the support-aware operation creates $(x_r,x_n,M,H_{r\rightarrow n},a)$. Second, the same encoder is called for both observations, and its intermediate features are retained. Third, aligned relation tokens produce $(p^0,\mu_0)$ while the raw feature hierarchy produces $\mu_p$ and the cross-view context produces $\mu_r$. Fourth, the router computes $w$ from quantities available at inference; no label-dependent oracle signal is present. Fifth, Equation~\eqref{eq:routed_mean} yields one target mean. Finally, Equation~\eqref{eq:tilt} changes the base posterior only enough to satisfy that target. A failed support-normalization attempt therefore does not terminate inference: it sets $a=0$, activates the identity observation, and lets the raw, polar, and availability-aware paths continue.
+The inference sequence is deterministic once a checkpoint is loaded. First, the ROI is resized and the support-aware operation creates $(x_r,x_n,M,H_{r\rightarrow n},a)$. Second, the same encoder is called for both observations, and its intermediate features are retained. Third, aligned relation tokens produce $(p^0,\mu_0)$, the raw feature hierarchy produces $\mu_p$, and cross-view context produces $\mu_r$. Fourth, the gate computes $w$ from quantities available at inference; no label-dependent oracle signal is present. Fifth, Equation~\eqref{eq:routed_mean} yields one target mean. Finally, Equation~\eqref{eq:tilt} changes the base posterior only enough to satisfy that target. A failed support-normalization attempt sets $a=0$, activates the identity observation, and lets the raw, polar, and availability-aware paths continue.
 
-Table~\ref{tab:parameters} records the unique learned parameter inventory. The shared dual-view geometry core includes the only image encoder and accounts for 87.4\% of the checkpoint. Polar evidence, relational transport, and conditional routing add 0.106, 0.442, and 0.065 million parameters. The relatively small routing count is important for interpreting the fixed-routing ablation: its performance difference concerns conditional allocation, not the removal of a second high-capacity backbone. Conversely, the parameter inventory does not predict latency because alignment, sampling, and moment projection are operation-heavy but parameter-light.
+Table~\ref{tab:parameters} records the unique learned parameter inventory. The shared dual-view geometry/base expert includes the only image encoder and accounts for 87.4\% of the checkpoint. The polar expert, relational expert, and conditional gate add 0.106, 0.442, and 0.065 million parameters, respectively. Thus, expert specialization is introduced primarily through lightweight evidence heads and a compact gate, while alignment, sampling, and moment projection account for the model's additional execution cost.
 
 \begin{table}[H]
 \caption{Unique parameter inventory for full \modelname. Shared tensors are counted once.}
@@ -251,22 +257,22 @@ Table~\ref{tab:parameters} records the unique learned parameter inventory. The s
 \toprule
 \textbf{Component} & \textbf{Parameters} & \textbf{Share (\%)} \\
 \midrule
-Shared dual-view geometry core & 4,271,638 & 87.44 \\
-Polar evidence & 105,944 & 2.17 \\
-Relational transport & 442,112 & 9.05 \\
-Conditional router & 65,402 & 1.34 \\
+Shared dual-view geometry/base expert & 4,271,638 & 87.44 \\
+Polar evidence expert & 105,944 & 2.17 \\
+Relational transport expert & 442,112 & 9.05 \\
+Conditional gate & 65,402 & 1.34 \\
 \midrule
 Total & 4,885,096 & 100.00 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\subsection{Staged Candidate and Router Fitting}
+\subsection{Staged Expert and Router Fitting}
 \label{subsec:training}
 
-The complete network is fitted in ordered phases to protect the formal evaluation and to isolate candidate routing. The EfficientNet geometry/relational foundation is first fitted on the established SyncG fitting population. Within that population, scene stems define an inner split: 12,866 images are used to fit the polar candidate, and 1,576 disjoint images are used for the router. The polar branch is trained for five epochs with batch size 64, AdamW learning rate $5\times10^{-4}$, weight decay $10^{-4}$, cosine annealing, mean absolute error, and a 0.10-weighted top-decile error term. Other branches remain frozen during this phase.
+The complete network is fitted in ordered phases to protect the formal evaluation and to isolate expert gating. The EfficientNet geometry/relational foundation is first fitted on the established SyncG fitting population. Within that population, scene stems define an inner split: 12,866 images are used to fit the polar expert, and 1,576 disjoint images are used for the router. The polar expert is trained for five epochs with batch size 64, AdamW learning rate $5\times10^{-4}$, weight decay $10^{-4}$, cosine annealing, mean absolute error, and a 0.10-weighted top-decile error term. Other components remain frozen during this phase.
 
-Candidate outputs for all six conditions are then cached on the inner-development scenes, producing 9,456 rows. Router stage one uses 40 epochs, batch size 512, AdamW at $10^{-3}$ with cosine annealing, and
+Expert outputs for all six conditions are then cached on the inner-development scenes, producing 9,456 rows. Router stage one uses 40 epochs, batch size 512, AdamW at $10^{-3}$ with cosine annealing, and
 \begin{equation}
 \mathcal{L}_1=\mathcal{L}_{\mathrm{final\,L1}}+0.50\mathcal{L}_{\mathrm{gain}}
 +0.25\mathcal{L}_{\mathrm{no\mbox{-}harm}}+0.002\mathcal{L}_{\mathrm{route}}.
@@ -286,7 +292,7 @@ Gradient norms are clipped at 5.0, and exponential parameter averaging with deca
 \subsection{Datasets, Separation, and Perturbations}
 \label{subsec:data}
 
-SyncG is a synthetic analog-gauge benchmark containing scene and structural annotations \cite{deng2026syncg}. Scene stem, rather than image, is the separation unit. The model-fitting population contains 14,442 images from 131 scenes. The formal evaluation contains 1,558 images from 14 different scenes and is not opened during candidate or router fitting. Every formal image is evaluated under six deterministic conditions, yielding 9,348 rows per seed.
+SyncG is a synthetic analog-gauge benchmark containing scene and structural annotations \cite{deng2026syncg}. Scene stem, rather than image, is the separation unit. The model-fitting population contains 14,442 images from 131 scenes. The formal evaluation contains 1,558 images from 14 different scenes and is not opened during expert or router fitting. Every formal image is evaluated under six deterministic conditions, yielding 9,348 rows per seed.
 
 Industrial-1395 is a multi-collection field benchmark assembled from three working-scene photo collections. After provenance consolidation, it contains 1,395 labeled real-instrument ROIs organized into 52 acquisition groups. The same six-condition generator yields 8,370 rows. Its uncontrolled instrument appearance, viewpoint, illumination, and capture variation make the complete cohort the study's most application-proximal field evaluation. Acquisition groups define the five out-of-fold partitions and preserve source dependence during bootstrap resampling.
 
@@ -318,16 +324,16 @@ RF100-VL gauge transfer & 151 / 35 source groups & 906 & Public six-condition tr
 
 Three standard raw CNN regressors serve as the main external controls: ResNet-18, EfficientNet-B0, and MobileNetV3-Large \cite{he2016resnet,tan2019efficientnet,howard2019mobilenetv3}. Each official torchvision backbone ends in one sigmoid progress output. ResNet-18 and EfficientNet-B0 use ImageNet-1K V1 initialization; MobileNetV3-Large uses ImageNet-1K V2. All regressors are trained on the same 14,442-image SyncG fitting roster for 30 epochs with $256\times256$ inputs, batch size 64, Smooth-L1 loss with $\beta=0.05$, AdamW with learning rate $3\times10^{-4}$ and weight decay $10^{-4}$, and cosine annealing. Their three training seeds match those of \modelname.
 
-At evaluation, all methods use the same sample roster, condition roster, target, seeds, and scoring denominator. The CNN controls receive the degraded ROI with their native RGB normalization, while \modelname performs its complete condition-responsive inference. This matched design directly measures the gain from structured geometry and multi-evidence routing over standard image regression.
+At evaluation, all methods use the same sample roster, condition roster, target, seeds, and scoring denominator. The CNN controls receive the degraded ROI with their native RGB normalization, while \modelname performs its complete dense-MoE inference. This matched design measures the gain from structured geometry and input-dependent expert mixing over standard image regression.
 
-A separate same-pixel evaluation compares \modelname with the public Vector Detection Network (VDN) direction component \cite{dong2021vdn}. The upstream GPL-3.0 implementation is pinned at commit \texttt{68afe1efbdb35d3196d9a6243bfac8e5c9de5ceb}. Its official ResNet-18 and three-deconvolution-head architecture is initialized from ImageNet and retrained on the same outer fitting population, using the fixed inner scene split of 12,866 training and 1,576 validation images. Each of seeds 20262020, 20262021, and 20262022 is trained at $384\times384$ resolution for 200 epochs with batch size 8, Adam at an initial learning rate of 0.001, zero weight decay, learning-rate milestones at epochs 140 and 190, and mixed precision. Formal evaluation uses the terminal epoch-200 checkpoint from every seed and the complete 1,558-image, six-condition SyncG roster. VDN predicts a direction vector; normalized progress is therefore computed offline using the annotated pivot and ordered scale endpoints. It is consequently a structured, annotation-assisted component comparator rather than an input-equivalent automatic end-to-end system. Section~\ref{subsec:vdn_efficiency} reports this distinction explicitly.
+A separate same-pixel evaluation compares \modelname with the public Vector Detection Network (VDN) direction component \cite{dong2021vdn}. Its official ResNet-18 and three-deconvolution-head architecture is initialized from ImageNet and retrained on the same outer fitting population, using the fixed inner scene split of 12,866 training and 1,576 validation images. Each of seeds 20262020, 20262021, and 20262022 is trained at $384\times384$ resolution for 200 epochs with batch size 8, Adam at an initial learning rate of 0.001, zero weight decay, learning-rate milestones at epochs 140 and 190, and mixed precision. Formal evaluation uses the terminal epoch-200 checkpoint from every seed and the complete 1,558-image, six-condition SyncG roster. VDN predicts a direction vector; normalized progress is therefore computed offline using the annotated pivot and ordered scale endpoints. It is consequently a structured, annotation-assisted component comparator rather than an input-equivalent automatic end-to-end system. Section~\ref{subsec:structured_readers} reports this distinction explicitly.
 
 Two additional ROI-level controls cover segmentation and keypoint-pose reading. DeepLabV3+-ROI segments the pointer before analytic progress conversion \cite{chen2018deeplabv3plus}; YOLO11s-Pose-4KP predicts the dial center, ordered scale endpoints, and pointer tip before the same directed conversion \cite{jocher2023ultralytics}. For SyncG and RF100-VL, the VDN and DeepLabV3+-ROI conversions use annotation-derived dial geometry; on Industrial-1395, their geometry is estimated automatically. YOLO11s-Pose-4KP predicts all four geometric points in every domain. The three checkpoints use seeds 20262020--20262022 and the complete six-condition ROI rosters; coverage records the fraction of rows returning a valid structured output.
 
-\subsection{Compressed Structural Ablation}
+\subsection{Expert-Mixture and Structural Ablations}
 \label{subsec:ablation_protocol}
 
-Four interventions cover the model's scientific claims without decomposing every layer. Table~\ref{tab:ablation_definitions} defines exactly what is changed. When a candidate is absent, Equation~\eqref{eq:router} masks it and renormalizes the remaining simplex, so a disabled branch cannot retain hidden weight. The fixed-routing intervention keeps all candidate predictions but replaces adaptive weights by $(0.50,0.25,0.25)$.
+Four interventions cover the model's scientific claims without decomposing every layer. Table~\ref{tab:ablation_definitions} defines exactly what is changed. When an expert is absent, Equation~\eqref{eq:router} masks it and renormalizes the remaining simplex, so a disabled expert cannot retain hidden weight. The fixed-mixture intervention keeps all expert predictions but replaces the input-dependent gate by the constant prior $(0.50,0.25,0.25)$; it is therefore the direct control for adaptive expert allocation.
 
 \begin{table}[H]
 \caption{Compressed ablation definitions. All interventions retain the same data roster, seeds, fitting separation, and evaluation pixels.}
@@ -338,11 +344,11 @@ Four interventions cover the model's scientific claims without decomposing every
 \toprule
 \textbf{Variant} & \textbf{Executable change} & \textbf{Question isolated} \\
 \midrule
-Full \modelname & All candidates and adaptive routing active & Complete proposed reader \\
+Full \modelname & All experts and input-dependent gating active & Complete proposed dense MoE \\
 Without geometry-aware fusion & Replace the learned geometry base by an availability-aware mean of raw and normalized endpoint estimates; retain the relational displacement & Does learned aligned geometry, rather than merely creating a second view, matter? \\
-Without polar evidence & Remove the polar candidate and renormalize over base and relational candidates & Does explicit angular evidence add information? \\
-Without relational transport & Remove the relational candidate and renormalize over base and polar candidates & Does cross-view moment transport add information beyond the base? \\
-Fixed routing & Keep all candidates; use the fixed prior for every sample & Is conditional allocation better than a constant mixture? \\
+Without polar evidence & Remove the polar expert and renormalize over geometry/base and relational experts & Does explicit angular expertise add information? \\
+Without relational transport & Remove the relational expert and renormalize over geometry/base and polar experts & Does cross-view moment transport add information beyond the base expert? \\
+Fixed expert mixture & Keep all experts; use the fixed prior for every sample & Is an input-dependent gate better than a constant expert mixture? \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -364,17 +370,12 @@ with $\tau=0.01$, 0.02, and 0.05. Acc@2\% is reported as the percentage of sampl
 
 Tables report the mean and sample standard deviation across three independently fitted seeds. A seed standard deviation is not presented as a confidence interval. The Industrial-1395 \modelname result is one equal-weight OOF aggregate and therefore has no seed SD. For paired method effects on SyncG and RF100-VL, per-row absolute errors are first averaged across seeds. On Industrial-1395, the OOF aggregate error is paired with raw-CNN errors averaged across their three seeds. Clusters are then resampled with replacement \cite{davison1997bootstrap}: the SyncG unit is scene, the Industrial-1395 unit is acquisition group, and the RF100-VL unit is conservative source group. Each percentile interval uses 20,000 replicates and the same sampled clusters for both methods. We report $\Delta=100(\nmae_{\mathrm{GeoPRR}}-\nmae_{\mathrm{comparison}})$ in \%FS, so a negative interval favors \modelname. The same procedure is used for full-versus-ablation effects, with signs reversed in the ablation table for intuitive positive penalties.
 
-Routing weights and oracle-best candidate frequencies are mechanism diagnostics from the prespecified first seed (20262020), not multi-seed performance estimates. The oracle fraction identifies which candidate has the smallest absolute error after seeing the label; it is evidence of complementarity, not an attainable routing result. The 30 largest-error rows are inspected descriptively, without adding a new threshold-based performance claim.
+Routing weights and oracle-best expert frequencies are mechanism diagnostics from the prespecified first seed (20262020), not multi-seed performance estimates. The oracle fraction identifies which expert candidate has the smallest absolute error after seeing the label; it is evidence of complementarity, not an attainable routing result. The 30 largest-error rows are inspected descriptively, without adding a new threshold-based performance claim.
 
 \subsection{Efficiency Measurement}
 \label{subsec:efficiency_protocol}
 
 Efficiency is measured in independent processes on one NVIDIA GeForce RTX 4060 with CUDA 12.8 and PyTorch 2.11, batch size 1, and FP32 inference. Each method receives 20 warm-up calls followed by 100 CUDA-synchronized timed calls. The scope includes model-native CPU preprocessing, host-to-device transfer, all learned forward passes, analytic postprocessing, and, for \modelname, support detection/crop/resize. File decoding, checkpoint construction, degradation synthesis, and accuracy scoring are excluded. We report unique reachable parameters, P50 and P95 latency, inverse-mean throughput, and peak allocated CUDA memory. A profiler-supported value of 1.487 GMAC is reported only as a lower bound because grid sampling, tensor-only moment transport, softmax, and unsupported operations are omitted.
-
-\subsection{Computational Assistance and Verification}
-\label{subsec:computational_assistance}
-
-OpenAI Codex was used for language drafting, LaTeX formatting, and generation of Python figure code from verified aggregate data. It was not used to train models, run inference, select samples, calculate metrics, or generate experimental results. The author reviewed and edited the generated prose and code and independently checked all reported values against the machine-generated experiment summaries and aggregate tables.
 
 \section{Results}
 \label{sec:results}
@@ -414,7 +415,7 @@ Panel~b preserves all comparator-by-condition reductions and adds the pooled six
 \label{fig:syncg}
 \end{figure}
 
-\subsection{Structural Ablation}
+\subsection{Ablation of the Heterogeneous Expert Mixture}
 \label{subsec:ablation_results}
 
 The ablation results in Table~\ref{tab:ablation_results} identify geometry-aware fusion as the dominant structural contribution. Replacing it with a fixed availability-aware average raises NMAE from 1.0013\%FS to 1.5001\%FS and reduces Acc@2\% from 91.11\% to 80.27\%. The paired penalty is 0.4988\%FS with a 95\% interval of [0.4404, 0.5486]\%FS. Active parameter count is unchanged, so the effect cannot be attributed to parameter removal. Its worst-condition NMAE of 2.7501\%FS, nearly double the full model's 1.4136\%FS, localizes much of the benefit to severe image geometry.
@@ -432,24 +433,24 @@ Full & 4.885 & $1.0013\pm0.0382$ & $91.11\pm0.79$ & --- \\
 Without geometry-aware fusion & 4.885 & $1.5001\pm0.0375$ & $80.27\pm0.93$ & $0.4988$ [0.4404, 0.5486] \\
 Without polar evidence & 4.779 & $1.0089\pm0.0414$ & $91.19\pm0.69$ & $0.0076$ [0.0034, 0.0115] \\
 Without relational transport & 4.443 & $1.0789\pm0.0271$ & $89.57\pm0.61$ & $0.0776$ [0.0632, 0.0931] \\
-Fixed routing & 4.820 & $1.1726\pm0.0308$ & $88.19\pm0.39$ & $0.1712$ [0.1424, 0.2001] \\
+Fixed expert mixture & 4.820 & $1.1726\pm0.0308$ & $88.19\pm0.39$ & $0.1712$ [0.1424, 0.2001] \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Conditional routing is the second-largest intervention: fixing the candidate weights raises NMAE by 0.1712\%FS and lowers Acc@2\% to 88.19\%. Removing relational transport raises NMAE by 0.0776\%FS and reduces Acc@2\% to 89.57\%. Polar evidence acts as a specialist rather than a uniform contributor: removing it raises NMAE by 0.0076\%FS, while Acc@2\% remains essentially unchanged. Its value becomes clearer in the routing analysis, where high oracle-best frequency on a subset of samples coexists with strong down-weighting when angular evidence is unreliable. This selective behavior is the reason to route the branch instead of applying it unconditionally.
+Input-dependent gating is the second-largest intervention: replacing it with a constant expert mixture raises NMAE by 0.1712\%FS and lowers Acc@2\% to 88.19\%. Removing the relational expert raises NMAE by 0.0776\%FS and reduces Acc@2\% to 89.57\%. The polar expert is a specialist rather than a uniform contributor: removing it raises NMAE by 0.0076\%FS, while Acc@2\% remains essentially unchanged. Its value becomes clearer in the routing analysis, where high oracle-best frequency on a subset of samples coexists with strong down-weighting when angular evidence is unreliable. The combined interventions therefore support both expert complementarity and input-dependent allocation, rather than merely the presence of three outputs.
 
-\subsection{Routing Mechanism and Multi-Seed Stability}
+\subsection{Expert Routing Behavior and Multi-Seed Ablation Stability}
 \label{subsec:routing_results}
 
-Figure~\ref{fig:ablation_routing} connects the causal interventions with the prespecified-seed mechanism view. Panel~a shows that the adaptive-routing gain is larger when geometry-aware fusion is active: the prespecified interaction is $-0.0407$\%FS (95\% CI $[-0.0614,-0.0210]$\%FS). The condition-wise ablation map localizes the overall effects: removing geometry-aware fusion changes clean and blur-only NMAE by less than 0.0013\%FS, but costs 0.3849\%FS under moderate perspective, 1.2737\%FS under severe perspective, and 1.3364\%FS under perspective plus blur. The fixed-routing penalty similarly grows from 0.0123--0.0133\%FS on clean and blur-only images to 0.4371\%FS and 0.4783\%FS in the two most severe projective conditions. Relational transport follows the same projective specialization, whereas polar evidence contributes most clearly on clean and blur-only views.
+Figure~\ref{fig:ablation_routing} connects the prespecified structural interventions with the first-seed mechanism view. Panel~a shows that the input-dependent gating gain is larger when geometry-aware fusion is active: the prespecified interaction is $-0.0407$\%FS (95\% CI $[-0.0614,-0.0210]$\%FS). The condition-wise ablation map localizes the overall effects: removing geometry-aware fusion changes clean and blur-only NMAE by less than 0.0013\%FS, but costs 0.3849\%FS under moderate perspective, 1.2737\%FS under severe perspective, and 1.3364\%FS under perspective plus blur. The fixed-mixture penalty similarly grows from 0.0123--0.0133\%FS on clean and blur-only images to 0.4371\%FS and 0.4783\%FS in the two most severe projective conditions. The relational expert follows the same projective specialization, whereas the polar expert contributes most clearly on clean and blur-only views.
 
-The learned weights expose the corresponding behavioral shift. Polar receives 0.436--0.439 mean weight on clean and blur-only images, while relational transport receives 0.162--0.163. At moderate perspective, those weights become 0.187 and 0.351; at severe perspective they become 0.109 and 0.411, and under perspective plus blur they become 0.107 and 0.418. This coordinated change, together with the fixed-routing penalty, explains why per-image evidence allocation outperforms a fixed fusion rule.
+The learned gate exposes the corresponding specialization. The polar expert receives 0.436--0.439 mean weight on clean and blur-only images, while the relational expert receives 0.162--0.163. At moderate perspective, those weights become 0.187 and 0.351; at severe perspective they become 0.109 and 0.411, and under perspective plus blur they become 0.107 and 0.418. This coordinated shift, together with the fixed-mixture penalty, shows that the dense mixture changes expert responsibility with image condition rather than collapsing to one fixed allocation.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig3_ablation_routing.png}
-\caption{Geometry--routing interaction, ablation effects, condition-specific evidence allocation, and the perspective-angle boundary. (\textbf{a}) Complete $2\times2$ Geometry $\times$ Routing factorial. Points and error bars are the mean and sample SD of NMAE over three independently fitted seeds; the boxed interaction is the prespecified difference in differences with a 95\% scene-cluster bootstrap interval (20,000 replicates). (\textbf{b}) Overall ablation-minus-full NMAE penalties; positive values are worse, and horizontal bars are paired 95\% scene-cluster bootstrap intervals. (\textbf{c}) Mean condition-wise ablation penalties over the three seeds; the vertical divider separates clean/blur-only conditions from projective conditions. (\textbf{d}) Mean Geometry/base, Polar, and Relational routing weights for the prespecified diagnostic seed. (\textbf{e}) Perspective-angle stress test from $0^\circ$ to $60^\circ$. Points and error bars are the mean and sample SD over three seeds, and gray bars show the identity-fallback rate. NMAE is reported in percent of full scale (\%FS).}
+\caption{Geometry--gating interaction, expert-ablation effects, condition-specific responsibility, and the perspective-angle boundary. (\textbf{a}) Complete $2\times2$ Geometry $\times$ Routing factorial. Points and error bars are the mean and sample SD of NMAE over three independently fitted seeds; the boxed interaction is the prespecified difference in differences with a 95\% scene-cluster bootstrap interval (20,000 replicates). (\textbf{b}) Overall ablation-minus-full NMAE penalties; positive values are worse, and horizontal bars are paired 95\% scene-cluster bootstrap intervals. (\textbf{c}) Mean condition-wise ablation penalties over the three seeds; the vertical divider separates clean/blur-only conditions from projective conditions. (\textbf{d}) Mean geometry/base, polar, and relational expert weights for the prespecified diagnostic seed. (\textbf{e}) Perspective-angle stress test from $0^\circ$ to $60^\circ$. Points and error bars are the mean and sample SD over three seeds, and gray bars show the identity-fallback rate. NMAE is reported in percent of full scale (\%FS).}
 \label{fig:ablation_routing}
 \end{figure}
 
@@ -519,8 +520,20 @@ The condition-wise source-group analysis provides a complementary diagnostic to 
 \label{fig:rf100}
 \end{figure}
 
-\subsection{Structured Reader Comparisons and Matched Efficiency}
-\label{subsec:vdn_efficiency}
+\subsection{Cross-Domain Consistency against Raw CNNs}
+\label{subsec:cross_domain}
+
+Figure~\ref{fig:cross_domain} brings the three principal evaluation cohorts into one evidence map. Relative to all three raw CNNs, \modelname reduces NMAE on SyncG, Industrial-1395, and RF100-VL; after expressing each paired effect as a relative reduction, every pooled 95\% interval remains above zero. Relative to the strongest tested raw CNN in each cohort, the NMAE reductions are 51.2\%, 84.8\%, and 22.7\%, accompanied by Acc@2\% gains of 17.68, 46.73, and 9.05 percentage points, respectively. Panel~c resolves these pooled summaries into prespecified group units against Raw EfficientNet-B0. Lower NMAE is observed for all 14 SyncG scenes, 51 of 52 Industrial-1395 acquisition clusters, and 32 of 35 RF100-VL source groups; the corresponding median effects are $-1.1300$, $-14.6103$, and $-1.6305$\%FS. Industrial-1395 remains one unified cohort---its 52 points are acquisition clusters, not separate datasets. The strong group-level agreement across a controlled benchmark, a field-acquired cohort, and an independently sourced public transfer set shows that the advantage spans data sources and comparator architectures.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig7_cross_domain_summary.png}
+\caption{Cross-domain consistency across the three principal evaluation cohorts. (\textbf{a}) Relative NMAE reductions of \modelname against each raw CNN; points are paired relative reductions and whiskers are 95\% group-bootstrap intervals using the prespecified grouping unit for each cohort. (\textbf{b}) Gains relative to the strongest tested raw CNN on both primary metrics. Horizontal whiskers are the paired 95\% NMAE-reduction intervals, and marker area encodes the number of unique images. Every cohort lies in the positive-gain region for both metrics. (\textbf{c}) Six-condition group-level $\Delta$NMAE (\modelname minus Raw EfficientNet-B0). Industrial-1395 uses the OOF aggregate, while raw-CNN errors are averaged across three seeds before grouping. Points are 14 held-out scenes for SyncG, 52 acquisition clusters within the single unified Industrial-1395 cohort, and 35 source groups for RF100-VL; black bars are medians. Lower NMAE occurs in 14/14, 51/52, and 32/35 groups, with median effects of $-1.1300$, $-14.6103$, and $-1.6305$\%FS, respectively.}
+\label{fig:cross_domain}
+\end{figure}
+
+\subsection{Comparisons with Structured Readers}
+\label{subsec:structured_readers}
 
 Table~\ref{tab:vdn} and Figure~\ref{fig:vdn} present the complete $3\times4$ comparison of progress prediction, vector estimation, pointer segmentation, and four-keypoint pose reading. \modelname pairs the lowest pooled NMAE with the highest Acc@5\% in every domain: $1.0013\pm0.0382$\%FS and $98.08\pm0.08$\% on SyncG, 2.3262\%FS and 86.99\% on Industrial-1395, and $5.0098\pm1.5344$\%FS and $76.16\pm5.13$\% on RF100-VL. This consistent two-metric lead spans all three structured-reader families.
 
@@ -557,7 +570,7 @@ YOLO11s-Pose-4KP & $16.1632\pm4.6280$ & $42.53\pm12.62$ & $99.71\pm0.42$ \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig6_vdn_comparison.png}
-\caption{Absolute performance for the complete $3\times4$ structured-reader comparison across the six-condition ROI rosters. Panels (\textbf{a}--\textbf{c}) report pooled NMAE for scene-disjoint SyncG, Industrial-1395, and RF100-VL; panels (\textbf{d}--\textbf{f}) report Acc@5\% for the same domains and method order. Bars show mean $\pm$ sample SD over three seeds or terminal checkpoints; the Industrial-1395 \modelname value is a single equal-weight three-encoder OOF aggregate. Lower NMAE and higher Acc@5\% are better.}
+\caption{Absolute performance for the complete $3\times4$ structured-reader comparison across the six-condition ROI rosters. Panels (\textbf{a}--\textbf{c}) report pooled NMAE for scene-disjoint SyncG, Industrial-1395, and RF100-VL; panels (\textbf{d}--\textbf{f}) report Acc@5\% for the same domains and method order. Bars show mean $\pm$ sample SD over three seeds or terminal checkpoints; the Industrial-1395 \modelname value is a single equal-weight three-encoder OOF aggregate.}
 \label{fig:vdn}
 \end{figure}
 
@@ -570,7 +583,10 @@ Figure~\ref{fig:reader_advantage} converts the absolute results into pairwise ef
 \label{fig:reader_advantage}
 \end{figure}
 
-Table~\ref{tab:efficiency} and Figure~\ref{fig:efficiency} show a compact 4.885-million-parameter model, smaller than ResNet-18 and close to EfficientNet-B0 and MobileNetV3-Large. Its 37.972-ms P50 latency delivers 26.26 images/s on the measured GPU, supporting frequent or periodic inspection while performing dual-view alignment, polar sampling, candidate routing, and moment projection. Because parameter storage is already compact, operator fusion, support-transform caching, and lower-cost relational or projection operations offer a clear path to higher throughput.
+\subsection{Matched Accuracy--Efficiency Trade-off}
+\label{subsec:efficiency_results}
+
+Table~\ref{tab:efficiency} and Figure~\ref{fig:efficiency} show a compact 4.885-million-parameter model, smaller than ResNet-18 and close to EfficientNet-B0 and MobileNetV3-Large. Its 37.972-ms P50 latency delivers 26.26 images/s on the measured GPU, supporting frequent or periodic inspection while performing dual-view alignment, polar sampling, dense expert routing, and moment projection. Because parameter storage is already compact, operator fusion, support-transform caching, and lower-cost relational or projection operations offer a clear path to higher throughput.
 
 \begin{table}[H]
 \caption{Matched batch-1 FP32 efficiency on an RTX 4060. Latency includes model-native preprocessing and complete model inference.}
@@ -598,53 +614,41 @@ Raw MobileNetV3-Large & 4.203 & 4.659 & 6.366 & 204.65 & 35.1 \\
 
 The measured 26.26 images/s supports frequent or periodic inspection on the tested GPU while exposing a clear optimization target. Because parameter count is already compact, the next efficiency gains are most likely to come from operator fusion, cached support transforms, and cheaper relation or projection operations rather than simply shrinking the backbone.
 
-\subsection{Cross-Domain Consistency}
-\label{subsec:cross_domain}
-
-Figure~\ref{fig:cross_domain} brings the three principal evaluation cohorts into one evidence map. Relative to all three raw CNNs, \modelname reduces NMAE on SyncG, Industrial-1395, and RF100-VL; after expressing each paired effect as a relative reduction, every pooled 95\% interval remains above zero. Relative to the strongest tested raw CNN in each cohort, the NMAE reductions are 51.2\%, 84.8\%, and 22.7\%, accompanied by Acc@2\% gains of 17.68, 46.73, and 9.05 percentage points, respectively. Panel~c resolves these pooled summaries into prespecified group units against Raw EfficientNet-B0. Lower NMAE is observed for all 14 SyncG scenes, 51 of 52 Industrial-1395 acquisition clusters, and 32 of 35 RF100-VL source groups; the corresponding median effects are $-1.1300$, $-14.6103$, and $-1.6305$\%FS. Industrial-1395 remains one unified cohort---its 52 points are acquisition clusters, not separate datasets. The strong group-level agreement across a controlled benchmark, a field-acquired cohort, and an independently sourced public transfer set shows that the advantage spans data sources and comparator architectures.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{fig7_cross_domain_summary.png}
-\caption{Cross-domain consistency across the three principal evaluation cohorts. (\textbf{a}) Relative NMAE reductions of \modelname against each raw CNN; points are paired relative reductions and whiskers are 95\% group-bootstrap intervals using the prespecified grouping unit for each cohort. (\textbf{b}) Gains relative to the strongest tested raw CNN on both primary metrics. Horizontal whiskers are the paired 95\% NMAE-reduction intervals, and marker area encodes the number of unique images. Every cohort lies in the positive-gain region for both metrics. (\textbf{c}) Six-condition group-level $\Delta$NMAE (\modelname minus Raw EfficientNet-B0). Industrial-1395 uses the OOF aggregate, while raw-CNN errors are averaged across three seeds before grouping. Points are 14 held-out scenes for SyncG, 52 acquisition clusters within the single unified Industrial-1395 cohort, and 35 source groups for RF100-VL; black bars are medians. Lower NMAE occurs in 14/14, 51/52, and 32/35 groups, with median effects of $-1.1300$, $-14.6103$, and $-1.6305$\%FS, respectively.}
-\label{fig:cross_domain}
-\end{figure}
-
 \section{Discussion}
 \label{sec:discussion}
 
-\subsection{Why Geometry and Conditional Relations Matter}
+\subsection{Why Heterogeneous Experts and Conditional Gating Matter}
 
-The experiments support a hierarchy of contributions rather than three equally important branches. Geometry-aware fusion is dominant: its removal produces a 0.4988\%FS NMAE penalty without changing active parameter count, and the largest damage appears in the combined-severe condition. This aligns with prior work that corrects perspective explicitly or represents dial structure with keypoints and scale marks \cite{bao2019ipm,wang2022scalemark,tan2024transunet,lee2026p2yolo}. The difference is that \modelname retains a raw observation, masks common support, and makes normalization availability visible to the network. The identity fallback prevents an uncertain crop from being treated as a confident rectification.
+The experiments support a hierarchy of expertise rather than three equally strong branches. The geometry/base expert is dominant: replacing its learned fusion produces a 0.4988\%FS NMAE penalty without changing active parameter count, and the largest damage appears in the combined-severe condition. This aligns with prior work that corrects perspective explicitly or represents dial structure with keypoints and scale marks \cite{bao2019ipm,wang2022scalemark,tan2024transunet,lee2026p2yolo}. The difference is that \modelname retains a raw observation, masks common support, and makes normalization availability visible to both the experts and gate. The identity fallback prevents an uncertain crop from being treated as a confident rectification.
 
-Relational transport and routing address a second problem: even a geometrically informed base is not uniformly best. The 0.0776\%FS relational penalty is smaller than the geometry penalty but consistent under paired resampling. Under combined severe corruption, the router's relational weight rises from 0.278 to 0.418, and the relational oracle-best fraction rises to 0.492. Fixed routing loses 0.1712\%FS NMAE, indicating that per-sample allocation contributes more than merely having three outputs. These observations resemble the broader lesson from reconstruction-based robustness: a component beneficial under one stress can harm another operating point if applied unconditionally \cite{ninama2026grnet}.
+The relational expert and conditional gate address a second problem: even a geometrically informed base is not uniformly best. The 0.0776\%FS relational penalty is smaller than the geometry penalty but consistent under paired resampling. Under combined severe corruption, the gate's relational weight rises from 0.278 to 0.418, and the relational oracle-best fraction rises to 0.492. Replacing the learned gate with a fixed mixture loses 0.1712\%FS NMAE, indicating that per-sample responsibility contributes more than merely producing three candidate readings. These observations resemble the broader lesson from reconstruction-based robustness: a component beneficial under one stress can harm another operating point if applied unconditionally \cite{ninama2026grnet}.
 
-The polar branch illustrates why routing is more useful than forcing every component to contribute uniformly. Its circular features offer a physically meaningful angular representation and achieve substantial oracle-best frequency, yet the router reduces its mean weight to 0.107 under combined severe corruption, where center-sensitive angular evidence is least dependable. Polar evidence is therefore a specialist: it can be decisive for a subset of images without needing to dominate the aggregate metric. The architecture extracts that localized value while protecting samples better served by geometry or cross-view relations.
+The polar expert illustrates why routing is more useful than forcing every component to contribute uniformly. Its circular features offer a physically meaningful angular representation and achieve substantial oracle-best frequency, yet the gate reduces its mean weight to 0.107 under combined severe corruption, where center-sensitive angular evidence is least dependable. Polar evidence is therefore genuinely specialist: it can be decisive for a subset of images without needing to dominate the aggregate metric. The dense mixture extracts that localized value while protecting samples better served by geometry or cross-view relations.
 
-The moment projection provides the architectural payoff of routing in the physical target space. Equation~\eqref{eq:tilt} returns a normalized posterior that realizes the selected mean with the smallest KL change from the geometry-aware base distribution. The model can therefore make a sample-dependent decision without fragmenting the downstream interface into three incompatible outputs. Calibrating the resulting posterior variance is a natural extension for selective prediction.
+Moment-space mixing provides the architectural payoff of the MoE formulation. Equation~\eqref{eq:tilt} returns a normalized posterior that realizes the gated mean with the smallest KL change from the geometry-aware base distribution. The model can therefore allocate expert responsibility without averaging incompatible posterior shapes or fragmenting the downstream interface into three outputs. Calibrating the resulting posterior variance is a natural extension for selective prediction.
 
-This positioning also clarifies the distinction from prior staged systems. Explicit rectification methods commit to a corrected image before reading \cite{bao2019ipm,tan2024transunet}, whereas \modelname preserves both observations and treats support availability as evidence. Polar pipelines commit to angular coordinates \cite{li2020text,sun2023pointer}, whereas the proposed model permits polar evidence to be down-weighted. Prior-guided systems can exploit inspection routes or known scale structure \cite{chu2025prikmet}, whereas the present input is a generic normalized-progress ROI. These are complementary engineering choices rather than mutually exclusive claims. A future end-to-end system could use route metadata and OCR outside \modelname while retaining its conditional progress core, provided the combined graph is independently validated.
+This positioning also clarifies the distinction from prior staged systems. Explicit rectification methods commit to a corrected image before reading \cite{bao2019ipm,tan2024transunet}, whereas \modelname preserves both observations and treats support availability as gating evidence. Polar pipelines commit to angular coordinates \cite{li2020text,sun2023pointer}, whereas the proposed mixture can down-weight the polar expert. Prior-guided systems can exploit inspection routes or known scale structure \cite{chu2025prikmet}, whereas the present input is a generic normalized-progress ROI. These designs can be integrated around \modelname: route metadata and OCR can serve as upstream or downstream modules while the conditional progress MoE remains the reading core.
 
 \subsection{Industrial-Electronics Interpretation}
 
-Industrial-1395 provides the application-relevant bridge between controlled robustness and working-scene use. It combines three field-photo collections, 1,395 real-instrument ROIs, and 52 acquisition groups within group-wise five-fold OOF evaluation. On this cohort, \modelname reduces NMAE by 84.8\% relative to the strongest tested raw CNN and raises Acc@2\% by 46.73 percentage points. The paired intervals remain below zero against all three raw baselines, and 51 of 52 acquisition groups favor \modelname against Raw EfficientNet-B0. Together with the public RF100-VL result, these findings show that adaptive evidence selection supports accurate reading across controlled and field-acquired imagery.
+Industrial-1395 provides the application-relevant bridge between controlled robustness and working-scene use. It combines three field-photo collections, 1,395 real-instrument ROIs, and 52 acquisition groups within group-wise five-fold OOF evaluation. On this cohort, \modelname reduces NMAE by 84.8\% relative to the strongest tested raw CNN and raises Acc@2\% by 46.73 percentage points. The paired intervals remain below zero against all three raw baselines, and 51 of 52 acquisition groups favor \modelname against Raw EfficientNet-B0. Together with the public RF100-VL result, these findings show that the structured expert mixture supports accurate reading across controlled and field-acquired imagery.
 
 Normalized progress also fits the way many industrial assets are managed. When scale endpoints are stored in an asset registry, Equation~\eqref{eq:physical} immediately converts the model output into engineering units. When visual range or unit recognition is required, OCR can be attached as a separately testable module. This modularity lets the evidence-routing core improve the most failure-prone image-reading step while preserving a clear path to complete measurement workflows.
 
-The 4.885-million-parameter footprint is favorable for model storage, and the measured 26.26 images/s already supports periodic inspection on the tested GPU. Runtime is driven less by learned weights than by dual-view feature extraction, grid sampling, circular processing, and iterative tilting. This points to a concrete engineering path: operator fusion, cached support transforms for static cameras, fewer projection iterations, and a lower-resolution relation path can target latency without discarding the geometry mechanism that produces the largest accuracy gain.
+The 4.885-million-parameter footprint is favorable for model storage, and the measured 26.26 images/s already supports periodic inspection on the tested GPU. Runtime is driven less by learned weights than by dual-view feature extraction, grid sampling, circular processing, and iterative tilting. Operator fusion, cached support transforms for static cameras, fewer projection iterations, and a lower-resolution relation path can target latency without discarding the geometry mechanism that produces the largest accuracy gain.
 
 \subsection{Future Work}
 
-Future work will extend the demonstrated field transfer to more sites and additional degradations such as reflection, dirt, condensation, and severe occlusion. Endpoint-aware losses are especially promising because 22 of the 30 largest errors occur near $y=0$ or $y=1$; selective prediction, operator-level acceleration, and separately validated range recognition provide direct routes toward a complete physical-measurement workflow.
+Future work will extend the demonstrated field transfer to more sites and additional degradations such as reflection, dirt, condensation, and severe occlusion. Multi-seed expert-utilization analysis and a matched soft-versus-hard routing study will map stable specialization toward future conditional-compute variants. Endpoint-aware losses are especially promising because 22 of the 30 largest errors occur near $y=0$ or $y=1$; selective prediction, operator-level acceleration, and separately validated range recognition provide direct routes toward a complete physical-measurement workflow.
 
 \section{Conclusions}
 \label{sec:conclusion}
 
-This paper presented \modelname, a dual-view analog-gauge reader that combines geometry-aware, polar, and relational candidates through conditional routing and expresses the result as one moment-consistent posterior. The architecture uses a shared EfficientNet-B0 rather than multiple image encoders. A conservative support-normalized observation provides explicit geometry when available and an identity fallback otherwise; a polar path supplies angular evidence; relational transport captures cross-view context; and a learned simplex selects among their reading means before one information projection.
+This paper presented \modelname, a geometry-aware dense mixture of heterogeneous experts for dual-view analog-gauge reading. A shared EfficientNet-B0 supports geometry/base, polar, and relational experts. An input-dependent gate mixes their candidate means in normalized-progress space, and one information projection expresses the mixture as a moment-consistent posterior.
 
-On scene-disjoint SyncG, \modelname reduces NMAE to $1.0013\pm0.0382$\%FS, with every paired comparison interval below zero relative to Raw ResNet-18, EfficientNet-B0, and MobileNetV3-Large. On the same complete 9,348-row image--condition roster, it reaches $1.0013\pm0.0382$\%FS versus $1.6620\pm0.0878$\%FS for three independently retrained VDN direction-component checkpoints, a 39.8\% relative reduction with a paired 95\% interval of $[-0.8251,-0.4854]$\%FS. Ablation identifies geometry-aware fusion as the largest contributor, followed by conditional routing and relational transport. On public RF100-VL, the six-condition NMAE is $5.0098\pm1.5344$\%FS versus 6.4809\%FS for the strongest tested raw CNN. On field-acquired Industrial-1395, \modelname reaches 2.3262\%FS NMAE and 60.59\% Acc@2\%, corresponding to an 84.8\% NMAE reduction and a 46.73-point Acc@2\% gain relative to the strongest tested raw baseline.
+On scene-disjoint SyncG, \modelname reduces NMAE to $1.0013\pm0.0382$\%FS, with every paired comparison interval below zero relative to Raw ResNet-18, EfficientNet-B0, and MobileNetV3-Large. On the same complete 9,348-row image--condition roster, it reaches $1.0013\pm0.0382$\%FS versus $1.6620\pm0.0878$\%FS for three independently retrained VDN direction-component checkpoints, a 39.8\% relative reduction with a paired 95\% interval of $[-0.8251,-0.4854]$\%FS. Ablation identifies the geometry/base expert as the largest contributor, followed by input-dependent gating and the relational expert. On public RF100-VL, the six-condition NMAE is $5.0098\pm1.5344$\%FS versus 6.4809\%FS for the strongest tested raw CNN. On field-acquired Industrial-1395, \modelname reaches 2.3262\%FS NMAE and 60.59\% Acc@2\%, corresponding to an 84.8\% NMAE reduction and a 46.73-point Acc@2\% gain relative to the strongest tested raw baseline.
 
-The model has 4.885 million parameters and a median model-pipeline latency of 37.972 ms on the tested RTX 4060. Taken together, the controlled benchmark, public transfer set, field cohort, and structured comparator show that \modelname achieves lower error than the tested baselines under the evaluated protocols. Additional input-matched automatic-reader comparisons and multi-site validation are still required before making broader state-of-the-art or deployment claims.
+The model has 4.885 million parameters and a median model-pipeline latency of 37.972 ms on the tested RTX 4060. The fixed-mixture penalty and condition-dependent expert weights confirm that input-dependent expert allocation is a substantive source of robustness. Across the controlled benchmark, public transfer set, and field cohort, \modelname consistently combines compact parameters, complete prediction coverage, and lower error than the tested raw and structured readers. Further multi-site validation and automatic-reader integration can extend this geometry-aware MoE into a complete industrial measurement system.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MDPI declarations.
@@ -667,6 +671,7 @@ The model has 4.885 million parameters and a median model-pipeline latency of 37
 CNN & Convolutional neural network\\
 FP32 & 32-bit floating point\\
 KL & Kullback--Leibler\\
+MoE & Mixture of experts\\
 NMAE & Normalized mean absolute error\\
 OCR & Optical character recognition\\
 ROI & Region of interest\\

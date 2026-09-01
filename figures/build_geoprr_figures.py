@@ -21,6 +21,7 @@ from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 from matplotlib.lines import Line2D
 from matplotlib.patches import Circle, FancyArrowPatch, FancyBboxPatch, Polygon, Rectangle, Wedge
 from matplotlib.ticker import FuncFormatter
+from PIL import Image, ImageFilter
 
 
 HERE = Path(__file__).resolve().parent
@@ -125,6 +126,7 @@ def configure_style() -> None:
             "grid.linewidth": 0.6,
             "grid.alpha": 0.85,
             "legend.frameon": False,
+            "mathtext.fontset": "dejavusans",
             "pdf.fonttype": 42,
             "ps.fonttype": 42,
             "svg.fonttype": "none",
@@ -443,35 +445,45 @@ def arrow(
 
 def architecture_example_images() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Return one public RF100-VL ROI and three explanatory view variants."""
-    import cv2
-
     source = HERE / "assets" / "rf100_test_000000.png"
-    image_bgr = cv2.imread(str(source), cv2.IMREAD_COLOR)
-    if image_bgr is None:
+    if not source.exists():
         raise FileNotFoundError(f"Architecture example is missing: {source}")
-    clean = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
-    clean = cv2.resize(clean, (320, 320), interpolation=cv2.INTER_AREA)
+    clean_image = Image.open(source).convert("RGB").resize((320, 320), Image.Resampling.LANCZOS)
+    blurred_image = clean_image.filter(ImageFilter.GaussianBlur(radius=5.2))
 
-    blurred = cv2.GaussianBlur(clean, (0, 0), sigmaX=5.2, sigmaY=5.2)
-    height, width = clean.shape[:2]
-    src = np.float32([[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]])
-    dst = np.float32(
+    width, height = clean_image.size
+    source_points = np.asarray(
+        [[0.0, 0.0], [width - 1.0, 0.0], [width - 1.0, height - 1.0], [0.0, height - 1.0]],
+        dtype=float,
+    )
+    destination_points = np.asarray(
         [
             [0.18 * width, 0.04 * height],
             [0.91 * width, 0.17 * height],
             [0.98 * width, 0.88 * height],
             [0.04 * width, 0.97 * height],
-        ]
+        ],
+        dtype=float,
     )
-    matrix = cv2.getPerspectiveTransform(src, dst)
-    oblique = cv2.warpPerspective(
-        clean,
-        matrix,
+    system: list[list[float]] = []
+    target: list[float] = []
+    for (x_out, y_out), (x_in, y_in) in zip(destination_points, source_points):
+        system.append([x_out, y_out, 1.0, 0.0, 0.0, 0.0, -x_in * x_out, -x_in * y_out])
+        target.append(x_in)
+        system.append([0.0, 0.0, 0.0, x_out, y_out, 1.0, -y_in * x_out, -y_in * y_out])
+        target.append(y_in)
+    coefficients = np.linalg.solve(np.asarray(system), np.asarray(target))
+    oblique_image = clean_image.transform(
         (width, height),
-        flags=cv2.INTER_LINEAR,
-        borderMode=cv2.BORDER_CONSTANT,
-        borderValue=(239, 243, 246),
+        Image.Transform.PERSPECTIVE,
+        data=tuple(float(value) for value in coefficients),
+        resample=Image.Resampling.BICUBIC,
+        fillcolor=(239, 243, 246),
     )
+
+    clean = np.asarray(clean_image)
+    blurred = np.asarray(blurred_image)
+    oblique = np.asarray(oblique_image)
 
     support = np.any(oblique < 232, axis=2)
     ys, xs = np.where(support)
@@ -479,7 +491,9 @@ def architecture_example_images() -> tuple[np.ndarray, np.ndarray, np.ndarray, n
         margin = 7
         x0, x1 = max(int(xs.min()) - margin, 0), min(int(xs.max()) + margin + 1, width)
         y0, y1 = max(int(ys.min()) - margin, 0), min(int(ys.max()) + margin + 1, height)
-        normalized = cv2.resize(oblique[y0:y1, x0:x1], (320, 320), interpolation=cv2.INTER_LINEAR)
+        normalized = np.asarray(
+            Image.fromarray(oblique[y0:y1, x0:x1]).resize((320, 320), Image.Resampling.BICUBIC)
+        )
     else:
         normalized = oblique.copy()
     return clean, blurred, oblique, normalized
@@ -506,117 +520,225 @@ def image_card(
 
 def build_architecture(*, png_only: bool = False) -> None:
     clean, blurred, oblique, normalized = architecture_example_images()
-    fig = plt.figure(figsize=(7.20, 4.70), layout="constrained")
-    grid = fig.add_gridspec(2, 1, height_ratios=[1.55, 2.70], hspace=0.05)
+    fig = plt.figure(figsize=(7.20, 5.35), layout="constrained")
+    grid = fig.add_gridspec(2, 1, height_ratios=[1.32, 3.05], hspace=0.04)
 
-    # Panel a: the application problem, expressed with minimal labels.
+    # Panel a: one gauge under three conditions, so the motivation is visible.
     ax = fig.add_subplot(grid[0])
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.axis("off")
     panel_label(ax, "a", 0.0, 1.005)
-    ax.text(0.035, 1.005, "Capture conditions change which visual evidence remains trustworthy", ha="left", va="bottom", fontsize=FONT_HEAD, fontweight="bold")
-    image_card(ax, clean, 0.055, "Frontal view", "geometry + pointer edges", COLORS["base"])
-    image_card(ax, blurred, 0.378, "Motion blur", "global layout > local edges", COLORS["polar"])
-    image_card(ax, oblique, 0.701, "Oblique view", "cross-view relations > raw coordinates", COLORS["rel"])
+    ax.text(
+        0.035,
+        1.005,
+        "The same gauge preserves different evidence under blur and viewpoint change",
+        ha="left",
+        va="bottom",
+        fontsize=FONT_HEAD,
+        fontweight="bold",
+    )
+    image_card(ax, clean, 0.055, "Frontal view", "pointer + scale edges", COLORS["base"])
+    image_card(ax, blurred, 0.378, "Motion blur", "local edges weaken", COLORS["polar"])
+    image_card(ax, oblique, 0.701, "Oblique view", "support + coordinates shift", COLORS["rel"])
 
-    # Panel b: a clean left-to-right evidence-routing architecture.
+    # Panel b: the complete publication-facing computation and its key I/O.
     ax2 = fig.add_subplot(grid[1])
     ax2.set_xlim(0, 1)
     ax2.set_ylim(0, 1)
     ax2.axis("off")
     panel_label(ax2, "b", 0.0, 1.005)
-    ax2.text(0.035, 1.005, "GeoPRR-Net routes complementary evidence instead of committing to one representation", ha="left", va="bottom", fontsize=FONT_HEAD, fontweight="bold")
+    ax2.text(
+        0.035,
+        1.005,
+        "GeoPRR-Net: shared features → structured experts → dense gate → one coherent reading",
+        ha="left",
+        va="bottom",
+        fontsize=FONT_HEAD,
+        fontweight="bold",
+    )
 
-    rounded_box(ax2, (0.015, 0.19), 0.13, 0.63, "", face="#F7F9FB", edge=COLORS["grid"], linewidth=1.0)
-    ax2.text(0.080, 0.775, "DUAL VIEWS", ha="center", fontsize=FONT_HEAD, fontweight="bold", color=COLORS["hero"])
-    raw_ax = ax2.inset_axes([0.034, 0.545, 0.092, 0.18])
+    stage_y = 0.925
+    for x, label in (
+        (0.083, "1  OBSERVATIONS"),
+        (0.258, "2  SHARED FEATURES"),
+        (0.488, "3  STRUCTURED EXPERTS"),
+        (0.742, "4  DENSE ROUTING"),
+        (0.925, "5  READOUT"),
+    ):
+        ax2.text(x, stage_y, label, ha="center", va="center", fontsize=6.2, fontweight="bold", color=COLORS["muted"])
+
+    # 1. Raw and support-normalized observations, including the geometry payload.
+    rounded_box(ax2, (0.010, 0.13), 0.145, 0.73, "", face="#F7F9FB", edge=COLORS["grid"], linewidth=1.0)
+    raw_ax = ax2.inset_axes([0.032, 0.635, 0.101, 0.155])
     raw_ax.imshow(oblique)
     raw_ax.set_xticks([])
     raw_ax.set_yticks([])
     for spine in raw_ax.spines.values():
         spine.set_color(COLORS["base"])
         spine.set_linewidth(1.1)
-    ax2.text(0.080, 0.510, "raw ROI", ha="center", fontsize=FONT_BODY, fontweight="bold")
+    ax2.text(0.0825, 0.607, r"raw ROI  $x_r$", ha="center", va="center", fontsize=7.4, fontweight="bold")
 
-    norm_ax = ax2.inset_axes([0.034, 0.275, 0.092, 0.18])
+    ax2.text(
+        0.070,
+        0.525,
+        "support-aware\ncrop + resize",
+        ha="center",
+        va="center",
+        fontsize=5.8,
+        color=COLORS["muted"],
+        linespacing=0.95,
+    )
+    arrow(ax2, (0.132, 0.575), (0.132, 0.475), color=COLORS["muted"], width=0.8)
+
+    norm_ax = ax2.inset_axes([0.032, 0.315, 0.101, 0.155])
     norm_ax.imshow(normalized)
     norm_ax.set_xticks([])
     norm_ax.set_yticks([])
     for spine in norm_ax.spines.values():
         spine.set_color(COLORS["rel"])
         spine.set_linewidth(1.1)
-    ax2.text(0.080, 0.240, "normalized ROI", ha="center", fontsize=FONT_BODY, fontweight="bold")
+    ax2.text(0.0825, 0.287, r"normalized  $x_n$", ha="center", va="center", fontsize=7.4, fontweight="bold")
+    rounded_box(
+        ax2,
+        (0.027, 0.150),
+        0.111,
+        0.095,
+        "mask M\nhomography H\navailability a",
+        face="white",
+        edge=COLORS["rel"],
+        fontsize=5.8,
+        weight="bold",
+        linewidth=0.8,
+        radius=0.012,
+    )
 
-    rounded_box(ax2, (0.18, 0.31), 0.13, 0.42, "", face="#EDF3FA", edge=COLORS["hero"], linewidth=1.25)
-    ax2.text(0.245, 0.675, "SHARED\nENCODER", ha="center", va="top", fontsize=FONT_HEAD, fontweight="bold", color=COLORS["hero"], linespacing=0.95)
-    ax2.text(0.245, 0.565, "EfficientNet-B0", ha="center", fontsize=FONT_BODY, fontweight="bold")
+    # 2. One encoder is applied twice with shared parameters.
+    rounded_box(ax2, (0.190, 0.305), 0.135, 0.45, "", face="#EDF3FA", edge=COLORS["hero"], linewidth=1.2)
+    ax2.text(0.2575, 0.705, "SHARED ENCODER", ha="center", va="center", fontsize=7.4, fontweight="bold", color=COLORS["hero"])
+    ax2.text(0.2575, 0.640, "EfficientNet-B0", ha="center", va="center", fontsize=6.6, fontweight="bold")
+    ax2.text(0.2575, 0.590, "same weights × 2 views", ha="center", va="center", fontsize=5.8, color=COLORS["muted"])
     for offset, alpha in ((0.0, 0.95), (0.012, 0.65), (0.024, 0.38)):
-        ax2.add_patch(Rectangle((0.205 + offset, 0.455 + offset), 0.072, 0.070, facecolor=COLORS["hero_soft"], edgecolor=COLORS["hero"], linewidth=0.7, alpha=alpha))
-    arrow(ax2, (0.145, 0.635), (0.18, 0.595), color=COLORS["base"])
-    arrow(ax2, (0.145, 0.365), (0.18, 0.435), color=COLORS["rel"])
+        ax2.add_patch(
+            Rectangle(
+                (0.222 + offset, 0.445 + offset),
+                0.057,
+                0.066,
+                facecolor=COLORS["hero_soft"],
+                edgecolor=COLORS["hero"],
+                linewidth=0.7,
+                alpha=alpha,
+            )
+        )
+    ax2.text(0.2575, 0.370, r"$F^8$ · $F^{16}$ · $z$", ha="center", va="center", fontsize=7.4, fontweight="bold", color=COLORS["hero"])
+    arrow(ax2, (0.155, 0.505), (0.190, 0.505), color=COLORS["hero"], width=1.05)
 
-    branch_x, branch_w = 0.365, 0.245
+    # 3. Three physically distinct experts expose explicit candidate outputs.
+    branch_x, branch_w = 0.365, 0.240
     branches = [
-        (0.65, "GEOMETRY / BASE", "p⁰  →  μG", COLORS["base_soft"], COLORS["base"]),
-        (0.42, "POLAR", "q(θ)  →  μP", COLORS["polar_soft"], COLORS["polar"]),
-        (0.19, "RELATIONAL", "Δz, H, M  →  μR", COLORS["rel_soft"], COLORS["rel"]),
+        (0.660, "GEOMETRY / BASE", "align dual-view relations", r"$p^0$ (128 bins),  $\mu_0$", COLORS["base_soft"], COLORS["base"]),
+        (0.420, "POLAR", "8 radial × 36 angular", r"$q(\theta),\ \mu_P,\ \rho,\ h_q$", COLORS["polar_soft"], COLORS["polar"]),
+        (0.180, "RELATIONAL", "pooled cross-view transport", r"$\mu_R=\mathrm{clip}(\mu_0+\delta_R)$", COLORS["rel_soft"], COLORS["rel"]),
     ]
-    for y, head, outcome, face, edge in branches:
-        rounded_box(ax2, (branch_x, y), branch_w, 0.15, "", face=face, edge=edge, linewidth=1.05)
-        ax2.text(branch_x + 0.014, y + 0.103, head, ha="left", va="center", fontsize=FONT_HEAD, fontweight="bold", color=edge)
-        ax2.text(branch_x + 0.014, y + 0.045, outcome, ha="left", va="center", fontsize=FONT_BODY, fontweight="bold", color=edge)
+    for y, head, method, outcome, face, edge in branches:
+        rounded_box(ax2, (branch_x, y), branch_w, 0.18, "", face=face, edge=edge, linewidth=1.05)
+        ax2.text(branch_x + 0.014, y + 0.137, head, ha="left", va="center", fontsize=7.1, fontweight="bold", color=edge)
+        ax2.text(branch_x + 0.014, y + 0.087, method, ha="left", va="center", fontsize=5.8, color=COLORS["ink"])
+        ax2.text(branch_x + 0.014, y + 0.037, outcome, ha="left", va="center", fontsize=7.4, fontweight="bold", color=edge)
 
-    for gx in (0.532, 0.546, 0.560):
-        ax2.plot([gx, gx], [0.714, 0.770], color=COLORS["base"], linewidth=0.55, alpha=0.75)
-    for gy in (0.723, 0.741, 0.759):
-        ax2.plot([0.520, 0.574], [gy, gy], color=COLORS["base"], linewidth=0.55, alpha=0.75)
-    ax2.add_patch(Wedge((0.550, 0.492), 0.030, 20, 330, width=0.009, facecolor=COLORS["polar"], edgecolor="none", alpha=0.9))
-    ax2.plot([0.550, 0.573], [0.492, 0.515], color=COLORS["polar"], linewidth=1.1)
+    # Small method glyphs make the three representations visually distinct.
+    for gx in (0.565, 0.575, 0.585):
+        ax2.plot([gx, gx], [0.720, 0.785], color=COLORS["base"], linewidth=0.5, alpha=0.75)
+    for gy in (0.730, 0.750, 0.770):
+        ax2.plot([0.555, 0.595], [gy, gy], color=COLORS["base"], linewidth=0.5, alpha=0.75)
+    ax2.add_patch(Wedge((0.575, 0.510), 0.028, 15, 330, width=0.008, facecolor=COLORS["polar"], edgecolor="none"))
+    ax2.plot([0.575, 0.595], [0.510, 0.532], color=COLORS["polar"], linewidth=1.0)
     heat = np.array([[0.1, 0.5, 0.2, 0.8], [0.7, 0.2, 0.9, 0.3], [0.3, 0.8, 0.4, 0.6]])
-    heat_ax = ax2.inset_axes([0.532, 0.240, 0.038, 0.055])
+    heat_ax = ax2.inset_axes([0.555, 0.225, 0.040, 0.065])
     heat_ax.imshow(heat, cmap="GnBu", vmin=0, vmax=1, aspect="auto")
     heat_ax.axis("off")
-    for y, color in ((0.725, COLORS["base"]), (0.495, COLORS["polar"]), (0.265, COLORS["rel"])):
-        arrow(ax2, (0.31, 0.52), (branch_x, y), color=color)
+    for y, color in ((0.750, COLORS["base"]), (0.510, COLORS["polar"]), (0.270, COLORS["rel"])):
+        arrow(ax2, (0.325, 0.530), (branch_x, y), color=color)
 
-    rounded_box(ax2, (0.665, 0.30), 0.13, 0.44, "", face="#F3F0FA", edge=COLORS["efficient"], linewidth=1.2)
-    ax2.text(0.730, 0.690, "CONDITIONAL\nROUTER", ha="center", va="top", fontsize=FONT_HEAD, fontweight="bold", color=COLORS["efficient"], linespacing=0.95)
-    triangle = Polygon([[0.688, 0.420], [0.772, 0.420], [0.730, 0.580]], closed=True, facecolor="white", edgecolor=COLORS["efficient"], linewidth=1.0)
-    ax2.add_patch(triangle)
-    ax2.add_patch(Circle((0.730, 0.495), 0.013, facecolor=COLORS["efficient"], edgecolor="white", linewidth=0.5))
-    ax2.text(0.730, 0.355, "μ* = Σⱼ wⱼμⱼ", ha="center", fontsize=FONT_BODY, fontweight="bold")
-    for y, color in ((0.725, COLORS["base"]), (0.495, COLORS["polar"]), (0.265, COLORS["rel"])):
-        arrow(ax2, (branch_x + branch_w, y), (0.665, 0.52), color=color)
+    # 4. Dense routing uses context to weight every candidate for the sample.
+    gate_x, gate_w = 0.650, 0.175
+    rounded_box(ax2, (gate_x, 0.235), gate_w, 0.535, "", face="#F3F0FA", edge=COLORS["efficient"], linewidth=1.35)
+    ax2.text(0.7375, 0.722, "DENSE MoE GATE", ha="center", va="center", fontsize=7.4, fontweight="bold", color=COLORS["efficient"])
+    ax2.text(0.7375, 0.682, r"$G(v)$ · all experts active", ha="center", va="center", fontsize=6.0, color=COLORS["muted"])
+    rounded_box(
+        ax2,
+        (0.667, 0.568),
+        0.141,
+        0.075,
+        "$v$: geometry · $q(\\theta)$ · entropy\n"
+        "candidates · disagreement · $a$",
+        face="white",
+        edge=COLORS["efficient"],
+        fontsize=5.3,
+        linewidth=0.75,
+        radius=0.010,
+    )
+    for y, label, color in (
+        (0.475, r"$w_0$", COLORS["base"]),
+        (0.425, r"$w_P$", COLORS["polar"]),
+        (0.375, r"$w_R$", COLORS["rel"]),
+    ):
+        rounded_box(
+            ax2,
+            (0.680, y - 0.020),
+            0.115,
+            0.040,
+            label,
+            face=color,
+            edge=color,
+            fontsize=7.4,
+            weight="bold",
+            linewidth=0.0,
+            radius=0.010,
+        )
+        ax2.texts[-1].set_color("white")
+    ax2.text(0.7375, 0.530, r"$w=\mathrm{softmax}(\log\pi+\mathrm{gains})$", ha="center", va="center", fontsize=5.8, color=COLORS["efficient"])
+    ax2.text(0.7375, 0.315, r"$\sum_j w_j=1$", ha="center", va="center", fontsize=7.4, color=COLORS["muted"])
+    ax2.text(0.7375, 0.270, r"$\mu^*=\sum_j w_j\mu_j$", ha="center", va="center", fontsize=7.4, fontweight="bold", color=COLORS["efficient"])
+    for source_y, target_y, color in (
+        (0.750, 0.475, COLORS["base"]),
+        (0.510, 0.425, COLORS["polar"]),
+        (0.270, 0.375, COLORS["rel"]),
+    ):
+        arrow(ax2, (branch_x + branch_w, source_y), (gate_x, target_y), color=color)
 
-    rounded_box(ax2, (0.835, 0.33), 0.15, 0.41, "", face="#EAF4F8", edge=COLORS["hero"], linewidth=1.2)
-    ax2.text(0.910, 0.690, "MOMENT\nPROJECTION", ha="center", va="top", fontsize=FONT_HEAD, fontweight="bold", color=COLORS["hero"], linespacing=0.95)
-    curve_ax = ax2.inset_axes([0.855, 0.460, 0.111, 0.145])
+    # 5. The gate sets the mean; the base posterior supplies the shape.
+    projection_x, projection_w = 0.855, 0.135
+    rounded_box(ax2, (projection_x, 0.205), projection_w, 0.565, "", face="#EAF4F8", edge=COLORS["hero"], linewidth=1.25)
+    ax2.text(0.9225, 0.720, "MOMENT", ha="center", va="center", fontsize=7.1, fontweight="bold", color=COLORS["hero"])
+    ax2.text(0.9225, 0.682, "PROJECTION", ha="center", va="center", fontsize=7.1, fontweight="bold", color=COLORS["hero"])
+    ax2.text(0.9225, 0.624, r"KL-project $p^0$", ha="center", va="center", fontsize=7.4, fontweight="bold")
+    ax2.text(0.9225, 0.582, r"$E[p^*]=\mu^*$", ha="center", va="center", fontsize=7.4, fontweight="bold")
+    curve_ax = ax2.inset_axes([0.872, 0.415, 0.101, 0.125])
     bins = np.linspace(0, 1, 128)
     base_curve = np.exp(-0.5 * ((bins - 0.43) / 0.12) ** 2)
     final_curve = np.exp(-0.5 * ((bins - 0.57) / 0.105) ** 2)
     curve_ax.plot(bins, base_curve / base_curve.max(), color=COLORS["muted"], linewidth=0.9, linestyle="--")
     curve_ax.plot(bins, final_curve / final_curve.max(), color=COLORS["hero"], linewidth=1.3)
-    curve_ax.axvline(0.57, color=COLORS["warn"], linewidth=0.8)
+    curve_ax.axvline(0.57, color=COLORS["warn"], linewidth=0.75)
     curve_ax.set_xlim(0, 1)
     curve_ax.set_ylim(0, 1.08)
     curve_ax.axis("off")
-    ax2.text(0.910, 0.395, "E[p*] = μ*", ha="center", fontsize=FONT_BODY, fontweight="bold", color=COLORS["hero"])
-    arrow(ax2, (0.795, 0.52), (0.835, 0.52), color=COLORS["hero"], width=1.2)
+    ax2.text(0.9225, 0.355, r"$p^*$  (128 bins)", ha="center", va="center", fontsize=7.4, fontweight="bold", color=COLORS["hero"])
+    ax2.text(0.9225, 0.300, r"$\hat{y}=E[p^*]$", ha="center", va="center", fontsize=7.4, fontweight="bold")
+    ax2.text(0.9225, 0.247, r"scale endpoints → $\hat{s}$", ha="center", va="center", fontsize=6.0, color=COLORS["muted"])
+    arrow(ax2, (gate_x + gate_w, 0.490), (projection_x, 0.490), color=COLORS["hero"], width=1.2)
 
-    rounded_box(
+    # Direct p0 bypass: expert weights determine the target mean, not posterior shape.
+    arrow(
         ax2,
-        (0.850, 0.16),
-        0.12,
-        0.10,
-        "NORMALIZED\nPROGRESS",
-        face=COLORS["hero"],
-        edge=COLORS["hero"],
-        fontsize=FONT_HEAD,
-        weight="bold",
+        (branch_x + branch_w, 0.805),
+        (projection_x + 0.055, 0.770),
+        color=COLORS["base"],
+        width=0.95,
+        connection="arc3,rad=-0.22",
     )
-    ax2.texts[-1].set_color("white")
-    arrow(ax2, (0.910, 0.33), (0.910, 0.26), color=COLORS["hero"])
+    ax2.text(0.736, 0.842, r"base posterior $p^0$", ha="center", va="center", fontsize=7.4, fontweight="bold", color=COLORS["base"])
 
     if png_only:
         save_png(fig, "fig1_geoprr_architecture")

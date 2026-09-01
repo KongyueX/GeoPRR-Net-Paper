@@ -5,16 +5,16 @@
 - Core claim: capture conditions change which visual cue is reliable, so the reader preserves geometry/base, polar, and relational evidence and routes their candidate means before returning one posterior.
 - Archetype: operating-regime image plate plus evidence-flow schematic.
 - Panel hierarchy: panel (a) establishes the application problem; panel (b) is the hero architecture panel.
-- Final PNG: 2142 × 1657 pixels at 300 dpi, approximately 181.4 × 140.3 mm.
-- Source preflight: `validate_figure.py --strict` returned 20 PASS, 0 WARN, and 0 FAIL.
-- PDF audit: not run because this review revision intentionally generates and links only the PNG asset.
+- Final PNG: 2152 × 1597 pixels at 300 dpi, approximately 182.2 × 135.2 mm.
+- Source preflight: `validate_figure.py --strict` returned 19 PASS, one conservative math-script warning, and 0 FAIL; the rendered-PDF audit below resolves that warning directly.
+- PDF text audit: PASS; the smallest rendered glyph is 5.18 pt and no text run falls below 5 pt.
 
 ## Panel audit
 
 | Panel | Unique claim | Quantitative summary | Replicate unit | Labels | Collision check | Pass |
 |---|---|---|---|---|---|---|
 | a | The same dial presents different cue reliability under stable, blurred, and oblique capture | None; examples are explicitly illustrative | Not applicable | Context and failure mechanism are directly labeled | Images, labels, and provenance note remain separate at final size | Yes |
-| b | Three distinct evidence paths feed a sample-conditioned router and one moment-consistent posterior | None; no sample-specific weights or measured activations are shown | Not applicable | Every stage and the deployment envelope are directly labeled | Arrows, branch labels, icons, and output box are clear at final size | Yes |
+| b | Raw and normalized observations feed one shared encoder, three structured experts, a dense gate, and one moment-consistent posterior | None; no sample-specific weights or measured activations are shown | Not applicable | Key module inputs, methods, and outputs are directly labeled | Expert branches, the base-posterior bypass, routed mean, and final readout remain distinct at final size | Yes |
 
 ## Image-integrity record
 
@@ -26,5 +26,5 @@
 - Brightness/contrast/gamma: unchanged.
 - Pseudo-color: none on photographic examples; the small relational tile is a schematic glyph, not image evidence.
 - Stitching: none.
-- Reuse: the finished PNG is copied unchanged to the Chinese Markdown asset directory.
+- Reuse: the manuscript links directly to the regenerated PNG; downstream review documents should embed this same asset when refreshed.
 - Quantification link: none; the caption explicitly states that the examples are not routing measurements or performance evidence.
