@@ -3,6 +3,11 @@
 # Python build products
 __pycache__/
 *.py[cod]
+.venv-figures/
+
+# Optional figure export formats (PDF/PNG are the manuscript assets)
+figures/*.svg
+figures/*.tiff
 
 # LaTeX build products
 *.aux

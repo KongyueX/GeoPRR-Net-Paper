@@ -321,31 +321,28 @@
           "sample_sd": 0.028914782625527023
         }
       },
-      "Proposed": {
-        "acc_at_2_percent": {
-          "maximum": 0.21589008363201911,
-          "mean": 0.19119872560732776,
-          "minimum": 0.16606929510155316,
-          "per_seed": [
-            0.191636798088411,
-            0.21589008363201911,
-            0.16606929510155316
-          ],
-          "range": 0.049820788530465954,
-          "sample_sd": 0.02491328306493072
-        },
-        "nmae": {
-          "maximum": 0.13452073836005496,
-          "mean": 0.1236641670925754,
-          "minimum": 0.1027877311894779,
-          "per_seed": [
-            0.1027877311894779,
-            0.13368403172819335,
-            0.13452073836005496
-          ],
-          "range": 0.03173300717057706,
-          "sample_sd": 0.018084363453244743
-        }
+    "Proposed": {
+      "acc_at_2_percent": {
+        "maximum": 0.6058542413381123,
+        "mean": 0.6058542413381123,
+        "minimum": 0.6058542413381123,
+        "per_seed": [
+          0.6058542413381123
+        ],
+        "range": 0.0,
+        "sample_sd": 0.0
+      },
+      "nmae": {
+        "maximum": 0.023262000730589677,
+        "mean": 0.023262000730589677,
+        "minimum": 0.023262000730589677,
+        "per_seed": [
+          0.023262000730589677
+        ],
+        "range": 0.0,
+        "sample_sd": 0.0
+      },
+      "aggregation": "supervised group-wise five-fold OOF; three-encoder equal-weight aggregate"
       },
       "ResNet-18": {
         "acc_at_2_percent": {
@@ -387,46 +384,46 @@
         }
       }
     },
-    "note": "Restricted images and per-sample ledgers are excluded; all published statistics pool the complete Industrial-1395 cohort.",
+  "note": "Restricted images and unredacted source records are excluded; all published statistics pool the complete Industrial-1395 cohort. The pseudonymous OOF prediction ledger is released separately.",
     "paired": {
       "Proposed_minus_EfficientNet-B0": {
-        "delta_nmae_candidate_minus_comparator": -0.028885721405488292,
+      "delta_nmae_candidate_minus_comparator": -0.129287887767474,
         "group_unit": "acquisition cluster",
         "groups": 52,
         "paired_group_bootstrap_ci95": {
-          "high": -0.02204314585443232,
-          "low": -0.03530637715732999
+        "high": -0.09776723438429076,
+        "low": -0.16540016911141886
         },
         "replicates": 20000,
         "rows": 8370,
         "seed": 20260928,
-        "seed_handling": "average aligned per-row errors over three training seeds"
+      "seed_handling": "GeoPRR-Net uses the OOF equal-weight aggregate; raw comparator errors are averaged over three training seeds"
       },
       "Proposed_minus_MobileNetV3-Large": {
-        "delta_nmae_candidate_minus_comparator": -0.06390519042955624,
+      "delta_nmae_candidate_minus_comparator": -0.16430735679154193,
         "group_unit": "acquisition cluster",
         "groups": 52,
         "paired_group_bootstrap_ci95": {
-          "high": -0.048488672072977045,
-          "low": -0.07758424973440142
+        "high": -0.13014691920759336,
+        "low": -0.19960964858214775
         },
         "replicates": 20000,
         "rows": 8370,
         "seed": 20260929,
-        "seed_handling": "average aligned per-row errors over three training seeds"
+      "seed_handling": "GeoPRR-Net uses the OOF equal-weight aggregate; raw comparator errors are averaged over three training seeds"
       },
       "Proposed_minus_ResNet-18": {
-        "delta_nmae_candidate_minus_comparator": -0.11210710354724446,
+      "delta_nmae_candidate_minus_comparator": -0.21250926990923016,
         "group_unit": "acquisition cluster",
         "groups": 52,
         "paired_group_bootstrap_ci95": {
-          "high": -0.0799633860580856,
-          "low": -0.1446196236037525
+        "high": -0.16385898084129794,
+        "low": -0.26217123024365674
         },
         "replicates": 20000,
         "rows": 8370,
         "seed": 20260927,
-        "seed_handling": "average aligned per-row errors over three training seeds"
+      "seed_handling": "GeoPRR-Net uses the OOF equal-weight aggregate; raw comparator errors are averaged over three training seeds"
       }
     }
   },

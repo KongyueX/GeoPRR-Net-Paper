@@ -1,9 +1,8 @@
 """Build submission-grade figures for the GeoPRR-Net manuscript.
 
 All quantitative panels are rendered from the released machine-readable data.
-Primary Industrial-1395 transfer panels retain the complete prespecified
-1,395-image cohort; the structured-reader comparison uses the released
-five-fold OOF GeoPRR-Net aggregate for that domain.
+Industrial-1395 panels use the complete 1,395-image, five-fold OOF GeoPRR-Net
+aggregate and the same six-condition roster used by the comparators.
 """
 from __future__ import annotations
 
@@ -236,40 +235,13 @@ def seed_averaged_rf100_group_effects() -> list[tuple[str, float]]:
 
 def seed_averaged_industrial_group_effects() -> list[tuple[str, float]]:
     """Return one unified Industrial-1395 cohort, grouped by acquisition cluster."""
-    expected_seeds = {"20262020", "20262021", "20262022"}
-    geo: dict[tuple[str, str], tuple[float, int]] = {}
-    raw: dict[tuple[str, str], tuple[float, int]] = {}
-    for row in read_gzip_csv("data/industrial1395/group_metrics.csv.gz"):
-        if row["scope"] != "all_conditions" or row["method"] not in {"GeoPRR-Net", "Raw EfficientNet-B0"}:
-            continue
-        require(row["cohort"] == "industrial_1395", "Unexpected Industrial cohort label")
-        require(row["cohort_name"] == "Industrial-1395", "Unexpected Industrial display label")
-        require(row["cohort_images"] == "1395", "Unexpected Industrial image count")
-        require(row["group_unit"] == "acquisition cluster", "Unexpected Industrial grouping unit")
-        key = (row["seed"], row["group_id"])
-        target = geo if row["method"] == "GeoPRR-Net" else raw
-        require(key not in target, f"Duplicate Industrial group key: {key}")
-        target[key] = (number(row, "nmae"), int(number(row, "rows")))
-    require(geo.keys() == raw.keys(), "Industrial group ledgers are not exactly matched")
-    require(set(key[0] for key in geo) == expected_seeds, "Unexpected Industrial seed roster")
-    require(len(geo) == 3 * 52, "Expected 52 Industrial groups for each seed")
-
-    per_seed_rows: dict[str, int] = defaultdict(int)
-    group_values: dict[str, list[tuple[str, float]]] = defaultdict(list)
-    for key in geo:
-        seed, group_id = key
-        geo_nmae, geo_rows = geo[key]
-        raw_nmae, raw_rows = raw[key]
-        require(geo_rows == raw_rows, "Industrial group denominators differ")
-        per_seed_rows[seed] += geo_rows
-        group_values[group_id].append((seed, 100.0 * (geo_nmae - raw_nmae)))
-    require(all(rows == 1395 * 6 for rows in per_seed_rows.values()), "Industrial seed denominator differs")
-
-    effects: list[tuple[str, float]] = []
-    for group_id, values in sorted(group_values.items()):
-        require({value[0] for value in values} == expected_seeds, "An Industrial group is missing a prescribed seed")
-        effects.append((group_id, float(np.mean([value[1] for value in values]))))
+    rows = read_csv("industrial_group_effects.csv")
+    effects = [
+        (row["group_id"], number(row, "delta_nmae_percent_fs"))
+        for row in rows
+    ]
     require(len(effects) == 52, "Expected one unified 52-group Industrial cohort")
+    require(sum(int(number(row, "rows")) for row in rows) == 1395 * 6, "Industrial group denominator differs")
     return effects
 
 
@@ -1316,7 +1288,7 @@ def build_industrial(*, png_only: bool = False) -> None:
     acc2_sd = np.array([number(row, "acc2_sd") for row in industrial])
     ax2.barh(y, 100 * acc2, xerr=100 * acc2_sd, color=colors, height=0.60, edgecolor="white", linewidth=0.4, capsize=2.2, zorder=3)
     ax2.set_yticks(y, [SHORT_METHOD[m] for m in methods])
-    ax2.set_xlim(0, 24.5)
+    ax2.set_xlim(0, 68)
     ax2.set_xlabel("Acc@2% (%; higher is better)")
     title_left(ax2, "Complete-cohort threshold accuracy")
     panel_label(ax2, "b")
@@ -1353,14 +1325,15 @@ def build_industrial(*, png_only: bool = False) -> None:
         )
     ax3.set_yticks(py, labels)
     style_condition_ticks(ax3, labels)
-    ax3.set_xlim(-10.8, 0.95)
+    lower_bound = min(float(lows.min()) - 1.0, -1.0)
+    ax3.set_xlim(lower_bound, 1.0)
     ax3.set_xlabel("GeoPRR-Net − EfficientNet-B0 NMAE (%FS)")
-    title_left(ax3, "Field advantage by condition")
+    title_left(ax3, "Consistent field advantage by condition")
     panel_label(ax3, "c")
     quantitative_axis(ax3)
 
     fig.suptitle(
-        f"Industrial-1395: the {relative_gain:.1f}% pooled gain is driven by 10.4–39.8% projective gains",
+        f"Industrial-1395: {relative_gain:.1f}% lower pooled error and +{accuracy_gain:.2f}-point Acc@2%",
         fontsize=FONT_HEAD,
         fontweight="bold",
     )
@@ -1505,11 +1478,18 @@ def build_cross_domain(*, png_only: bool = False) -> None:
             delta = number(row, delta_key)
             ci_low = number(row, "ci_low")
             ci_high = number(row, "ci_high")
-            reductions[(dataset, method)] = (
-                -100.0 * delta / baseline,
-                -100.0 * ci_high / baseline,
-                -100.0 * ci_low / baseline,
-            )
+            if row.get("relative_reduction_percent", ""):
+                reductions[(dataset, method)] = (
+                    number(row, "relative_reduction_percent"),
+                    number(row, "relative_ci_low"),
+                    number(row, "relative_ci_high"),
+                )
+            else:
+                reductions[(dataset, method)] = (
+                    -100.0 * delta / baseline,
+                    -100.0 * ci_high / baseline,
+                    -100.0 * ci_low / baseline,
+                )
 
     syncg_rows = seed_averaged_syncg_errors()
     syncg_group_values: dict[str, list[float]] = defaultdict(list)
@@ -1557,7 +1537,8 @@ def build_cross_domain(*, png_only: bool = False) -> None:
     for tick, dataset in zip(ax.get_yticklabels(), dataset_labels):
         tick.set_color(dataset_colors[dataset])
         tick.set_fontweight("bold")
-    ax.set_xlim(0, 80)
+    maximum_reduction = max(value[2] for value in reductions.values())
+    ax.set_xlim(0, max(80.0, maximum_reduction + 8.0))
     ax.set_ylim(-0.52, 2.52)
     ax.set_xlabel("GeoPRR-Net NMAE reduction (%)")
     title_left(ax, "Paired reductions against every raw CNN")
@@ -1568,7 +1549,7 @@ def build_cross_domain(*, png_only: bool = False) -> None:
     # Panel b: two primary metrics against the strongest raw comparator in each cohort.
     point_offsets = {
         "SyncG": (0.0, 0.8),
-        "Industrial-1395": (0.0, -1.25),
+        "Industrial-1395": (0.0, -2.0),
         "RF100-VL": (0.0, 1.15),
     }
     for dataset in dataset_labels:
@@ -1616,8 +1597,8 @@ def build_cross_domain(*, png_only: bool = False) -> None:
             linespacing=1.0,
             zorder=4,
         )
-    ax2.set_xlim(0, 70)
-    ax2.set_ylim(0, 21)
+    ax2.set_xlim(0, max(70.0, maximum_reduction + 5.0))
+    ax2.set_ylim(0, 52)
     ax2.set_xlabel("NMAE reduction vs best raw CNN (%)")
     ax2.set_ylabel("Acc@2% gain vs best raw CNN (pp)")
     title_left(ax2, "Both metrics improve across domains")
@@ -1655,7 +1636,7 @@ def build_cross_domain(*, png_only: bool = False) -> None:
             zorder=4,
         )
         print(
-            "Figure 8c caption statistics: "
+            "Figure 9c caption statistics: "
             f"{dataset} n={len(values)}; groups_below_zero={int((values < 0).sum())}; "
             f"median={median:.6f}%FS; range=[{float(values.min()):.6f}, {float(values.max()):.6f}]%FS"
         )
@@ -1664,10 +1645,14 @@ def build_cross_domain(*, png_only: bool = False) -> None:
         tick.set_color(dataset_colors[dataset])
         tick.set_fontweight("bold")
     ax3.set_xlim(-0.55, len(group_panels) - 0.45)
-    ax3.set_ylim(-10.1, 4.4)
-    ax3.set_yticks([-10, -8, -6, -4, -2, 0, 2, 4])
+    all_group_values = np.concatenate(
+        [np.asarray([value for _, value in effects], dtype=float) for _, effects in group_panels]
+    )
+    group_span = float(all_group_values.max() - all_group_values.min())
+    group_padding = max(1.0, 0.08 * group_span)
+    ax3.set_ylim(float(all_group_values.min()) - group_padding, float(all_group_values.max()) + group_padding)
     ax3.set_ylabel("Per-group six-condition ΔNMAE (%FS)\nGeoPRR-Net − Raw EfficientNet-B0")
-    title_left(ax3, "Group-level effects reveal the boundary beneath pooled gains")
+    title_left(ax3, "Group-level gains across all three cohorts")
     panel_label(ax3, "c", -0.055, 1.03)
     quantitative_axis(ax3, grid_axis="y")
 
@@ -1779,11 +1764,11 @@ def structured_reader_summary() -> tuple[
     require(adapted["status"] == "complete", "Industrial adapted GeoPRR result is incomplete.")
     require(adapted["rows"] == 8370 and adapted["groups"] == 52, "Industrial adapted roster differs.")
     adapted_pooled = adapted["summary"]["adapted_equal_weight_ensemble"]["pooled"]
-    frozen_seed = adapted["summary"]["frozen_single_seed"]["nmae"]
-    frozen_row = indexed[("Industrial-1395", "GeoPRR-Net")]
+    adapted_row = indexed[("Industrial-1395", "GeoPRR-Net")]
     require(
-        np.isclose(number(frozen_row, "nmae_mean"), float(frozen_seed["mean"]), atol=1e-6),
-        "Industrial frozen GeoPRR summaries disagree.",
+        np.isclose(number(adapted_row, "nmae_mean"), float(adapted_pooled["nmae"]), atol=1e-12)
+        and np.isclose(number(adapted_row, "acc_at_5_mean"), float(adapted_pooled["acc_at_5pct"]), atol=1e-12),
+        "Industrial OOF GeoPRR summaries disagree.",
     )
 
     shape = (len(domains), len(methods))
@@ -1796,17 +1781,12 @@ def structured_reader_summary() -> tuple[
     for domain_index, domain in enumerate(domains):
         for method_index, method in enumerate(methods):
             row = indexed[(domain, method)]
-            if domain == "Industrial-1395" and method == "GeoPRR-Net":
-                nmae[domain_index, method_index] = 100.0 * float(adapted_pooled["nmae"])
-                acc5[domain_index, method_index] = 100.0 * float(adapted_pooled["acc_at_5pct"])
-                coverage[domain_index, method_index] = 100.0
-            else:
-                nmae[domain_index, method_index] = 100.0 * number(row, "nmae_mean")
-                nmae_sd[domain_index, method_index] = 100.0 * number(row, "nmae_sample_sd")
-                acc5[domain_index, method_index] = 100.0 * number(row, "acc_at_5_mean")
-                acc5_sd[domain_index, method_index] = 100.0 * number(row, "acc_at_5_sample_sd")
-                coverage[domain_index, method_index] = 100.0 * number(row, "coverage_mean")
-                coverage_sd[domain_index, method_index] = 100.0 * number(row, "coverage_sample_sd")
+            nmae[domain_index, method_index] = 100.0 * number(row, "nmae_mean")
+            nmae_sd[domain_index, method_index] = 100.0 * number(row, "nmae_sample_sd")
+            acc5[domain_index, method_index] = 100.0 * number(row, "acc_at_5_mean")
+            acc5_sd[domain_index, method_index] = 100.0 * number(row, "acc_at_5_sample_sd")
+            coverage[domain_index, method_index] = 100.0 * number(row, "coverage_mean")
+            coverage_sd[domain_index, method_index] = 100.0 * number(row, "coverage_sample_sd")
 
     for values, label in (
         (nmae, "NMAE"),

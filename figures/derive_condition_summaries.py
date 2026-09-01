@@ -1,9 +1,10 @@
 """Derive compact condition-wise CSVs from the public GeoPRR-Net data release.
 
 The public ledgers contain every SyncG sample, condition, and training seed.
-Industrial-1395 is reconstructed from its anonymized group summaries.  The
-script keeps the published rosters intact, averages paired errors across the
-three fitted seeds, and bootstraps the declared scene/source groups.
+Industrial-1395 combines the released supervised five-fold OOF GeoPRR-Net
+predictions with the anonymized raw-CNN group summaries.  The script keeps the
+published rosters intact, averages comparator errors across the three fitted
+seeds, and bootstraps the declared scene/source groups.
 """
 from __future__ import annotations
 
@@ -25,6 +26,7 @@ REPORT_PATH = DATA_ROOT / "public_results_summary.json"
 SYNCG_GEOPRR_PATH = DATA_ROOT / "syncg" / "geoprr_predictions.csv.gz"
 SYNCG_EXTERNAL_PATH = DATA_ROOT / "syncg" / "external_cnn_predictions.csv.gz"
 INDUSTRIAL_GROUP_PATH = DATA_ROOT / "industrial1395" / "group_metrics.csv.gz"
+INDUSTRIAL_OOF_PATH = DATA_ROOT / "industrial1395" / "supervised_feature_head_ensemble_per_sample.json"
 SEEDS = (20262020, 20262021, 20262022)
 CONDITIONS = (
     "clean",
@@ -49,6 +51,11 @@ SYNCG_ROWS_PER_CONDITION = 1_558
 SYNCG_SCENES = 14
 INDUSTRIAL_IMAGES = 1_395
 INDUSTRIAL_GROUPS = 52
+INDUSTRIAL_RAW_METHODS = (
+    "Raw ResNet-18",
+    "Raw EfficientNet-B0",
+    "Raw MobileNetV3-Large",
+)
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -97,15 +104,20 @@ def paired_group_bootstrap_fast(
     require(len(group_ids) >= 2, "paired bootstrap needs at least two groups")
     group_index = {group_id: index for index, group_id in enumerate(group_ids)}
     deltas = candidate - comparator
+    candidate_group_sums = np.zeros(len(group_ids), dtype=np.float64)
+    comparator_group_sums = np.zeros(len(group_ids), dtype=np.float64)
     group_sums = np.zeros(len(group_ids), dtype=np.float64)
     group_sizes = np.zeros(len(group_ids), dtype=np.int64)
     for row_index, group_id in enumerate(group_values):
         index = group_index[group_id]
+        candidate_group_sums[index] += candidate[row_index]
+        comparator_group_sums[index] += comparator[row_index]
         group_sums[index] += deltas[row_index]
         group_sizes[index] += 1
 
     rng = random.Random(seed)
     draws: list[float] = []
+    relative_draws: list[float] = []
     batch_size = 4_096
     completed = 0
     while completed < replicates:
@@ -122,12 +134,23 @@ def paired_group_bootstrap_fast(
             1,
         )
         draws.extend(((counts @ group_sums) / (counts @ group_sizes)).tolist())
+        candidate_sums = counts @ candidate_group_sums
+        comparator_sums = counts @ comparator_group_sums
+        require(bool((comparator_sums > 0).all()), "relative bootstrap comparator mean must be positive")
+        relative_draws.extend((100.0 * (comparator_sums - candidate_sums) / comparator_sums).tolist())
         completed += batch
+    comparator_mean = float(np.mean(comparator))
+    require(comparator_mean > 0, "relative reduction comparator mean must be positive")
     return {
         "delta_nmae_candidate_minus_comparator": float(np.mean(deltas)),
+        "relative_reduction_percent": 100.0 * (comparator_mean - float(np.mean(candidate))) / comparator_mean,
         "paired_group_bootstrap_ci95": {
             "low": quantile(draws, 0.025),
             "high": quantile(draws, 0.975),
+        },
+        "paired_group_bootstrap_relative_ci95": {
+            "low": quantile(relative_draws, 0.025),
+            "high": quantile(relative_draws, 0.975),
         },
         "groups": len(group_ids),
         "replicates": replicates,
@@ -142,7 +165,7 @@ def distribution(values: Iterable[float]) -> tuple[float, float]:
 
 def write_csv(name: str, fieldnames: list[str], rows: list[dict[str, Any]]) -> None:
     with (HERE / name).open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fieldnames)
+        writer = csv.DictWriter(stream, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -330,42 +353,132 @@ def derive_syncg_all_models() -> list[dict[str, Any]]:
     return output
 
 
-def derive_industrial() -> list[dict[str, Any]]:
+def load_industrial_adapted_sources() -> tuple[
+    dict[tuple[str, int, str], dict[str, dict[str, str]]],
+    dict[tuple[str, str], list[float]],
+]:
+    """Join OOF predictions to the public alias roster without releasing its map."""
     rows = read_gzip_csv(INDUSTRIAL_GROUP_PATH)
     cells: dict[tuple[str, int, str], dict[str, dict[str, str]]] = {}
     for row in rows:
         key = (row["method"], int(row["seed"]), row["scope"])
         cells.setdefault(key, {})[row["group_id"]] = row
+
+    payload = load_json(INDUSTRIAL_OOF_PATH)
+    oof_rows = payload["oof_rows"]
+    require(isinstance(oof_rows, list), "Industrial OOF rows must be a list")
+    require(len(oof_rows) == INDUSTRIAL_IMAGES * len(CONDITIONS), "Industrial OOF denominator differs")
+    require(payload["groups"] == INDUSTRIAL_GROUPS, "Industrial OOF group count differs")
+
+    # The public group table replaces source group names with group_001 ...
+    # group_052. Recover the internal one-to-one join by matching row counts
+    # and the three frozen-seed NMAEs carried by both released ledgers. Only
+    # aliases are written to the derived plotting files.
+    frozen_errors: dict[str, list[list[float]]] = {}
+    original_rows: dict[str, int] = {}
+    for row in oof_rows:
+        original_group = str(row["group_id"])
+        target = float(row["target"])
+        predictions = row["frozen_seed_predictions"]
+        require(len(predictions) == len(SEEDS), "Industrial frozen seed roster differs")
+        group_errors = frozen_errors.setdefault(original_group, [[] for _ in SEEDS])
+        for index, prediction in enumerate(predictions):
+            group_errors[index].append(abs(float(prediction) - target))
+        original_rows[original_group] = original_rows.get(original_group, 0) + 1
+
+    alias_reference = cells[("GeoPRR-Net", SEEDS[0], "all_conditions")]
+    require(len(alias_reference) == INDUSTRIAL_GROUPS, "Industrial public alias count differs")
+    alias_vectors = {
+        alias: tuple(
+            float(cells[("GeoPRR-Net", seed, "all_conditions")][alias]["nmae"])
+            for seed in SEEDS
+        )
+        for alias in alias_reference
+    }
+    alias_rows = {alias: int(row["rows"]) for alias, row in alias_reference.items()}
+    aliases: dict[str, str] = {}
+    used_aliases: set[str] = set()
+    for original_group, per_seed in sorted(frozen_errors.items()):
+        vector = tuple(float(np.mean(values)) for values in per_seed)
+        candidates = [
+            alias
+            for alias, count in alias_rows.items()
+            if count == original_rows[original_group]
+        ]
+        require(bool(candidates), "Industrial OOF group has no size-matched public alias")
+        scored = sorted(
+            (max(abs(left - right) for left, right in zip(vector, alias_vectors[alias])), alias)
+            for alias in candidates
+        )
+        error, alias = scored[0]
+        require(error < 1e-3, "Industrial OOF group could not be matched to the public alias roster")
+        require(alias not in used_aliases, "Industrial OOF alias matching is not one-to-one")
+        aliases[original_group] = alias
+        used_aliases.add(alias)
+    require(len(aliases) == len(used_aliases) == INDUSTRIAL_GROUPS, "Industrial alias map is incomplete")
+
+    adapted_errors: dict[tuple[str, str], list[float]] = {}
+    for row in oof_rows:
+        alias = aliases[str(row["group_id"])]
+        condition = str(row["condition"])
+        require(condition in CONDITIONS, "Unexpected Industrial OOF condition")
+        error = abs(float(row["adapted_equal_weight_prediction"]) - float(row["target"]))
+        adapted_errors.setdefault((alias, condition), []).append(error)
+        adapted_errors.setdefault((alias, "all_conditions"), []).append(error)
+    require(
+        sum(len(values) for (alias, scope), values in adapted_errors.items() if scope == "all_conditions")
+        == INDUSTRIAL_IMAGES * len(CONDITIONS),
+        "Industrial adapted errors do not recover the complete roster",
+    )
+    return cells, adapted_errors
+
+
+def industrial_group_arrays(
+    *,
+    cells: dict[tuple[str, int, str], dict[str, dict[str, str]]],
+    adapted_errors: dict[tuple[str, str], list[float]],
+    scope: str,
+    comparator: str,
+) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    """Expand group means to row weights for the declared cluster bootstrap."""
+    reference = cells[(comparator, SEEDS[0], scope)]
+    group_ids = sorted(reference)
+    require(len(group_ids) == INDUSTRIAL_GROUPS, "Industrial comparator group count differs")
+    candidate_parts: list[np.ndarray] = []
+    comparator_parts: list[np.ndarray] = []
+    groups: list[str] = []
+    for group_id in group_ids:
+        candidate_values = adapted_errors[(group_id, scope)]
+        row_count = len(candidate_values)
+        require(row_count == int(reference[group_id]["rows"]), "Industrial paired group size differs")
+        candidate_mean = float(np.mean(candidate_values))
+        comparator_mean = statistics.fmean(
+            float(cells[(comparator, seed, scope)][group_id]["nmae"])
+            for seed in SEEDS
+        )
+        candidate_parts.append(np.full(row_count, candidate_mean, dtype=np.float64))
+        comparator_parts.append(np.full(row_count, comparator_mean, dtype=np.float64))
+        groups.extend([group_id] * row_count)
+    return np.concatenate(candidate_parts), np.concatenate(comparator_parts), groups
+
+
+def derive_industrial() -> list[dict[str, Any]]:
+    cells, adapted_errors = load_industrial_adapted_sources()
     output: list[dict[str, Any]] = []
     for index, condition in enumerate(CONDITIONS):
-        reference = cells[("GeoPRR-Net", SEEDS[0], condition)]
+        reference = cells[("Raw EfficientNet-B0", SEEDS[0], condition)]
         group_ids = sorted(reference)
         require(len(group_ids) == INDUSTRIAL_GROUPS, "Industrial public group count differs")
         group_sizes = {group_id: int(reference[group_id]["rows"]) for group_id in group_ids}
         require(sum(group_sizes.values()) == INDUSTRIAL_IMAGES, "Industrial public denominator differs")
 
-        proposed: list[np.ndarray] = []
         baseline: list[np.ndarray] = []
         for seed in SEEDS:
-            proposed_cell = cells[("GeoPRR-Net", seed, condition)]
             baseline_cell = cells[("Raw EfficientNet-B0", seed, condition)]
-            require(set(proposed_cell) == set(group_ids), "Industrial GeoPRR group roster differs")
             require(set(baseline_cell) == set(group_ids), "Industrial baseline group roster differs")
-            require(
-                all(int(proposed_cell[group]["rows"]) == group_sizes[group] for group in group_ids),
-                "Industrial GeoPRR group sizes differ",
-            )
             require(
                 all(int(baseline_cell[group]["rows"]) == group_sizes[group] for group in group_ids),
                 "Industrial baseline group sizes differ",
-            )
-            proposed.append(
-                np.concatenate(
-                    [
-                        np.full(group_sizes[group], float(proposed_cell[group]["nmae"]), dtype=np.float64)
-                        for group in group_ids
-                    ]
-                )
             )
             baseline.append(
                 np.concatenate(
@@ -375,21 +488,135 @@ def derive_industrial() -> list[dict[str, Any]]:
                     ]
                 )
             )
-        groups = [
-            group
-            for group in group_ids
-            for _ in range(group_sizes[group])
-        ]
+        proposed = np.concatenate(
+            [np.asarray(adapted_errors[(group, condition)], dtype=np.float64) for group in group_ids]
+        )
+        groups = [group for group in group_ids for _ in range(group_sizes[group])]
+        baseline_mean, baseline_sd = distribution(float(values.mean()) for values in baseline)
+        paired = paired_group_bootstrap_fast(
+            proposed,
+            np.asarray(baseline, dtype=np.float64).mean(axis=0),
+            groups,
+            replicates=BOOTSTRAP_REPLICATES,
+            seed=BOOTSTRAP_SEED + 100 + index,
+        )
+        interval = paired["paired_group_bootstrap_ci95"]
+        proposed_mean = float(proposed.mean())
         output.append(
-            summarize_condition(
-                condition=condition,
-                proposed_seed_errors=proposed,
-                baseline_seed_errors=baseline,
-                groups=groups,
-                bootstrap_seed=BOOTSTRAP_SEED + 100 + index,
-            )
+            {
+                "condition": condition,
+                "label": CONDITION_LABELS[condition],
+                "geo_nmae_mean": proposed_mean,
+                "geo_nmae_sd": 0.0,
+                "baseline_nmae_mean": baseline_mean,
+                "baseline_nmae_sd": baseline_sd,
+                "relative_reduction_percent": 100.0 * (baseline_mean - proposed_mean) / baseline_mean,
+                "delta_nmae": paired["delta_nmae_candidate_minus_comparator"],
+                "ci_low": interval["low"],
+                "ci_high": interval["high"],
+                "rows": len(groups),
+                "groups": paired["groups"],
+                "bootstrap_replicates": BOOTSTRAP_REPLICATES,
+            }
         )
     return output
+
+
+def derive_industrial_pooled() -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    cells, adapted_errors = load_industrial_adapted_sources()
+    group_ids = sorted(cells[("Raw EfficientNet-B0", SEEDS[0], "all_conditions")])
+    candidate_errors = np.concatenate(
+        [np.asarray(adapted_errors[(group, "all_conditions")], dtype=np.float64) for group in group_ids]
+    )
+    require(len(candidate_errors) == INDUSTRIAL_IMAGES * len(CONDITIONS), "Industrial pooled denominator differs")
+    metric_rows: list[dict[str, Any]] = [
+        {
+            "cohort": "industrial_1395",
+            "cohort_label": "Industrial-1395",
+            "method": "GeoPRR-Net",
+            "nmae_mean": float(candidate_errors.mean()),
+            "nmae_sd": 0.0,
+            "acc2_mean": float(np.mean(candidate_errors <= 0.02)),
+            "acc2_sd": 0.0,
+            "n_images": INDUSTRIAL_IMAGES,
+            "n_conditions": len(CONDITIONS),
+        }
+    ]
+    paired_rows: list[dict[str, Any]] = []
+    group_effect_rows: list[dict[str, Any]] = []
+    for method_index, method in enumerate(INDUSTRIAL_RAW_METHODS):
+        seed_nmae: list[float] = []
+        seed_acc2: list[float] = []
+        for seed in SEEDS:
+            cell = cells[(method, seed, "all_conditions")]
+            total_rows = sum(int(cell[group]["rows"]) for group in group_ids)
+            require(total_rows == len(candidate_errors), "Industrial raw-CNN denominator differs")
+            seed_nmae.append(
+                sum(float(cell[group]["nmae"]) * int(cell[group]["rows"]) for group in group_ids) / total_rows
+            )
+            seed_acc2.append(
+                sum(float(cell[group]["acc_at_2_percent"]) * int(cell[group]["rows"]) for group in group_ids)
+                / total_rows
+            )
+        nmae_mean, nmae_sd = distribution(seed_nmae)
+        acc2_mean, acc2_sd = distribution(seed_acc2)
+        metric_rows.append(
+            {
+                "cohort": "industrial_1395",
+                "cohort_label": "Industrial-1395",
+                "method": method,
+                "nmae_mean": nmae_mean,
+                "nmae_sd": nmae_sd,
+                "acc2_mean": acc2_mean,
+                "acc2_sd": acc2_sd,
+                "n_images": INDUSTRIAL_IMAGES,
+                "n_conditions": len(CONDITIONS),
+            }
+        )
+        candidate_grouped, comparator_grouped, groups = industrial_group_arrays(
+            cells=cells,
+            adapted_errors=adapted_errors,
+            scope="all_conditions",
+            comparator=method,
+        )
+        paired = paired_group_bootstrap_fast(
+            candidate_grouped,
+            comparator_grouped,
+            groups,
+            replicates=BOOTSTRAP_REPLICATES,
+            seed=20260927 + method_index,
+        )
+        interval = paired["paired_group_bootstrap_ci95"]
+        relative_interval = paired["paired_group_bootstrap_relative_ci95"]
+        paired_rows.append(
+            {
+                "comparator": method,
+                "label": method,
+                "delta": paired["delta_nmae_candidate_minus_comparator"],
+                "ci_low": interval["low"],
+                "ci_high": interval["high"],
+                "relative_reduction_percent": paired["relative_reduction_percent"],
+                "relative_ci_low": relative_interval["low"],
+                "relative_ci_high": relative_interval["high"],
+                "clusters": paired["groups"],
+                "replicates": BOOTSTRAP_REPLICATES,
+            }
+        )
+        if method == "Raw EfficientNet-B0":
+            for group_id in group_ids:
+                candidate_group = adapted_errors[(group_id, "all_conditions")]
+                comparator_group = statistics.fmean(
+                    float(cells[(method, seed, "all_conditions")][group_id]["nmae"])
+                    for seed in SEEDS
+                )
+                group_effect_rows.append(
+                    {
+                        "group_id": group_id,
+                        "delta_nmae_percent_fs": 100.0 * (float(np.mean(candidate_group)) - comparator_group),
+                        "rows": len(candidate_group),
+                    }
+                )
+    return metric_rows, paired_rows, group_effect_rows
 
 
 def derive_ablation(report: dict[str, Any]) -> list[dict[str, Any]]:
@@ -482,6 +709,43 @@ def main() -> None:
         ],
         derive_syncg_all_models(),
     )
+    industrial_rows, paired_industrial_rows, industrial_group_rows = derive_industrial_pooled()
+    write_csv(
+        "industrial.csv",
+        [
+            "cohort",
+            "cohort_label",
+            "method",
+            "nmae_mean",
+            "nmae_sd",
+            "acc2_mean",
+            "acc2_sd",
+            "n_images",
+            "n_conditions",
+        ],
+        industrial_rows,
+    )
+    write_csv(
+        "paired_industrial.csv",
+        [
+            "comparator",
+            "label",
+            "delta",
+            "ci_low",
+            "ci_high",
+            "relative_reduction_percent",
+            "relative_ci_low",
+            "relative_ci_high",
+            "clusters",
+            "replicates",
+        ],
+        paired_industrial_rows,
+    )
+    write_csv(
+        "industrial_group_effects.csv",
+        ["group_id", "delta_nmae_percent_fs", "rows"],
+        industrial_group_rows,
+    )
     write_csv("industrial_condition_comparison.csv", condition_fields, derive_industrial())
     write_csv(
         "ablation_condition_effects.csv",
@@ -504,7 +768,7 @@ def main() -> None:
         ],
         derive_routing(report),
     )
-    print("Derived all-model SyncG, Industrial-1395, ablation, and routing condition summaries.")
+    print("Derived all-model SyncG, adapted Industrial-1395, ablation, and routing summaries.")
 
 
 if __name__ == "__main__":

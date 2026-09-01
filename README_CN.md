@@ -5,15 +5,25 @@
 目录内容：
 
 - `manuscript.tex`：论文主文件；
-- `GeoPRR-Net_中文翻译版V4.2.docx`：与正文图片及图注同步的中文审阅译稿，不作为投稿源文件；小规模改动递增小版本号，较大更新再递增主版本号，当前版本为 V4.2；
+- `GeoPRR-Net_中文翻译版V4.3.docx`：与正文图片及图注同步的中文审阅译稿，不作为投稿源文件；小规模改动递增小版本号，较大更新再递增主版本号，当前版本为 V4.3；
 - `references.bib`：参考文献；
 - `Definitions/`：仓库内的 MDPI *Electronics* 模板文件；
 - `figures/`：正文图件、生成图件所用的汇总 CSV 与脚本；图 1 正文直接引用 PNG，中文审阅稿也只引用 PNG。
 - `figures/assets/`：图 1 所用公开 RF100-VL 示例 ROI 及其来源说明。
 - `data/`：当前公开的 SyncG、RF100-VL、VDN 逐样本预测表、完整 3×4 结构化读数器汇总表、匿名化的 Industrial-1395 适配 OOF 逐行预测，以及新版 Figure 3 的 Geometry × Routing 联合消融和透视角度/fallback 扫描账本、训练历史、详细汇总统计与机器可读清单；不含模型权重、原始图像或未匿名化的 Industrial-1395 来源记录。
 
+论文图使用仓库内独立的 `.venv-figures` 环境生成。首次配置及重画命令为：
+
+```bash
+python3 -m venv .venv-figures
+.venv-figures/bin/python -m pip install -r figures/requirements.txt
+.venv-figures/bin/python figures/derive_condition_summaries.py
+.venv-figures/bin/python figures/build_geoprr_figures.py
+```
+
 当前稿件已按投稿稿口径完成以下处理：
 
+- 第 5.4 节及图 4 已统一采用 Industrial-1395 的完整五折 OOF 结果（NMAE `2.3262 %FS`、Acc@2% `60.59%`）；第 5.7 节及图 9 同步更新为相对最强原始 CNN 的 `84.8%` NMAE 降幅、`46.73` 个百分点 Acc@2% 增益，以及 51/52 个采集组取得更低 NMAE。
 - 表 8 已更新为三个数据集 × 四种方法的完整矩阵：GeoPRR-Net、VDN、DeepLabV3+-ROI 和 YOLO11s-Pose-4KP 均覆盖 SyncG、Industrial-1395 与 RF100-VL 的六条件清单；GeoPRR-Net 在三个域上均取得最低汇总 NMAE。
 - 图 6 已扩展为 NMAE 与 Acc@5 的 2×3 绝对性能矩阵；新增图 7 展示相对 NMAE 降幅、Acc@5 百分点增益和输出覆盖率。Industrial-1395 的 GeoPRR-Net 使用有监督五折 OOF 三编码器等权集成，NMAE 为 `2.3262 %FS`、Acc@5% 为 `86.99%`。
 - 新版 Figure 3 已生成在 `figures/fig3_ablation_routing.{png,pdf}`，并同步到英文主稿和中文审阅译稿的图片及图注；Figure 3a 补齐 Geometry × Routing 四组合，Figure 3e 覆盖 0°、15°、25°、35°、45°、60° 的完整透视与 identity-fallback 扫描。正文结果段落同步补充了 Figure 3a 的预先指定交互效应及 95% CI。

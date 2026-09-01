@@ -9,11 +9,11 @@ The implementation and reproducibility scripts are maintained in the companion
 ## Contents
 
 - `manuscript.tex`: MDPI *Electronics* manuscript source.
-- `GeoPRR-Net_中文翻译版V4.2.docx`: Chinese author-review translation synchronized
+- `GeoPRR-Net_中文翻译版V4.3.docx`: Chinese author-review translation synchronized
   with the manuscript figures and captions; it is not the submission source.
   Chinese review DOCX revisions use versioned filename suffixes: minor updates
   increment the decimal suffix, while major updates increment the integer. The
-  current version is V4.2.
+  current version is V4.3.
 - `references.bib`: bibliography database.
 - `Definitions/`: bundled MDPI class, styles, bibliography styles, and assets.
 - `figures/`: manuscript figures, figure-building scripts, and compact aggregate
@@ -29,11 +29,13 @@ Upload the repository contents to Overleaf and select `manuscript.tex` as the
 main document, or compile it with a compatible local TeX distribution.
 
 Re-derive the condition summaries from the public release tables, then rebuild
-the quantitative figures with:
+the quantitative figures in the dedicated plotting environment with:
 
 ```bash
-python figures/derive_condition_summaries.py
-python figures/build_geoprr_figures.py
+python3 -m venv .venv-figures
+.venv-figures/bin/python -m pip install -r figures/requirements.txt
+.venv-figures/bin/python figures/derive_condition_summaries.py
+.venv-figures/bin/python figures/build_geoprr_figures.py
 ```
 
 Public datasets are referenced from the manuscript. Public result tables are

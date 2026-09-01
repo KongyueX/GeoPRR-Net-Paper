@@ -37,7 +37,7 @@ paths, runtime logs, or non-public Industrial-1395 source records.
 | `industrial1395/supervised_feature_head_ensemble_per_sample.json` | 8,370 | Per-row predictions and aggregate metrics for supervised five-fold target-domain OOF GeoPRR-Net feature-head adaptation and equal-weight three-encoder aggregation. |
 | `training/geoprr_training_history.csv.gz` | 651 | Shared polar and variant-specific router optimization histories for the three GeoPRR-Net seeds. |
 | `training/vdn_training_history.csv.gz` | 600 | The complete 200-epoch history for each of the three matched VDN checkpoints. |
-| `roi_geometry_comparison_three_seed.csv` | 12 | Complete three-domain by four-method ROI-level comparison for GeoPRR-Net, VDN, DeepLabV3+-ROI, and YOLO11s-Pose-4KP, including clean/pooled NMAE, Acc@5%, coverage, and paired cluster-bootstrap intervals for the frozen three-seed rows. |
+| `roi_geometry_comparison_three_seed.csv` | 12 | Complete three-domain by four-method ROI-level comparison for GeoPRR-Net, VDN, DeepLabV3+-ROI, and YOLO11s-Pose-4KP, including clean/pooled NMAE, Acc@5%, coverage, and paired cluster-bootstrap intervals where released. The Industrial-1395 GeoPRR-Net row uses the five-fold OOF aggregate. |
 | `public_results_summary.json` | — | Current SyncG, RF100-VL, VDN, efficiency, and Industrial-1395 aggregate statistics. Industrial data are aggregates only. |
 | `inventory.json` | — | Row counts, file sizes, cohort dimensions, and explicit exclusions for this release. |
 
@@ -82,10 +82,10 @@ leaderboard.
 
 Industrial-1395 contains 1,395 restricted images and 52 acquisition clusters.
 Every published statistic pools the complete cohort; source-partition labels
-and subset-specific results are not released. Raw images, original group names,
-and per-sample records are not redistributed. One global
-`group_001 ... group_052` alias roster preserves the cluster analysis without
-exposing source identifiers.
+and subset-specific results are not reported. Raw images and unredacted source
+records are not redistributed. The public OOF ledger contains pseudonymous
+sample identifiers, while the group summary uses one global
+`group_001 ... group_052` alias roster for cluster analysis.
 
 ## Reading compressed tables
 

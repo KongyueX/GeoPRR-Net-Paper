@@ -2,7 +2,7 @@
   "excluded": [
     "model checkpoints and third-party weights",
     "raw SyncG and RF100 images",
-    "Industrial-1395 images and per-sample ledgers",
+    "Industrial-1395 images and unredacted source records",
     "local absolute paths and runtime logs"
   ],
   "files": [
@@ -132,12 +132,12 @@
       "rows": 8370
     },
     {
-      "bytes": 3986,
+      "bytes": 3800,
       "path": "data/roi_geometry_comparison_three_seed.csv",
       "rows": 12
     },
     {
-      "bytes": 154548,
+      "bytes": 154609,
       "path": "data/public_results_summary.json",
       "rows": null
     }
