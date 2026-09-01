@@ -9,11 +9,11 @@ The implementation and reproducibility scripts are maintained in the companion
 ## Contents
 
 - `manuscript.tex`: MDPI *Electronics* manuscript source.
-- `GeoPRR-Net_中文翻译版V4.1.docx`: Chinese author-review translation synchronized
+- `GeoPRR-Net_中文翻译版V4.2.docx`: Chinese author-review translation synchronized
   with the manuscript figures and captions; it is not the submission source.
   Chinese review DOCX revisions use versioned filename suffixes: minor updates
   increment the decimal suffix, while major updates increment the integer. The
-  current version is V4.1.
+  current version is V4.2.
 - `references.bib`: bibliography database.
 - `Definitions/`: bundled MDPI class, styles, bibliography styles, and assets.
 - `figures/`: manuscript figures, figure-building scripts, and compact aggregate
@@ -38,5 +38,5 @@ python figures/build_geoprr_figures.py
 
 Public datasets are referenced from the manuscript. Public result tables are
 documented in [`data/README.md`](data/README.md). Restricted field images and
-per-sample Industrial-1395 records, model checkpoints, and third-party weights
-are not redistributed here.
+non-anonymized Industrial-1395 source records, model checkpoints, and
+third-party weights are not redistributed here.

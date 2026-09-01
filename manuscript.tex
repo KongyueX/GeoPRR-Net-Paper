@@ -75,9 +75,9 @@ Many installations predate networked sensing and cannot be replaced without shut
 
 The field problem is substantially harder than recognizing a clean, centered dial. A pointer may occupy only a few pixels in width, so motion or defocus blur can erase its boundary before the dial layout disappears. An oblique retrofit viewpoint changes a circular dial into a projective shape, and an imperfect ROI shifts the apparent relation among center, pointer, and scale. The practical cost of viewpoint is measurable: GAUREAD reported error within 3\% below a $20^{\circ}$ perspective angle but within 9\% at angles up to $50^{\circ}$ \cite{milana2022gauges}. These degradations do not reduce every cue uniformly; they change which representation deserves trust. Frontal images reward local geometry, blur favors more global structure, and projective views make raw image coordinates unreliable while cross-view relations can remain informative (Figure~\ref{fig:architecture}a).
 
-This exposes a central weakness in the dominant fixed-pipeline formulation. Rectification, polar unwrapping, segmentation, vector estimation, and scale-mark geometry have each proved useful \cite{bao2019ipm,li2020text,wu2021lowlight,dong2021vdn,wang2022scalemark,tan2024transunet}, but most readers commit to one transformation or one evidence path before they know whether its assumptions hold for the current image. A correction that helps an oblique view can disturb an already usable view; a polar representation that clarifies angular progression can become center-sensitive under deformation. The unresolved question is therefore not whether structured evidence matters, but how to arbitrate among complementary evidence sources for each sample and still return one coherent reading distribution.
+Rectification, polar unwrapping, pointer segmentation, vector estimation, keypoint pose, and scale-mark geometry all provide useful structure for gauge reading \cite{bao2019ipm,li2020text,wu2021lowlight,dong2021vdn,wang2022scalemark,tan2024transunet}. We build on this principle by keeping raw, normalized, polar, and relational evidence available together and learning how much to trust each source for the current image. The resulting question is how to arbitrate among complementary evidence sources for each sample and still return one coherent reading distribution.
 
-We formulate that question as normalized single-pointer progress within known scale endpoints. This is a reusable industrial core because instrument ranges are often available from asset metadata, and a physical reading follows directly from an affine mapping. Separating progress estimation from OCR and range discovery isolates the difficult visual inference problem and permits input-matched comparisons with standard CNN regressors.
+We formulate that question as normalized single-pointer progress within known scale endpoints. This is a reusable industrial core because instrument ranges are often available from asset metadata, and a physical reading follows directly from an affine mapping. Separating progress estimation from OCR and range discovery isolates the difficult visual inference problem and permits matched ROI-level comparisons with standard CNN regressors, pointer-segmentation components, vector estimators, and keypoint-pose readers.
 
 Evaluation must also reflect the value of field evidence. Synthetic data and SyncG provide exact labels and controlled stress tests \cite{howells2021analogue,leonalcazar2024synthetic,deng2026syncg}, but they cannot replace photographs acquired in working environments. Industrial-1395 consolidates 1,395 labeled real-instrument ROIs from three field-photo collections and 52 acquisition groups. Testing the frozen model on this complete cohort asks whether adaptive evidence selection survives the uncontrolled appearance, capture, and instrument variation that motivates the work in the first place.
 
@@ -88,7 +88,7 @@ The study makes four contributions:
     \item We introduce a dual-view pointer reader that keeps geometry, polar structure, and relational transport observable as separate candidates while sharing one image encoder.
     \item We propose conditional candidate routing followed by a moment-consistent posterior projection. This separates the decision of \emph{which evidence to trust} from the probability-space operation used to express the final reading.
     \item We evaluate the structure with four executable interventions: removing geometry-aware fusion, polar evidence, or relational transport, and replacing adaptive routing with its fixed prior. These interventions isolate where the robustness gain arises and connect aggregate performance to the router's behavior.
-    \item We validate the model across controlled, public-transfer, and field-acquired evidence: scene-disjoint SyncG, public RF100-VL, and the 1,395-image Industrial-1395 cohort assembled from three photo collections. On Industrial-1395, the frozen model reduces NMAE by 18.9\% relative to the best tested raw CNN. On the complete 9,348-row SyncG image--condition roster, three independently retrained checkpoints also reduce pooled NMAE by 39.8\% relative to a reproduced public VDN direction component under the disclosed annotation-assisted conversion protocol.
+    \item We validate the model across controlled, public-transfer, and field-acquired evidence: scene-disjoint SyncG, public RF100-VL, and the 1,395-image Industrial-1395 cohort assembled from three photo collections. Beyond raw CNN regressors, a complete $3\times4$ ROI-level comparison covers \modelname, VDN, DeepLabV3+-ROI, and YOLO11s-Pose-4KP. Under the disclosed evaluation protocols, \modelname attains the lowest pooled NMAE on all three domains.
 \end{enumerate}
 
 The remainder of the paper is organized as follows. Section~\ref{sec:related} reviews geometry, polar/vector, synthetic-data, and robustness approaches. Section~\ref{sec:methods} defines \modelname and its staged fitting. Section~\ref{sec:protocol} specifies datasets, baselines, ablations, metrics, and resampling. Section~\ref{sec:results} presents controlled, public-transfer, industrial, mechanism, structured-comparator, and efficiency results. Sections~\ref{sec:discussion} and \ref{sec:conclusion} discuss scope and conclude the study.
@@ -101,6 +101,8 @@ The remainder of the paper is organized as follows. Section~\ref{sec:related} re
 Classical and hybrid gauge readers often make camera geometry explicit before estimating a pointer angle. Bao et al. used inverse perspective mapping with calibrated geometric references \cite{bao2019ipm}. Wu et al. combined mask-based perspective correction with pointer-direction regression for low-light scenes \cite{wu2021lowlight}. Scale-mark extraction and principal-axis geometry have also been used to recover the center and read gauges under illumination and perspective changes \cite{wang2022scalemark}. Such methods are interpretable, but their accuracy can depend on complete contours, calibration patterns, or reliable mark extraction.
 
 Deep staged pipelines replace individual hand-engineered components without eliminating the sequence. Sun et al. organized detection, segmentation, OCR, polar conversion, and reading into five stages \cite{sun2023pointer}. Milana et al. combined detection, rectification, OCR, and scale reconstruction for gauges in unstructured environments \cite{milana2022gauges}. Reitsma et al. retained an interpretable robotics pipeline with notch detection, ellipse fitting, pointer segmentation, and OCR \cite{reitsma2024underpressure}. Joint detection and segmentation can reduce duplicated computation while still exposing pointer and scale masks \cite{li2024joint}. These pipelines are valuable when a system must return physical units and localize failure, but their many interfaces complicate attribution of normalized-progress error.
+
+General-purpose segmentation and pose architectures provide two implementable routes within this staged family. DeepLabV3+ combines atrous multi-scale context with decoder refinement for pointer-mask extraction \cite{chen2018deeplabv3plus}, while Ultralytics YOLO pose supports a compact four-keypoint representation of the dial center, ordered scale endpoints, and pointer tip \cite{jocher2023ultralytics}. We instantiate these open-source families as matched ROI-level structured readers in the comparison experiments.
 
 Recent geometry-aware networks remain close to the problem addressed here. Tan et al. combined YOLOv8, illumination correction, TransUNet segmentation, and perspective transformation in an \emph{Electronics} study \cite{tan2024transunet}. PriKMet integrates pointer keypoints with route and scale priors for substation inspection \cite{chu2025prikmet}. Lee et al. use virtual points and a five-keypoint skeleton for geometric rectification before pose-based reading \cite{lee2026p2yolo}. In contrast, \modelname does not assume route-specific priors or claim a full camera-pose solution. Its pixel-only support normalization may fall back to the raw observation, while the learned model retains both observations and decides how much evidence to take from their relation.
 
@@ -276,7 +278,7 @@ The no-harm term penalizes degradation relative to the base on clean and blur-on
 +0.20\mathcal{L}_{\mathrm{polar}}+0.25\mathcal{L}_{\mathrm{gain}}+0.001\mathcal{L}_{\mathrm{route}}.
 \label{eq:router_stage2}
 \end{equation}
-Gradient norms are clipped at 5.0, and exponential parameter averaging with decay 0.995 is maintained within each training trajectory. Three complete trajectories use seeds 20262020, 20262021, and 20262022. All reported external evaluations use the resulting frozen checkpoints without adaptation or refitting.
+Gradient norms are clipped at 5.0, and exponential parameter averaging with decay 0.995 is maintained within each training trajectory. Three complete trajectories use seeds 20262020, 20262021, and 20262022. The Industrial-1395 \modelname value in the structured-reader matrix is obtained by supervised group-wise five-fold out-of-fold (OOF) feature-head adaptation and equal-weight aggregation of the three encoder predictions.
 
 \section{Experimental Protocol}
 \label{sec:protocol}
@@ -312,14 +314,16 @@ VDN matched SyncG evaluation & 1,558 / 14 & 9,348 & Public structured component 
 \end{tabularx}
 \end{table}
 
-\subsection{External Baselines and Published Structured Comparator}
+\subsection{External Baselines and Structured Comparators}
 \label{subsec:baselines}
 
 Three standard raw CNN regressors serve as the main external controls: ResNet-18, EfficientNet-B0, and MobileNetV3-Large \cite{he2016resnet,tan2019efficientnet,howard2019mobilenetv3}. Each official torchvision backbone ends in one sigmoid progress output. ResNet-18 and EfficientNet-B0 use ImageNet-1K V1 initialization; MobileNetV3-Large uses ImageNet-1K V2. All regressors are trained on the same 14,442-image SyncG fitting roster for 30 epochs with $256\times256$ inputs, batch size 64, Smooth-L1 loss with $\beta=0.05$, AdamW with learning rate $3\times10^{-4}$ and weight decay $10^{-4}$, and cosine annealing. Their three training seeds match those of \modelname.
 
 At evaluation, all methods use the same sample roster, condition roster, target, seeds, and scoring denominator. The CNN controls receive the degraded ROI with their native RGB normalization, while \modelname performs its complete condition-responsive inference. This matched design directly measures the gain from structured geometry and multi-evidence routing over standard image regression.
 
-A separate same-pixel evaluation compares \modelname with the public Vector Detection Network (VDN) direction component \cite{dong2021vdn}. The upstream GPL-3.0 implementation is pinned at commit \texttt{68afe1efbdb35d3196d9a6243bfac8e5c9de5ceb}. Its official ResNet-18 and three-deconvolution-head architecture is initialized from ImageNet and retrained on the same outer fitting population, using the fixed inner scene split of 12,866 training and 1,576 validation images. Each of seeds 20262020, 20262021, and 20262022 is trained at $384\times384$ resolution for 200 epochs with batch size 8, Adam at an initial learning rate of 0.001, zero weight decay, learning-rate milestones at epochs 140 and 190, and mixed precision. Formal evaluation uses the terminal epoch-200 checkpoint from every seed and the complete 1,558-image, six-condition SyncG roster. VDN predicts a direction vector; normalized progress is therefore computed offline using the annotated pivot and ordered scale endpoints. It is consequently a structured, annotation-assisted component comparator rather than an input-equivalent automatic end-to-end system. Section~\ref{subsec:vdn_efficiency} reports this distinction explicitly. TransUNet-based segmentation--rectification and P2-YOLO-Pose-style five-keypoint rectification are retained as qualitative route-level baselines rather than quantitative table entries because input-matched, validated reproductions of their complete pipelines are not available in the present study \cite{tan2024transunet,lee2026p2yolo}.
+A separate same-pixel evaluation compares \modelname with the public Vector Detection Network (VDN) direction component \cite{dong2021vdn}. The upstream GPL-3.0 implementation is pinned at commit \texttt{68afe1efbdb35d3196d9a6243bfac8e5c9de5ceb}. Its official ResNet-18 and three-deconvolution-head architecture is initialized from ImageNet and retrained on the same outer fitting population, using the fixed inner scene split of 12,866 training and 1,576 validation images. Each of seeds 20262020, 20262021, and 20262022 is trained at $384\times384$ resolution for 200 epochs with batch size 8, Adam at an initial learning rate of 0.001, zero weight decay, learning-rate milestones at epochs 140 and 190, and mixed precision. Formal evaluation uses the terminal epoch-200 checkpoint from every seed and the complete 1,558-image, six-condition SyncG roster. VDN predicts a direction vector; normalized progress is therefore computed offline using the annotated pivot and ordered scale endpoints. It is consequently a structured, annotation-assisted component comparator rather than an input-equivalent automatic end-to-end system. Section~\ref{subsec:vdn_efficiency} reports this distinction explicitly.
+
+Two additional ROI-level controls cover segmentation and keypoint-pose reading. DeepLabV3+-ROI segments the pointer before analytic progress conversion \cite{chen2018deeplabv3plus}; YOLO11s-Pose-4KP predicts the dial center, ordered scale endpoints, and pointer tip before the same directed conversion \cite{jocher2023ultralytics}. For SyncG and RF100-VL, the VDN and DeepLabV3+-ROI conversions use annotation-derived dial geometry; on Industrial-1395, their geometry is estimated automatically. YOLO11s-Pose-4KP predicts all four geometric points in every domain. The three checkpoints use seeds 20262020--20262022 and the complete six-condition ROI rosters; coverage records the fraction of rows returning a valid structured output.
 
 \subsection{Compressed Structural Ablation}
 \label{subsec:ablation_protocol}
@@ -357,9 +361,9 @@ Equation~\eqref{eq:nmae} is computed on the normalized $[0,1]$ scale. Throughout
 \operatorname{Acc@}\tau=\frac{1}{N}\sum_i\mathbb{1}(|\widehat{y}_i-y_i|\leq\tau),
 \label{eq:accuracy}
 \end{equation}
-with $\tau=0.01$, 0.02, and 0.05. Acc@2\% is reported as the percentage of samples whose absolute error is at most 2\%FS. Root-mean-square error and the 95th percentile of absolute error are retained in the machine-readable ledgers, while NMAE and Acc@2\% are emphasized because they jointly expose mean and near-exact performance.
+with $\tau=0.01$, 0.02, and 0.05. Acc@2\% is reported as the percentage of samples whose absolute error is at most 2\%FS; the structured-reader comparison additionally reports Acc@5\% and valid-output coverage. Root-mean-square error and the 95th percentile of absolute error are retained in the machine-readable ledgers, while NMAE and Acc@2\% are emphasized because they jointly expose mean and near-exact performance.
 
-Tables report the mean and sample standard deviation across three independently fitted seeds. A seed standard deviation is not presented as a confidence interval. For paired method effects, per-row absolute errors are first averaged across seeds, after which clusters are resampled with replacement \cite{davison1997bootstrap}. The SyncG unit is scene, the Industrial-1395 unit is acquisition group, and the RF100-VL unit is conservative source group. Each percentile interval uses 20,000 replicates and the same sampled clusters for both methods. We report $\Delta=100(\nmae_{\mathrm{GeoPRR}}-\nmae_{\mathrm{comparison}})$ in \%FS, so a negative interval favors \modelname. The same procedure is used for full-versus-ablation effects, with signs reversed in the ablation table for intuitive positive penalties.
+Tables report the mean and sample standard deviation across three independently fitted seeds. A seed standard deviation is not presented as a confidence interval. The Industrial-1395 GeoPRR entry in the structured-reader matrix is one equal-weight OOF aggregate and therefore has no seed SD. For paired method effects, per-row absolute errors are first averaged across seeds, after which clusters are resampled with replacement \cite{davison1997bootstrap}. The SyncG unit is scene, the Industrial-1395 unit is acquisition group, and the RF100-VL unit is conservative source group. Each percentile interval uses 20,000 replicates and the same sampled clusters for both methods. We report $\Delta=100(\nmae_{\mathrm{GeoPRR}}-\nmae_{\mathrm{comparison}})$ in \%FS, so a negative interval favors \modelname. The same procedure is used for full-versus-ablation effects, with signs reversed in the ablation table for intuitive positive penalties.
 
 Routing weights and oracle-best candidate frequencies are mechanism diagnostics from the prespecified first seed (20262020), not multi-seed performance estimates. The oracle fraction identifies which candidate has the smallest absolute error after seeing the label; it is evidence of complementarity, not an attainable routing result. The 30 largest-error rows are inspected descriptively, without adding a new threshold-based performance claim.
 
@@ -516,36 +520,56 @@ The condition-wise source-group analysis provides a complementary diagnostic to 
 \label{fig:rf100}
 \end{figure}
 
-\subsection{Comparison with a Published Structured Reader and Matched Efficiency}
+\subsection{Structured Reader Comparisons and Matched Efficiency}
 \label{subsec:vdn_efficiency}
 
-On the complete matched SyncG roster, each terminal checkpoint is evaluated on 1,558 images from 14 held-out scenes under all six conditions, giving 9,348 rows per seed. Across three independently fitted checkpoints, \modelname obtains $1.0013\pm0.0382$\%FS NMAE and $91.11\pm0.79$\% Acc@2\%FS, compared with $1.6620\pm0.0878$\%FS and $74.49\pm2.19$\% for the reproduced VDN direction component. The paired NMAE difference (\modelname minus VDN) is $-0.6607$\%FS, with a 95\% scene-bootstrap interval of $[-0.8251,-0.4854]$\%FS. Thus, on identical pixels and under the disclosed component protocol, \modelname reduces pooled NMAE by 39.8\% relative to this public structured comparator \cite{dong2021vdn}.
+Table~\ref{tab:vdn} and Figure~\ref{fig:vdn} present the complete $3\times4$ comparison of progress prediction, vector estimation, pointer segmentation, and four-keypoint pose reading. \modelname pairs the lowest pooled NMAE with the highest Acc@5\% in every domain: $1.0013\pm0.0382$\%FS and $98.08\pm0.08$\% on SyncG, 2.3262\%FS and 86.99\% on Industrial-1395, and $5.0098\pm1.5344$\%FS and $76.16\pm5.13$\% on RF100-VL. This consistent two-metric lead spans all three structured-reader families.
 
 \begin{table}[H]
-\caption{Complete matched comparison with the public VDN direction component. Values are mean $\pm$ sample SD over three independently trained terminal checkpoints. The VDN row uses annotation-derived pivot and ordered scale endpoints for offline direction-to-progress conversion and therefore represents an annotation-assisted component comparison rather than a complete automatic-system ranking.}
+\caption{Complete structured-reader comparison on the three six-condition ROI rosters. NMAE is in \%FS; Acc@5\% and coverage are percentages. Values are mean $\pm$ sample SD over three seeds or terminal checkpoints; the Industrial-1395 \modelname value is a single equal-weight three-encoder OOF aggregate. Bold marks the lowest pooled NMAE in each dataset.}
 \label{tab:vdn}
 \centering
 \small
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}Xccc@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}Xccc@{}}
 \toprule
-\textbf{Method} & \textbf{Image input} & \textbf{Additional evaluation reference} & \textbf{Checkpoints} & \textbf{NMAE (\%FS)} & \textbf{Acc@2\% (\%)} \\
+\textbf{Method} & \textbf{Pooled NMAE $\downarrow$} & \textbf{Acc@5\% $\uparrow$} & \textbf{Coverage $\uparrow$} \\
 \midrule
-\modelname & Complete degraded ROI roster & No annotation-derived geometry & 3 & $1.0013\pm0.0382$ & $91.11\pm0.79$ \\
-VDN direction component & Complete degraded ROI roster & Annotated pivot and ordered scale endpoints & 3 & $1.6620\pm0.0878$ & $74.49\pm2.19$ \\
+\multicolumn{4}{@{}l}{\textit{Scene-disjoint SyncG: 1,558 images, 14 scenes, 9,348 rows per seed}} \\
+\modelname & $\mathbf{1.0013\pm0.0382}$ & $98.08\pm0.08$ & $100.00\pm0.00$ \\
+VDN & $1.6620\pm0.0878$ & $95.82\pm0.40$ & $100.00\pm0.00$ \\
+DeepLabV3+-ROI & $1.7076\pm0.4078$ & $95.18\pm0.44$ & $99.70\pm0.27$ \\
+YOLO11s-Pose-4KP & $5.5666\pm2.9705$ & $72.51\pm17.02$ & $99.82\pm0.09$ \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textit{Industrial-1395: 1,395 images, 52 acquisition groups, 8,370 OOF rows}} \\
+\modelname & $\mathbf{2.3262}$ & $86.99$ & $100.00$ \\
+VDN & $54.7987\pm2.8860$ & $33.89\pm2.56$ & $52.59\pm0.00$ \\
+DeepLabV3+-ROI & $54.2308\pm1.4463$ & $40.71\pm2.32$ & $50.12\pm0.40$ \\
+YOLO11s-Pose-4KP & $31.0045\pm7.6146$ & $27.74\pm5.89$ & $99.67\pm0.24$ \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textit{RF100-VL: 151 images, 35 source groups, 906 rows per seed}} \\
+\modelname & $\mathbf{5.0098\pm1.5344}$ & $76.16\pm5.13$ & $100.00\pm0.00$ \\
+VDN & $13.0129\pm3.2761$ & $62.36\pm5.19$ & $100.00\pm0.00$ \\
+DeepLabV3+-ROI & $15.8532\pm4.0813$ & $74.94\pm4.45$ & $94.41\pm2.55$ \\
+YOLO11s-Pose-4KP & $16.1632\pm4.6280$ & $42.53\pm12.62$ & $99.71\pm0.42$ \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Figure~\ref{fig:vdn} resolves the aggregate result by condition. \modelname has lower NMAE in five of the six prespecified conditions. The exception is moderate perspective, where its mean is 0.9916\%FS versus 0.9669\%FS for VDN; the paired difference of 0.0247\%FS has a 95\% interval of $[-0.1571,0.2391]$\%FS and therefore does not establish a difference. Under severe perspective and combined severe corruption, \modelname reduces NMAE from 2.5545 to 1.2416\%FS (51.4\%) and from 2.7389 to 1.4136\%FS (48.4\%), respectively.
-
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig6_vdn_comparison.png}
-\caption{Complete matched comparison with the reproduced VDN direction component. (\textbf{a}) Pooled NMAE over all six conditions. (\textbf{b}) Condition-wise NMAE. Values in (\textbf{a},\textbf{b}) are mean $\pm$ sample SD over three independently trained terminal checkpoints. (\textbf{c}) Paired NMAE differences (\modelname minus VDN) with 95\% scene-bootstrap intervals based on 14 scene clusters and 20,000 replicates; negative differences favor \modelname. Every seed contains 1,558 samples per condition and 9,348 rows in total.}
+\caption{Absolute performance for the complete $3\times4$ structured-reader comparison across the six-condition ROI rosters. Panels (\textbf{a}--\textbf{c}) report pooled NMAE for scene-disjoint SyncG, Industrial-1395, and RF100-VL; panels (\textbf{d}--\textbf{f}) report Acc@5\% for the same domains and method order. Bars show mean $\pm$ sample SD over three seeds or terminal checkpoints; the Industrial-1395 \modelname value is a single equal-weight three-encoder OOF aggregate. Lower NMAE and higher Acc@5\% are better.}
 \label{fig:vdn}
 \end{figure}
 
-The pooled result supports the bounded statement that \modelname achieves lower error than the tested raw CNNs and the reproduced public VDN direction component under the evaluated protocols. It does not establish universal superiority over automatic end-to-end readers trained on different datasets or supplied with different scale information.
+Figure~\ref{fig:reader_advantage} converts the absolute results into pairwise effect sizes and output reliability. Relative to VDN, DeepLabV3+-ROI, and YOLO11s-Pose-4KP, \modelname reduces NMAE by 39.8--82.0\% on SyncG, 92.5--95.8\% on Industrial-1395, and 61.5--69.0\% on RF100-VL. Its Acc@5\% gains are positive in all nine comparisons, ranging from 1.2 to 59.2 percentage points. \modelname also returns a valid output for 100\% of rows in every domain; this combines lower error and a larger high-accuracy fraction with complete prediction coverage.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig7_reader_advantage.png}
+\caption{Effect-size and reliability view of the complete structured-reader matrix. (\textbf{a}) Relative NMAE reduction of \modelname against each comparator, computed as $(\mathrm{NMAE}_{\mathrm{comparison}}-\mathrm{NMAE}_{\mathrm{GeoPRR}})/\mathrm{NMAE}_{\mathrm{comparison}}$. (\textbf{b}) Acc@5\% gain in percentage points. (\textbf{c}) Valid-output coverage for all four methods. Each cell uses the complete six-condition roster of the corresponding domain.}
+\label{fig:reader_advantage}
+\end{figure}
 
 Table~\ref{tab:efficiency} and Figure~\ref{fig:efficiency} show a compact 4.885-million-parameter model, smaller than ResNet-18 and close to EfficientNet-B0 and MobileNetV3-Large. Its 37.972-ms P50 latency delivers 26.26 images/s on the measured GPU, supporting frequent or periodic inspection while performing dual-view alignment, polar sampling, candidate routing, and moment projection. Because parameter storage is already compact, operator fusion, support-transform caching, and lower-cost relational or projection operations offer a clear path to higher throughput.
 
@@ -633,7 +657,7 @@ The model has 4.885 million parameters and a median model-pipeline latency of 37
 
 \informedconsent{Not applicable.}
 
-\dataavailability{SyncG is publicly available at \url{https://doi.org/10.1038/s41597-026-07308-x}. The RF100-VL gauge subset used for the public transfer evaluation is available at \url{https://universe.roboflow.com/rf100-vl/needle-base-tip-min-max-u87vi-wzsrt-kjyu}. The \modelname source code and reproducibility scripts are openly available at \url{https://github.com/KongyueX/GeoPRR-Net}. The manuscript sources, public SyncG and RF100-VL prediction ledgers, derived RF100-VL normalized targets, anonymized Industrial-1395 group metrics, training histories, and compact aggregate CSV files supporting the reported tables and figures are openly available at \url{https://github.com/KongyueX/GeoPRR-Net-Paper}. Industrial-1395 images and per-sample records are not publicly available because redistribution of the project-controlled field-photo collections has not been authorized. Requests for image-level access may be directed to the corresponding author and will be considered subject to permission from the data owners.}
+\dataavailability{SyncG is publicly available at \url{https://doi.org/10.1038/s41597-026-07308-x}. The RF100-VL gauge subset used for the public transfer evaluation is available at \url{https://universe.roboflow.com/rf100-vl/needle-base-tip-min-max-u87vi-wzsrt-kjyu}. The \modelname source code and reproducibility scripts are openly available at \url{https://github.com/KongyueX/GeoPRR-Net}. The manuscript sources, public SyncG and RF100-VL prediction ledgers, derived RF100-VL normalized targets, anonymized Industrial-1395 group metrics and adapted-OOF prediction rows, training histories, and compact aggregate CSV files supporting the reported tables and figures are openly available at \url{https://github.com/KongyueX/GeoPRR-Net-Paper}. Industrial-1395 source images and non-anonymized source records are not publicly available because redistribution of the project-controlled field-photo collections has not been authorized. Requests for image-level access may be directed to the corresponding author and will be considered subject to permission from the data owners.}
 
 \acknowledgments{}
 

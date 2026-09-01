@@ -1,8 +1,9 @@
 """Build submission-grade figures for the GeoPRR-Net manuscript.
 
-All quantitative panels are rendered from the compact CSV files stored next to
-this script.  Industrial-1395 is treated as one complete, prespecified test-only
-cohort; its condition-wise panels retain all 1,395 images in every condition.
+All quantitative panels are rendered from the released machine-readable data.
+Primary Industrial-1395 transfer panels retain the complete prespecified
+1,395-image cohort; the structured-reader comparison uses the released
+five-fold OOF GeoPRR-Net aggregate for that domain.
 """
 from __future__ import annotations
 
@@ -15,7 +16,6 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Iterable
 
-import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
@@ -137,6 +137,11 @@ def configure_style() -> None:
 
 def read_csv(name: str) -> list[dict[str, str]]:
     with (HERE / name).open("r", encoding="utf-8-sig", newline="") as stream:
+        return list(csv.DictReader(stream))
+
+
+def read_data_csv(name: str) -> list[dict[str, str]]:
+    with (HERE.parent / "data" / name).open("r", encoding="utf-8-sig", newline="") as stream:
         return list(csv.DictReader(stream))
 
 
@@ -466,6 +471,8 @@ def arrow(
 
 def architecture_example_images() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Return one public RF100-VL ROI and three explanatory view variants."""
+    import cv2
+
     source = HERE / "assets" / "rf100_test_000000.png"
     image_bgr = cv2.imread(str(source), cv2.IMREAD_COLOR)
     if image_bgr is None:
@@ -1747,137 +1754,260 @@ def build_efficiency(*, png_only: bool = False) -> None:
         save_all(fig, "fig6_efficiency")
 
 
+def structured_reader_summary() -> tuple[
+    list[str],
+    list[str],
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+]:
+    """Return the validated 3-domain by 4-reader metric tensors."""
+    rows = read_data_csv("roi_geometry_comparison_three_seed.csv")
+    domains = ["SyncG Scene-Holdout", "Industrial-1395", "RF100-VL"]
+    methods = ["GeoPRR-Net", "VDN", "DeepLabV3+-ROI", "YOLO11s-Pose-4KP"]
+    indexed = {(row["domain"], row["method"]): row for row in rows}
+    require(len(rows) == len(indexed) == 12, "The reader comparison must contain a complete 3 x 4 matrix.")
+    require(set(indexed) == {(domain, method) for domain in domains for method in methods}, "The reader comparison matrix is incomplete.")
+    require(all(row["seeds"] == "20262020|20262021|20262022" for row in rows), "Unexpected seed roster.")
+
+    adapted_path = HERE.parent / "data" / "industrial1395" / "supervised_feature_head_ensemble_per_sample.json"
+    with adapted_path.open("r", encoding="utf-8") as stream:
+        adapted = json.load(stream)
+    require(adapted["status"] == "complete", "Industrial adapted GeoPRR result is incomplete.")
+    require(adapted["rows"] == 8370 and adapted["groups"] == 52, "Industrial adapted roster differs.")
+    adapted_pooled = adapted["summary"]["adapted_equal_weight_ensemble"]["pooled"]
+    frozen_seed = adapted["summary"]["frozen_single_seed"]["nmae"]
+    frozen_row = indexed[("Industrial-1395", "GeoPRR-Net")]
+    require(
+        np.isclose(number(frozen_row, "nmae_mean"), float(frozen_seed["mean"]), atol=1e-6),
+        "Industrial frozen GeoPRR summaries disagree.",
+    )
+
+    shape = (len(domains), len(methods))
+    nmae = np.zeros(shape, dtype=float)
+    nmae_sd = np.zeros(shape, dtype=float)
+    acc5 = np.zeros(shape, dtype=float)
+    acc5_sd = np.zeros(shape, dtype=float)
+    coverage = np.zeros(shape, dtype=float)
+    coverage_sd = np.zeros(shape, dtype=float)
+    for domain_index, domain in enumerate(domains):
+        for method_index, method in enumerate(methods):
+            row = indexed[(domain, method)]
+            if domain == "Industrial-1395" and method == "GeoPRR-Net":
+                nmae[domain_index, method_index] = 100.0 * float(adapted_pooled["nmae"])
+                acc5[domain_index, method_index] = 100.0 * float(adapted_pooled["acc_at_5pct"])
+                coverage[domain_index, method_index] = 100.0
+            else:
+                nmae[domain_index, method_index] = 100.0 * number(row, "nmae_mean")
+                nmae_sd[domain_index, method_index] = 100.0 * number(row, "nmae_sample_sd")
+                acc5[domain_index, method_index] = 100.0 * number(row, "acc_at_5_mean")
+                acc5_sd[domain_index, method_index] = 100.0 * number(row, "acc_at_5_sample_sd")
+                coverage[domain_index, method_index] = 100.0 * number(row, "coverage_mean")
+                coverage_sd[domain_index, method_index] = 100.0 * number(row, "coverage_sample_sd")
+
+    for values, label in (
+        (nmae, "NMAE"),
+        (nmae_sd, "NMAE SD"),
+        (acc5, "Acc@5"),
+        (acc5_sd, "Acc@5 SD"),
+        (coverage, "coverage"),
+        (coverage_sd, "coverage SD"),
+    ):
+        require(bool(np.isfinite(values).all()), f"Non-finite structured-reader {label}.")
+        require(bool((values >= 0).all()), f"Negative structured-reader {label}.")
+    require(bool((nmae[:, [0]] < nmae[:, 1:]).all()), "GeoPRR-Net must have the lowest NMAE in every domain.")
+    require(bool((acc5[:, [0]] > acc5[:, 1:]).all()), "GeoPRR-Net must have the highest Acc@5 in every domain.")
+    require(bool(np.allclose(coverage[:, 0], 100.0)), "GeoPRR-Net coverage must be complete.")
+    return domains, methods, nmae, nmae_sd, acc5, acc5_sd, coverage, coverage_sd
+
+
 def build_vdn(*, png_only: bool = False) -> None:
-    """Plot the complete three-seed, same-pixel VDN comparison."""
-    rows = read_csv("vdn_supplement.csv")
-    pooled = next(row for row in rows if row["scope"] == "all_conditions")
-    conditions = [row for row in rows if row["scope"] == "condition"]
-    if len(conditions) != 6:
-        raise ValueError("The VDN figure requires all six prespecified conditions.")
-    if any(int(row["checkpoints"]) != 3 for row in rows):
-        raise ValueError("The formal VDN figure requires three checkpoints per method.")
+    """Plot absolute NMAE and Acc@5 for the complete reader matrix."""
+    domains, methods, nmae, nmae_sd, acc5, acc5_sd, _, _ = structured_reader_summary()
+    labels = {
+        "GeoPRR-Net": "GeoPRR-Net",
+        "VDN": "VDN",
+        "DeepLabV3+-ROI": "DeepLab\nROI",
+        "YOLO11s-Pose-4KP": "YOLO-Pose\n4KP",
+    }
+    colors = {
+        "GeoPRR-Net": COLORS["hero"],
+        "VDN": COLORS["baseline_dark"],
+        "DeepLabV3+-ROI": COLORS["rel"],
+        "YOLO11s-Pose-4KP": COLORS["polar"],
+    }
+    panel_titles = ["SyncG scene holdout", "Industrial-1395", "RF100-VL"]
 
-    vdn_color = COLORS["mobile"]
-    fig = plt.figure(figsize=(7.20, 3.85), layout="constrained")
-    grid = fig.add_gridspec(1, 3, width_ratios=[0.78, 1.42, 1.22])
-    ax = fig.add_subplot(grid[0, 0])
-    ax2 = fig.add_subplot(grid[0, 1])
-    ax3 = fig.add_subplot(grid[0, 2])
+    fig = plt.figure(figsize=(7.20, 5.55), layout="constrained")
+    grid = fig.add_gridspec(2, 3, height_ratios=[1.0, 1.0])
+    axes = np.asarray([[fig.add_subplot(grid[row, column]) for column in range(3)] for row in range(2)])
+    xpos = np.arange(len(methods))
+    method_colors = [colors[method] for method in methods]
 
-    pooled_mean = np.array(
-        [number(pooled, "geoprr_nmae_percent_fs"), number(pooled, "vdn_nmae_percent_fs")]
-    )
-    pooled_sd = np.array(
-        [number(pooled, "geoprr_nmae_sd_percent_fs"), number(pooled, "vdn_nmae_sd_percent_fs")]
-    )
-    pooled_colors = [COLORS["hero"], vdn_color]
-    xpos = np.arange(2)
-    ax.bar(
-        xpos,
-        pooled_mean,
-        yerr=pooled_sd,
-        capsize=2.6,
-        color=pooled_colors,
-        width=0.62,
-        edgecolor="white",
-        linewidth=0.5,
-        zorder=3,
-    )
-    ax.set_xticks(xpos, ["GeoPRR-Net", "VDN"])
-    for tick in ax.get_xticklabels():
-        tick.set_rotation(18)
-        tick.set_rotation_mode("anchor")
-        tick.set_ha("right")
-    ax.set_ylim(0, 2.05)
-    ax.set_ylabel("NMAE (%FS; lower is better)")
-    title_left(ax, "Complete matched roster")
-    panel_label(ax, "a", -0.17, 1.03)
-    quantitative_axis(ax)
-    for x, value, sd in zip(xpos, pooled_mean, pooled_sd):
-        ax.text(x, value + sd + 0.06, f"{value:.3f}", ha="center", va="bottom", fontweight="bold")
-    takeaway(ax, "39.8% lower", x=0.96, y=0.98)
-
-    labels = [row["label"] for row in conditions]
-    y = np.arange(len(conditions))[::-1]
-    geo = np.array([number(row, "geoprr_nmae_percent_fs") for row in conditions])
-    geo_sd = np.array([number(row, "geoprr_nmae_sd_percent_fs") for row in conditions])
-    vdn = np.array([number(row, "vdn_nmae_percent_fs") for row in conditions])
-    vdn_sd = np.array([number(row, "vdn_nmae_sd_percent_fs") for row in conditions])
-    ax2.errorbar(
-        geo,
-        y + 0.12,
-        xerr=geo_sd,
-        fmt="o",
-        markersize=4.2,
-        color=COLORS["hero"],
-        ecolor=COLORS["hero"],
-        capsize=2.0,
-        linewidth=1.0,
-        label="GeoPRR-Net",
-        zorder=4,
-    )
-    ax2.errorbar(
-        vdn,
-        y - 0.12,
-        xerr=vdn_sd,
-        fmt="s",
-        markersize=3.8,
-        color=vdn_color,
-        ecolor=vdn_color,
-        capsize=2.0,
-        linewidth=1.0,
-        label="VDN",
-        zorder=3,
-    )
-    ax2.set_yticks(y, labels)
-    style_condition_ticks(ax2, labels)
-    ax2.set_xlim(0.55, 3.02)
-    ax2.set_xlabel("Condition NMAE (%FS)")
-    title_left(ax2, "Condition-wise performance")
-    panel_label(ax2, "b", -0.20, 1.03)
-    quantitative_axis(ax2)
-    ax2.legend(loc="lower right")
-
-    forest_rows = [pooled, *conditions]
-    forest_labels = [row["label"] for row in forest_rows]
-    forest_y = np.arange(len(forest_rows))[::-1]
-    delta = np.array([number(row, "delta_percent_fs") for row in forest_rows])
-    low = np.array([number(row, "ci95_low_percent_fs") for row in forest_rows])
-    high = np.array([number(row, "ci95_high_percent_fs") for row in forest_rows])
-    ax3.axvspan(-1.75, 0, color=COLORS["hero_soft"], alpha=0.55, zorder=0)
-    ax3.axvline(0, color=COLORS["ink"], linewidth=0.9, zorder=2)
-    for i, (yy, effect, lo, hi) in enumerate(zip(forest_y, delta, low, high)):
-        marker_color = COLORS["warn"] if lo <= 0 <= hi else COLORS["hero"]
-        marker = "D" if i == 0 else "o"
-        ax3.errorbar(
-            effect,
-            yy,
-            xerr=[[effect - lo], [hi - effect]],
-            fmt=marker,
-            markersize=4.5 if i == 0 else 3.8,
-            color=marker_color,
-            ecolor=marker_color,
-            capsize=2.0,
-            linewidth=1.15,
-            zorder=4,
+    for domain_index, (domain, title) in enumerate(zip(domains, panel_titles)):
+        nmae_ax = axes[0, domain_index]
+        nmae_ax.bar(
+            xpos,
+            nmae[domain_index],
+            yerr=nmae_sd[domain_index],
+            capsize=2.6,
+            color=method_colors,
+            width=0.64,
+            edgecolor="white",
+            linewidth=0.5,
+            zorder=3,
         )
-    ax3.set_yticks(forest_y, forest_labels)
-    style_condition_ticks(ax3, forest_labels)
-    ax3.set_xlim(-1.75, 0.42)
-    ax3.set_xlabel(r"GeoPRR-Net $-$ VDN NMAE (%FS)")
-    title_left(ax3, "Paired scene-bootstrap effects")
-    panel_label(ax3, "c", -0.22, 1.03)
-    quantitative_axis(ax3)
+        nmae_upper = float(np.max(nmae[domain_index] + nmae_sd[domain_index]))
+        nmae_ylim = nmae_upper * 1.24
+        nmae_ax.set_ylim(0, nmae_ylim)
+        nmae_ax.set_xticks(xpos, [])
+        nmae_ax.set_ylabel("Pooled NMAE (%FS)" if domain_index == 0 else "NMAE (%FS)")
+        title_left(nmae_ax, title)
+        panel_label(nmae_ax, chr(ord("a") + domain_index), -0.14, 1.03)
+        quantitative_axis(nmae_ax, grid_axis="y")
+        for x, value, sd, method in zip(xpos, nmae[domain_index], nmae_sd[domain_index], methods):
+            nmae_ax.text(
+                x,
+                value + sd + 0.021 * nmae_ylim,
+                f"{value:.2f}",
+                ha="center",
+                va="bottom",
+                fontsize=FONT_BODY,
+                fontweight="bold" if method == "GeoPRR-Net" else "normal",
+                color=COLORS["hero"] if method == "GeoPRR-Net" else COLORS["ink"],
+            )
+
+        acc_ax = axes[1, domain_index]
+        acc_ax.bar(
+            xpos,
+            acc5[domain_index],
+            yerr=acc5_sd[domain_index],
+            capsize=2.6,
+            color=method_colors,
+            width=0.64,
+            edgecolor="white",
+            linewidth=0.5,
+            zorder=3,
+        )
+        acc_ax.set_ylim(0, 110)
+        acc_ax.set_xticks(xpos, [labels[method] for method in methods])
+        acc_ax.set_ylabel("Acc@5 (%)" if domain_index == 0 else "Acc@5 (%)")
+        panel_label(acc_ax, chr(ord("d") + domain_index), -0.14, 1.03)
+        quantitative_axis(acc_ax, grid_axis="y")
+        for x, value, sd, method in zip(xpos, acc5[domain_index], acc5_sd[domain_index], methods):
+            acc_ax.text(
+                x,
+                min(value + sd + 2.0, 107.0),
+                f"{value:.1f}",
+                ha="center",
+                va="bottom",
+                fontsize=FONT_BODY,
+                fontweight="bold" if method == "GeoPRR-Net" else "normal",
+                color=COLORS["hero"] if method == "GeoPRR-Net" else COLORS["ink"],
+            )
 
     fig.suptitle(
-        "Three-seed VDN comparison on 1,558 images and all six conditions",
+        "GeoPRR-Net combines lower pooled error with higher Acc@5 across three domains",
         fontsize=FONT_HEAD,
         fontweight="bold",
     )
     if png_only:
         save_png(fig, "fig6_vdn_comparison")
     else:
-        save_all(fig, "fig6_vdn_comparison")
+        save_pdf_png(fig, "fig6_vdn_comparison")
+
+
+def build_reader_advantage(*, png_only: bool = False) -> None:
+    """Plot effect-size and valid-output maps for the complete reader matrix."""
+    domains, methods, nmae, _, acc5, _, coverage, _ = structured_reader_summary()
+    domain_labels = ["SyncG", "Industrial-1395", "RF100-VL"]
+    comparator_labels = ["VDN", "DeepLab", "YOLO-Pose"]
+    method_labels = ["GeoPRR", "VDN", "DLV3+", "YOLO-Pose"]
+
+    reductions = 100.0 * (nmae[:, 1:] - nmae[:, [0]]) / nmae[:, 1:]
+    acc5_gains = acc5[:, [0]] - acc5[:, 1:]
+    require(bool((reductions > 0).all()), "Every relative NMAE reduction must be positive.")
+    require(bool((acc5_gains > 0).all()), "Every Acc@5 gain must be positive.")
+
+    fig = plt.figure(figsize=(7.20, 3.35), layout="constrained")
+    grid = fig.add_gridspec(1, 3, width_ratios=[1.0, 1.0, 1.18])
+    axes = [fig.add_subplot(grid[0, index]) for index in range(3)]
+    matrices = [reductions, acc5_gains, coverage]
+    xlabels = [comparator_labels, comparator_labels, method_labels]
+    titles = ["Relative NMAE reduction", "Acc@5 gain", "Valid-output coverage"]
+    colorbar_labels = ["Reduction (%)", "Gain (percentage points)", "Coverage (%)"]
+    vmax_values = [100.0, 60.0, 100.0]
+    cmaps = [
+        LinearSegmentedColormap.from_list("reader_reduction", ["#F2F6F9", "#A9CBE2", "#4E8FC2", "#0F4D92"]),
+        LinearSegmentedColormap.from_list("reader_acc_gain", ["#F1F8F7", "#A7D9D3", "#4BB3A8", "#168A82"]),
+        LinearSegmentedColormap.from_list("reader_coverage", ["#F6F3FA", "#C8BCE0", "#8A75B5", "#5D478F"]),
+    ]
+
+    for panel_index, (ax, matrix, labels, title, cbar_label, vmax, cmap) in enumerate(
+        zip(axes, matrices, xlabels, titles, colorbar_labels, vmax_values, cmaps)
+    ):
+        image = ax.imshow(
+            matrix,
+            cmap=cmap,
+            vmin=0,
+            vmax=vmax,
+            aspect="auto",
+            interpolation="nearest",
+        )
+        ax.set_xticks(np.arange(len(labels)), labels)
+        ax.set_yticks(np.arange(len(domains)), domain_labels)
+        ax.set_xticks(np.arange(-0.5, len(labels), 1), minor=True)
+        ax.set_yticks(np.arange(-0.5, len(domains), 1), minor=True)
+        ax.grid(which="minor", color=COLORS["paper"], linewidth=1.1)
+        ax.tick_params(which="both", length=0)
+        title_left(ax, title)
+        panel_label(ax, chr(ord("a") + panel_index), -0.15, 1.03)
+        for row_index in range(matrix.shape[0]):
+            for column_index in range(matrix.shape[1]):
+                value = float(matrix[row_index, column_index])
+                if panel_index == 0:
+                    label = f"{value:.1f}%"
+                elif panel_index == 1:
+                    label = f"+{value:.1f}"
+                else:
+                    label = f"{value:.1f}%"
+                ax.text(
+                    column_index,
+                    row_index,
+                    label,
+                    ha="center",
+                    va="center",
+                    fontsize=FONT_BODY,
+                    fontweight="bold" if (panel_index < 2 or column_index == 0) else "normal",
+                    color=COLORS["paper"] if value / vmax >= 0.58 else COLORS["ink"],
+                )
+        if panel_index == 2:
+            ax.add_patch(
+                Rectangle(
+                    (-0.5, -0.5),
+                    1.0,
+                    len(domains),
+                    fill=False,
+                    edgecolor=COLORS["hero"],
+                    linewidth=1.5,
+                )
+            )
+        colorbar = fig.colorbar(image, ax=ax, orientation="horizontal", fraction=0.075, pad=0.12, aspect=24)
+        colorbar.set_label(cbar_label)
+        colorbar.outline.set_visible(False)
+
+    fig.suptitle(
+        "GeoPRR-Net delivers consistent effect-size gains with complete output coverage",
+        fontsize=FONT_HEAD,
+        fontweight="bold",
+    )
+    if png_only:
+        save_png(fig, "fig7_reader_advantage")
+    else:
+        save_pdf_png(fig, "fig7_reader_advantage")
 
 
 def main() -> None:
@@ -1893,6 +2023,7 @@ def main() -> None:
             "rf100",
             "cross_domain",
             "vdn",
+            "reader_advantage",
             "efficiency",
         ),
         default="all",
@@ -1919,6 +2050,8 @@ def main() -> None:
         build_cross_domain(png_only=args.png_only)
     if args.figure in ("all", "vdn"):
         build_vdn(png_only=args.png_only)
+    if args.figure in ("all", "reader_advantage"):
+        build_reader_advantage(png_only=args.png_only)
     if args.figure in ("all", "efficiency"):
         build_efficiency(png_only=args.png_only)
     if args.png_only:

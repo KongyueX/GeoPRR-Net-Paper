@@ -4,9 +4,10 @@ This directory contains the public, machine-readable result tables underlying
 the current GeoPRR-Net manuscript. Values are normalized to full scale in
 `[0, 1]`; multiply errors by 100 to obtain `%FS`.
 
-The release contains predictions and training/evaluation metrics only. It does
+The release contains predictions and training/evaluation metrics only,
+including an anonymized Industrial-1395 adapted-OOF prediction ledger. It does
 not redistribute source images, model checkpoints, third-party weights, local
-paths, runtime logs, or restricted Industrial-1395 per-sample records.
+paths, runtime logs, or non-public Industrial-1395 source records.
 
 ## Inventory
 
@@ -33,8 +34,10 @@ paths, runtime logs, or restricted Industrial-1395 per-sample records.
 | `industrial1395/group_metrics.csv.gz` | 11,232 | Group-level metrics for 52 globally anonymized acquisition clusters within one unified Industrial-1395 cohort, nine GeoPRR/CNN outputs, three seeds, and eight condition scopes. |
 | `industrial1395/cohort_metrics.csv` | 216 | Full-denominator and group-macro metrics for the complete 1,395-image cohort; Raw and SARN-v2 ResNet-18, EfficientNet-B0, and MobileNetV3-Large are included, and no source-partition rows are reported. |
 | `industrial1395/group_metrics_audit.json` | — | Denominator, group-macro, anonymization, and test-only evaluation checks. |
+| `industrial1395/supervised_feature_head_ensemble_per_sample.json` | 8,370 | Per-row predictions and aggregate metrics for supervised five-fold target-domain OOF GeoPRR-Net feature-head adaptation and equal-weight three-encoder aggregation. |
 | `training/geoprr_training_history.csv.gz` | 651 | Shared polar and variant-specific router optimization histories for the three GeoPRR-Net seeds. |
 | `training/vdn_training_history.csv.gz` | 600 | The complete 200-epoch history for each of the three matched VDN checkpoints. |
+| `roi_geometry_comparison_three_seed.csv` | 12 | Complete three-domain by four-method ROI-level comparison for GeoPRR-Net, VDN, DeepLabV3+-ROI, and YOLO11s-Pose-4KP, including clean/pooled NMAE, Acc@5%, coverage, and paired cluster-bootstrap intervals for the frozen three-seed rows. |
 | `public_results_summary.json` | — | Current SyncG, RF100-VL, VDN, efficiency, and Industrial-1395 aggregate statistics. Industrial data are aggregates only. |
 | `inventory.json` | — | Row counts, file sizes, cohort dimensions, and explicit exclusions for this release. |
 

@@ -127,6 +127,16 @@
       "rows": 600
     },
     {
+      "bytes": 4682903,
+      "path": "data/industrial1395/supervised_feature_head_ensemble_per_sample.json",
+      "rows": 8370
+    },
+    {
+      "bytes": 3986,
+      "path": "data/roi_geometry_comparison_three_seed.csv",
+      "rows": 12
+    },
+    {
       "bytes": 154548,
       "path": "data/public_results_summary.json",
       "rows": null
