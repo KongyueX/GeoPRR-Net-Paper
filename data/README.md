@@ -2,7 +2,9 @@
 
 This directory contains the public, machine-readable result tables underlying
 the current GeoPRR-Net manuscript. Values are normalized to full scale in
-`[0, 1]`; multiply errors by 100 to obtain `%FS`.
+`[0, 1]`; multiply errors by 100 to obtain `%FS`. The new
+`roi_comparison_zero_shot*` files explicitly use percentage units in their
+column names and JSON metadata; do not multiply those values by 100 again.
 
 The release contains predictions and training/evaluation metrics only,
 including an anonymized Industrial-1395 adapted-OOF prediction ledger. It does
@@ -40,6 +42,43 @@ paths, runtime logs, or non-public Industrial-1395 source records.
 | `roi_geometry_comparison_three_seed.csv` | 12 | Complete three-domain by four-method ROI-level comparison for GeoPRR-Net, VDN, DeepLabV3+-ROI, and YOLO11s-Pose-4KP, including clean/pooled NMAE, Acc@5%, coverage, and paired cluster-bootstrap intervals where released. The Industrial-1395 GeoPRR-Net row uses the five-fold OOF aggregate. |
 | `public_results_summary.json` | — | Current SyncG, RF100-VL, VDN, efficiency, and Industrial-1395 aggregate statistics. Industrial data are aggregates only. |
 | `inventory.json` | — | Row counts, file sizes, cohort dimensions, and explicit exclusions for this release. |
+
+## Source-reference update: 2026-09-07
+
+| File | Rows | Contents |
+|---|---:|---|
+| `roi_comparison_zero_shot.csv` | 12 | Three readers on Industrial-1395 and RF100-VL, clean and six-condition scopes; per-seed NMAE, Acc@2, Acc@5, coverage, and mean/sample SD in percentage units. |
+| `roi_comparison_zero_shot_public.json` | — | Aggregate source-only transfer results, reference-model provenance, cohort sizes, and per-seed statistics. |
+| `roi_comparison_efficiency.csv` | 5 | Matched FP32 batch-1 native-component and complete ROI-reader parameter, operation, latency, throughput, and memory measurements. |
+| `roi_comparison_efficiency_public.json` | — | Hardware, input/measurement scope, observed FP32 precision, and aggregate timing/failure evidence for all five arms. |
+
+Industrial DeepLab and VDN now use same-seed YOLO11s-Pose-4KP models trained
+on SyncG to provide pivot/start/end. The predicted pointer tip is excluded
+from reference selection, confidence checks, and decoding. The previous
+detector's training roster could not be established; its predictions have
+been replaced by a fresh three-seed evaluation. Six-condition NMAE is now
+32.9356 ± 4.0842%FS for DeepLab and 25.3840 ± 6.7070%FS for VDN. YOLO remains
+31.0045 ± 7.6146%FS. RF100 DeepLab/VDN remain annotation-assisted components.
+
+The existing Industrial GeoPRR entry uses supervised target-domain OOF
+adaptation, whereas these comparators are source-only readers within supplied
+ROIs. `evaluation_setting` makes this distinction explicit in the 12-row
+comparison table. Its Industrial delta column is a descriptive point
+difference against that OOF aggregate; confidence intervals remain unreported.
+The frozen source-only GeoPRR result of 12.3664%FS is a different setting.
+
+Efficiency uses RTX 4060 / PyTorch 2.11 / CUDA 12.8, FP32, batch 1, seed
+20262020, 20 warmups and 100 timed clean ROIs. Complete reader arms include
+reference detection, preprocessing, transfers, decoding and synchronization.
+DeepLab probability-map and VDN direction-only arms are explicitly identified
+as native components. FPS is inverse mean latency; failures remain timed.
+Supported neural GFLOPs omit preprocessing, NMS, CPU geometry and unsupported
+operators. Accuracy evaluation uses the existing CUDA autocast configuration.
+
+The new public JSON/CSV files contain cohort/seed aggregates, without source
+images, weights, local absolute paths, or per-image Industrial readings.
+Reproduction code and the full explanation are in the
+[code repository report](https://github.com/KongyueX/GeoPRR-Net/blob/main/docs/ROI_GEOMETRY_COMPARISON_CN.md).
 
 ## Core schemas
 

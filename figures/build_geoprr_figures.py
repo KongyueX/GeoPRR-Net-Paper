@@ -1930,10 +1930,10 @@ def build_vdn(*, png_only: bool = False) -> None:
     """Plot absolute NMAE and Acc@5 for the complete reader matrix."""
     domains, methods, nmae, nmae_sd, acc5, acc5_sd, _, _ = structured_reader_summary()
     labels = {
-        "GeoPRR-Net": "GeoPRR-Net",
+        "GeoPRR-Net": "GeoPRR-\nNet",
         "VDN": "VDN",
         "DeepLabV3+-ROI": "DeepLab\nROI",
-        "YOLO11s-Pose-4KP": "YOLO-Pose\n4KP",
+        "YOLO11s-Pose-4KP": "YOLO\n4KP",
     }
     colors = {
         "GeoPRR-Net": COLORS["hero"],
@@ -2012,7 +2012,8 @@ def build_vdn(*, png_only: bool = False) -> None:
             )
 
     fig.suptitle(
-        "GeoPRR-Net combines lower pooled error with higher Acc@5 across three domains",
+        "Structured-reader performance under the reported domain protocols\n"
+        "Industrial: supervised OOF GeoPRR-Net; source-only structured comparators",
         fontsize=FONT_HEAD,
         fontweight="bold",
     )
@@ -2026,8 +2027,8 @@ def build_reader_advantage(*, png_only: bool = False) -> None:
     """Plot effect-size and valid-output maps for the complete reader matrix."""
     domains, methods, nmae, _, acc5, _, coverage, _ = structured_reader_summary()
     domain_labels = ["SyncG", "Industrial-1395", "RF100-VL"]
-    comparator_labels = ["VDN", "DeepLab", "YOLO-Pose"]
-    method_labels = ["GeoPRR", "VDN", "DLV3+", "YOLO-Pose"]
+    comparator_labels = ["VDN", "DeepLab", "YOLO-\nPose"]
+    method_labels = ["GeoPRR", "VDN", "DLV3+", "YOLO-\nPose"]
 
     reductions = 100.0 * (nmae[:, 1:] - nmae[:, [0]]) / nmae[:, 1:]
     acc5_gains = acc5[:, [0]] - acc5[:, 1:]
@@ -2102,7 +2103,8 @@ def build_reader_advantage(*, png_only: bool = False) -> None:
         colorbar.outline.set_visible(False)
 
     fig.suptitle(
-        "GeoPRR-Net delivers consistent effect-size gains with complete output coverage",
+        "Descriptive effect sizes and valid-output coverage under the reported protocols\n"
+        "Industrial: supervised OOF GeoPRR-Net; source-only structured comparators",
         fontsize=FONT_HEAD,
         fontweight="bold",
     )

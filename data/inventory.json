@@ -87,7 +87,7 @@
       "rows": null
     },
     {
-      "bytes": 2611,
+      "bytes": 2619,
       "path": "data/figure3/README.md",
       "rows": null
     },
@@ -132,14 +132,34 @@
       "rows": 8370
     },
     {
-      "bytes": 3800,
+      "bytes": 4225,
       "path": "data/roi_geometry_comparison_three_seed.csv",
       "rows": 12
     },
     {
-      "bytes": 154609,
+      "bytes": 220635,
       "path": "data/public_results_summary.json",
       "rows": null
+    },
+    {
+      "path": "data/roi_comparison_zero_shot_public.json",
+      "rows": null,
+      "bytes": 35974
+    },
+    {
+      "path": "data/roi_comparison_efficiency_public.json",
+      "rows": null,
+      "bytes": 25937
+    },
+    {
+      "path": "data/roi_comparison_zero_shot.csv",
+      "rows": 12,
+      "bytes": 5358
+    },
+    {
+      "path": "data/roi_comparison_efficiency.csv",
+      "rows": 5,
+      "bytes": 1050
     }
   ],
   "publication_model": "GeoPRR-Net",
@@ -191,5 +211,12 @@
     20262020,
     20262021,
     20262022
-  ]
+  ],
+  "roi_source_reference_update": {
+    "date": "2026-09-07",
+    "transfer_rows": 12,
+    "efficiency_arms": 5,
+    "readout_seed_count": 3,
+    "industrial_reference_geometry": "source-trained YOLO pose; pivot/start/end only"
+  }
 }

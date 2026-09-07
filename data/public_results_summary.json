@@ -321,28 +321,28 @@
           "sample_sd": 0.028914782625527023
         }
       },
-    "Proposed": {
-      "acc_at_2_percent": {
-        "maximum": 0.6058542413381123,
-        "mean": 0.6058542413381123,
-        "minimum": 0.6058542413381123,
-        "per_seed": [
-          0.6058542413381123
-        ],
-        "range": 0.0,
-        "sample_sd": 0.0
-      },
-      "nmae": {
-        "maximum": 0.023262000730589677,
-        "mean": 0.023262000730589677,
-        "minimum": 0.023262000730589677,
-        "per_seed": [
-          0.023262000730589677
-        ],
-        "range": 0.0,
-        "sample_sd": 0.0
-      },
-      "aggregation": "supervised group-wise five-fold OOF; three-encoder equal-weight aggregate"
+      "Proposed": {
+        "acc_at_2_percent": {
+          "maximum": 0.6058542413381123,
+          "mean": 0.6058542413381123,
+          "minimum": 0.6058542413381123,
+          "per_seed": [
+            0.6058542413381123
+          ],
+          "range": 0.0,
+          "sample_sd": 0.0
+        },
+        "nmae": {
+          "maximum": 0.023262000730589677,
+          "mean": 0.023262000730589677,
+          "minimum": 0.023262000730589677,
+          "per_seed": [
+            0.023262000730589677
+          ],
+          "range": 0.0,
+          "sample_sd": 0.0
+        },
+        "aggregation": "supervised group-wise five-fold OOF; three-encoder equal-weight aggregate"
       },
       "ResNet-18": {
         "acc_at_2_percent": {
@@ -384,46 +384,46 @@
         }
       }
     },
-  "note": "Restricted images and unredacted source records are excluded; all published statistics pool the complete Industrial-1395 cohort. The pseudonymous OOF prediction ledger is released separately.",
+    "note": "Restricted images and unredacted source records are excluded; all published statistics pool the complete Industrial-1395 cohort. The pseudonymous OOF prediction ledger is released separately.",
     "paired": {
       "Proposed_minus_EfficientNet-B0": {
-      "delta_nmae_candidate_minus_comparator": -0.129287887767474,
+        "delta_nmae_candidate_minus_comparator": -0.129287887767474,
         "group_unit": "acquisition cluster",
         "groups": 52,
         "paired_group_bootstrap_ci95": {
-        "high": -0.09776723438429076,
-        "low": -0.16540016911141886
+          "high": -0.09776723438429076,
+          "low": -0.16540016911141886
         },
         "replicates": 20000,
         "rows": 8370,
         "seed": 20260928,
-      "seed_handling": "GeoPRR-Net uses the OOF equal-weight aggregate; raw comparator errors are averaged over three training seeds"
+        "seed_handling": "GeoPRR-Net uses the OOF equal-weight aggregate; raw comparator errors are averaged over three training seeds"
       },
       "Proposed_minus_MobileNetV3-Large": {
-      "delta_nmae_candidate_minus_comparator": -0.16430735679154193,
+        "delta_nmae_candidate_minus_comparator": -0.16430735679154193,
         "group_unit": "acquisition cluster",
         "groups": 52,
         "paired_group_bootstrap_ci95": {
-        "high": -0.13014691920759336,
-        "low": -0.19960964858214775
+          "high": -0.13014691920759336,
+          "low": -0.19960964858214775
         },
         "replicates": 20000,
         "rows": 8370,
         "seed": 20260929,
-      "seed_handling": "GeoPRR-Net uses the OOF equal-weight aggregate; raw comparator errors are averaged over three training seeds"
+        "seed_handling": "GeoPRR-Net uses the OOF equal-weight aggregate; raw comparator errors are averaged over three training seeds"
       },
       "Proposed_minus_ResNet-18": {
-      "delta_nmae_candidate_minus_comparator": -0.21250926990923016,
+        "delta_nmae_candidate_minus_comparator": -0.21250926990923016,
         "group_unit": "acquisition cluster",
         "groups": 52,
         "paired_group_bootstrap_ci95": {
-        "high": -0.16385898084129794,
-        "low": -0.26217123024365674
+          "high": -0.16385898084129794,
+          "low": -0.26217123024365674
         },
         "replicates": 20000,
         "rows": 8370,
         "seed": 20260927,
-      "seed_handling": "GeoPRR-Net uses the OOF equal-weight aggregate; raw comparator errors are averaged over three training seeds"
+        "seed_handling": "GeoPRR-Net uses the OOF equal-weight aggregate; raw comparator errors are averaged over three training seeds"
       }
     }
   },
@@ -4650,5 +4650,1546 @@
       }
     },
     "status": "complete"
+  },
+  "roi_source_only_transfer": {
+    "updated_date": "2026-09-07",
+    "results_file": "data/roi_comparison_zero_shot_public.json",
+    "table_file": "data/roi_comparison_zero_shot.csv",
+    "reference_kind": "source_only_pose4kp_reference",
+    "industrial_geometry": "Same-seed SyncG pose pivot/start/end; predicted pointer tip excluded",
+    "rf100_geometry": "Annotated pivot/start/end for DeepLab and VDN",
+    "units": "NMAE %FS; accuracy and coverage percent",
+    "datasets": {
+      "industrial_pooled": {
+        "name": "Industrial-1395",
+        "samples": 1395,
+        "groups": 52,
+        "rows_per_seed": 8370,
+        "methods": {
+          "yolo11s_pose4kp": {
+            "name": "YOLO11s-Pose-4KP",
+            "aggregate": {
+              "clean": {
+                "rows_per_seed": 1395,
+                "nmae_percent_fs": {
+                  "mean": 22.466530081257215,
+                  "sample_sd": 7.004334914891296,
+                  "per_seed": {
+                    "20262020": 15.497249441439076,
+                    "20262021": 22.396940087503793,
+                    "20262022": 29.505400714828767
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 24.492234169653525,
+                  "sample_sd": 3.701544828849114,
+                  "per_seed": {
+                    "20262020": 27.81362007168459,
+                    "20262021": 20.50179211469534,
+                    "20262022": 25.161290322580644
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 41.72043010752688,
+                  "sample_sd": 6.045778011534266,
+                  "per_seed": {
+                    "20262020": 48.67383512544803,
+                    "20262021": 37.70609318996416,
+                    "20262022": 38.78136200716846
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 99.83273596176821,
+                  "sample_sd": 0.1492233691373595,
+                  "per_seed": {
+                    "20262020": 100.0,
+                    "20262021": 99.71326164874552,
+                    "20262022": 99.78494623655914
+                  }
+                }
+              },
+              "all_conditions": {
+                "rows_per_seed": 8370,
+                "nmae_percent_fs": {
+                  "mean": 31.004500114042504,
+                  "sample_sd": 7.614609935600333,
+                  "per_seed": {
+                    "20262020": 23.53194708412602,
+                    "20262021": 30.72792254709623,
+                    "20262022": 38.75363071090527
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 15.870171246515332,
+                  "sample_sd": 3.6604077716710917,
+                  "per_seed": {
+                    "20262020": 18.685782556750297,
+                    "20262021": 11.732377538829152,
+                    "20262022": 17.19235364396655
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 27.741935483870964,
+                  "sample_sd": 5.886908103590731,
+                  "per_seed": {
+                    "20262020": 34.396654719235364,
+                    "20262021": 23.213859020310633,
+                    "20262022": 25.615292712066907
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 99.67343687773796,
+                  "sample_sd": 0.23574111647867627,
+                  "per_seed": {
+                    "20262020": 99.78494623655914,
+                    "20262021": 99.4026284348865,
+                    "20262022": 99.83273596176822
+                  }
+                }
+              }
+            },
+            "per_seed": [
+              {
+                "seed": 20262020,
+                "clean": {
+                  "rows": 1395,
+                  "failures": 0,
+                  "nmae_percent_fs": 15.497249441439076,
+                  "acc_at_2_percent": 27.81362007168459,
+                  "acc_at_5_percent": 48.67383512544803,
+                  "coverage_percent": 100.0
+                },
+                "all_conditions": {
+                  "rows": 8370,
+                  "failures": 18,
+                  "nmae_percent_fs": 23.53194708412602,
+                  "acc_at_2_percent": 18.685782556750297,
+                  "acc_at_5_percent": 34.396654719235364,
+                  "coverage_percent": 99.78494623655914
+                }
+              },
+              {
+                "seed": 20262021,
+                "clean": {
+                  "rows": 1395,
+                  "failures": 4,
+                  "nmae_percent_fs": 22.396940087503793,
+                  "acc_at_2_percent": 20.50179211469534,
+                  "acc_at_5_percent": 37.70609318996416,
+                  "coverage_percent": 99.71326164874552
+                },
+                "all_conditions": {
+                  "rows": 8370,
+                  "failures": 50,
+                  "nmae_percent_fs": 30.72792254709623,
+                  "acc_at_2_percent": 11.732377538829152,
+                  "acc_at_5_percent": 23.213859020310633,
+                  "coverage_percent": 99.4026284348865
+                }
+              },
+              {
+                "seed": 20262022,
+                "clean": {
+                  "rows": 1395,
+                  "failures": 3,
+                  "nmae_percent_fs": 29.505400714828767,
+                  "acc_at_2_percent": 25.161290322580644,
+                  "acc_at_5_percent": 38.78136200716846,
+                  "coverage_percent": 99.78494623655914
+                },
+                "all_conditions": {
+                  "rows": 8370,
+                  "failures": 14,
+                  "nmae_percent_fs": 38.75363071090527,
+                  "acc_at_2_percent": 17.19235364396655,
+                  "acc_at_5_percent": 25.615292712066907,
+                  "coverage_percent": 99.83273596176822
+                }
+              }
+            ]
+          },
+          "deeplabv3plus_roi": {
+            "name": "DeepLabV3+-ROI",
+            "aggregate": {
+              "clean": {
+                "rows_per_seed": 1395,
+                "nmae_percent_fs": {
+                  "mean": 19.05146332052762,
+                  "sample_sd": 5.010304977967542,
+                  "per_seed": {
+                    "20262020": 16.355666939402244,
+                    "20262021": 15.966228603554173,
+                    "20262022": 24.83249441862645
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 36.63082437275986,
+                  "sample_sd": 4.497886578365876,
+                  "per_seed": {
+                    "20262020": 38.70967741935484,
+                    "20262021": 39.71326164874552,
+                    "20262022": 31.469534050179213
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 52.903225806451616,
+                  "sample_sd": 7.478595759567012,
+                  "per_seed": {
+                    "20262020": 58.63799283154122,
+                    "20262021": 55.62724014336918,
+                    "20262022": 44.44444444444444
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 97.10872162485066,
+                  "sample_sd": 1.1588392499863496,
+                  "per_seed": {
+                    "20262020": 96.91756272401433,
+                    "20262021": 98.35125448028674,
+                    "20262022": 96.05734767025089
+                  }
+                }
+              },
+              "all_conditions": {
+                "rows_per_seed": 8370,
+                "nmae_percent_fs": {
+                  "mean": 32.93555056056938,
+                  "sample_sd": 4.084163488885349,
+                  "per_seed": {
+                    "20262020": 30.304491921662336,
+                    "20262021": 30.86160510759597,
+                    "20262022": 37.640554652449836
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 28.15611310234966,
+                  "sample_sd": 2.883376677832192,
+                  "per_seed": {
+                    "20262020": 30.81242532855436,
+                    "20262021": 28.566308243727597,
+                    "20262022": 25.089605734767026
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 40.39426523297491,
+                  "sample_sd": 4.798451937087216,
+                  "per_seed": {
+                    "20262020": 44.587813620071685,
+                    "20262021": 41.4336917562724,
+                    "20262022": 35.16129032258065
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 85.20111509358821,
+                  "sample_sd": 0.8062819710359735,
+                  "per_seed": {
+                    "20262020": 84.67144563918758,
+                    "20262021": 86.12903225806451,
+                    "20262022": 84.80286738351255
+                  }
+                }
+              }
+            },
+            "per_seed": [
+              {
+                "seed": 20262020,
+                "clean": {
+                  "rows": 1395,
+                  "failures": 43,
+                  "nmae_percent_fs": 16.355666939402244,
+                  "acc_at_2_percent": 38.70967741935484,
+                  "acc_at_5_percent": 58.63799283154122,
+                  "coverage_percent": 96.91756272401433
+                },
+                "all_conditions": {
+                  "rows": 8370,
+                  "failures": 1283,
+                  "nmae_percent_fs": 30.304491921662336,
+                  "acc_at_2_percent": 30.81242532855436,
+                  "acc_at_5_percent": 44.587813620071685,
+                  "coverage_percent": 84.67144563918758
+                }
+              },
+              {
+                "seed": 20262021,
+                "clean": {
+                  "rows": 1395,
+                  "failures": 23,
+                  "nmae_percent_fs": 15.966228603554173,
+                  "acc_at_2_percent": 39.71326164874552,
+                  "acc_at_5_percent": 55.62724014336918,
+                  "coverage_percent": 98.35125448028674
+                },
+                "all_conditions": {
+                  "rows": 8370,
+                  "failures": 1161,
+                  "nmae_percent_fs": 30.86160510759597,
+                  "acc_at_2_percent": 28.566308243727597,
+                  "acc_at_5_percent": 41.4336917562724,
+                  "coverage_percent": 86.12903225806451
+                }
+              },
+              {
+                "seed": 20262022,
+                "clean": {
+                  "rows": 1395,
+                  "failures": 55,
+                  "nmae_percent_fs": 24.83249441862645,
+                  "acc_at_2_percent": 31.469534050179213,
+                  "acc_at_5_percent": 44.44444444444444,
+                  "coverage_percent": 96.05734767025089
+                },
+                "all_conditions": {
+                  "rows": 8370,
+                  "failures": 1272,
+                  "nmae_percent_fs": 37.640554652449836,
+                  "acc_at_2_percent": 25.089605734767026,
+                  "acc_at_5_percent": 35.16129032258065,
+                  "coverage_percent": 84.80286738351255
+                }
+              }
+            ]
+          },
+          "vdn": {
+            "name": "VDN",
+            "aggregate": {
+              "clean": {
+                "rows_per_seed": 1395,
+                "nmae_percent_fs": {
+                  "mean": 23.959623318966763,
+                  "sample_sd": 5.680861216508008,
+                  "per_seed": {
+                    "20262020": 20.18618095552545,
+                    "20262021": 30.493175002068405,
+                    "20262022": 21.19951399930643
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 32.04301075268817,
+                  "sample_sd": 6.309465505665017,
+                  "per_seed": {
+                    "20262020": 32.831541218637994,
+                    "20262021": 25.376344086021504,
+                    "20262022": 37.92114695340502
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 47.12066905615293,
+                  "sample_sd": 4.988306534574469,
+                  "per_seed": {
+                    "20262020": 51.03942652329749,
+                    "20262021": 41.505376344086024,
+                    "20262022": 48.81720430107527
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 99.83273596176821,
+                  "sample_sd": 0.1492233691373595,
+                  "per_seed": {
+                    "20262020": 100.0,
+                    "20262021": 99.71326164874552,
+                    "20262022": 99.78494623655914
+                  }
+                }
+              },
+              "all_conditions": {
+                "rows_per_seed": 8370,
+                "nmae_percent_fs": {
+                  "mean": 25.384042764404214,
+                  "sample_sd": 6.707042569822726,
+                  "per_seed": {
+                    "20262020": 21.119689652314907,
+                    "20262021": 33.11495930681856,
+                    "20262022": 21.917479334079175
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 29.561927518916765,
+                  "sample_sd": 6.149740313711442,
+                  "per_seed": {
+                    "20262020": 31.40979689366786,
+                    "20262021": 22.700119474313023,
+                    "20262022": 34.57586618876942
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 42.508960573476706,
+                  "sample_sd": 5.378295145783894,
+                  "per_seed": {
+                    "20262020": 46.547192353643965,
+                    "20262021": 36.40382317801673,
+                    "20262022": 44.57586618876942
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 99.67343687773796,
+                  "sample_sd": 0.23574111647867627,
+                  "per_seed": {
+                    "20262020": 99.78494623655914,
+                    "20262021": 99.4026284348865,
+                    "20262022": 99.83273596176822
+                  }
+                }
+              }
+            },
+            "per_seed": [
+              {
+                "seed": 20262020,
+                "clean": {
+                  "rows": 1395,
+                  "failures": 0,
+                  "nmae_percent_fs": 20.18618095552545,
+                  "acc_at_2_percent": 32.831541218637994,
+                  "acc_at_5_percent": 51.03942652329749,
+                  "coverage_percent": 100.0
+                },
+                "all_conditions": {
+                  "rows": 8370,
+                  "failures": 18,
+                  "nmae_percent_fs": 21.119689652314907,
+                  "acc_at_2_percent": 31.40979689366786,
+                  "acc_at_5_percent": 46.547192353643965,
+                  "coverage_percent": 99.78494623655914
+                }
+              },
+              {
+                "seed": 20262021,
+                "clean": {
+                  "rows": 1395,
+                  "failures": 4,
+                  "nmae_percent_fs": 30.493175002068405,
+                  "acc_at_2_percent": 25.376344086021504,
+                  "acc_at_5_percent": 41.505376344086024,
+                  "coverage_percent": 99.71326164874552
+                },
+                "all_conditions": {
+                  "rows": 8370,
+                  "failures": 50,
+                  "nmae_percent_fs": 33.11495930681856,
+                  "acc_at_2_percent": 22.700119474313023,
+                  "acc_at_5_percent": 36.40382317801673,
+                  "coverage_percent": 99.4026284348865
+                }
+              },
+              {
+                "seed": 20262022,
+                "clean": {
+                  "rows": 1395,
+                  "failures": 3,
+                  "nmae_percent_fs": 21.19951399930643,
+                  "acc_at_2_percent": 37.92114695340502,
+                  "acc_at_5_percent": 48.81720430107527,
+                  "coverage_percent": 99.78494623655914
+                },
+                "all_conditions": {
+                  "rows": 8370,
+                  "failures": 14,
+                  "nmae_percent_fs": 21.917479334079175,
+                  "acc_at_2_percent": 34.57586618876942,
+                  "acc_at_5_percent": 44.57586618876942,
+                  "coverage_percent": 99.83273596176822
+                }
+              }
+            ]
+          }
+        }
+      },
+      "rf100": {
+        "name": "RF100-VL",
+        "samples": 151,
+        "groups": 35,
+        "rows_per_seed": 906,
+        "methods": {
+          "yolo11s_pose4kp": {
+            "name": "YOLO11s-Pose-4KP",
+            "aggregate": {
+              "clean": {
+                "rows_per_seed": 151,
+                "nmae_percent_fs": {
+                  "mean": 10.903948065434653,
+                  "sample_sd": 5.204636825161349,
+                  "per_seed": {
+                    "20262020": 11.410329871539604,
+                    "20262021": 5.464628781628377,
+                    "20262022": 15.836885543135976
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 32.22958057395143,
+                  "sample_sd": 16.65313837752079,
+                  "per_seed": {
+                    "20262020": 44.370860927152314,
+                    "20262021": 39.0728476821192,
+                    "20262022": 13.245033112582782
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 56.512141280353205,
+                  "sample_sd": 15.801792642978612,
+                  "per_seed": {
+                    "20262020": 63.57615894039735,
+                    "20262021": 67.54966887417218,
+                    "20262022": 38.41059602649007
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 100.0,
+                  "sample_sd": 0.0,
+                  "per_seed": {
+                    "20262020": 100.0,
+                    "20262021": 100.0,
+                    "20262022": 100.0
+                  }
+                }
+              },
+              "all_conditions": {
+                "rows_per_seed": 906,
+                "nmae_percent_fs": {
+                  "mean": 16.16315739703001,
+                  "sample_sd": 4.628025955216276,
+                  "per_seed": {
+                    "20262020": 15.26125831456762,
+                    "20262021": 12.052467126094351,
+                    "20262022": 21.175746750428058
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 22.442972774098603,
+                  "sample_sd": 10.554746977920926,
+                  "per_seed": {
+                    "20262020": 30.4635761589404,
+                    "20262021": 26.379690949227374,
+                    "20262022": 10.485651214128035
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 42.531272994849154,
+                  "sample_sd": 12.623541382005188,
+                  "per_seed": {
+                    "20262020": 48.45474613686534,
+                    "20262021": 51.1037527593819,
+                    "20262022": 28.03532008830022
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 99.7056659308315,
+                  "sample_sd": 0.4178740504635959,
+                  "per_seed": {
+                    "20262020": 99.8896247240618,
+                    "20262021": 99.22737306843267,
+                    "20262022": 100.0
+                  }
+                }
+              }
+            },
+            "per_seed": [
+              {
+                "seed": 20262020,
+                "clean": {
+                  "rows": 151,
+                  "failures": 0,
+                  "nmae_percent_fs": 11.410329871539604,
+                  "acc_at_2_percent": 44.370860927152314,
+                  "acc_at_5_percent": 63.57615894039735,
+                  "coverage_percent": 100.0
+                },
+                "all_conditions": {
+                  "rows": 906,
+                  "failures": 1,
+                  "nmae_percent_fs": 15.26125831456762,
+                  "acc_at_2_percent": 30.4635761589404,
+                  "acc_at_5_percent": 48.45474613686534,
+                  "coverage_percent": 99.8896247240618
+                }
+              },
+              {
+                "seed": 20262021,
+                "clean": {
+                  "rows": 151,
+                  "failures": 0,
+                  "nmae_percent_fs": 5.464628781628377,
+                  "acc_at_2_percent": 39.0728476821192,
+                  "acc_at_5_percent": 67.54966887417218,
+                  "coverage_percent": 100.0
+                },
+                "all_conditions": {
+                  "rows": 906,
+                  "failures": 7,
+                  "nmae_percent_fs": 12.052467126094351,
+                  "acc_at_2_percent": 26.379690949227374,
+                  "acc_at_5_percent": 51.1037527593819,
+                  "coverage_percent": 99.22737306843267
+                }
+              },
+              {
+                "seed": 20262022,
+                "clean": {
+                  "rows": 151,
+                  "failures": 0,
+                  "nmae_percent_fs": 15.836885543135976,
+                  "acc_at_2_percent": 13.245033112582782,
+                  "acc_at_5_percent": 38.41059602649007,
+                  "coverage_percent": 100.0
+                },
+                "all_conditions": {
+                  "rows": 906,
+                  "failures": 0,
+                  "nmae_percent_fs": 21.175746750428058,
+                  "acc_at_2_percent": 10.485651214128035,
+                  "acc_at_5_percent": 28.03532008830022,
+                  "coverage_percent": 100.0
+                }
+              }
+            ]
+          },
+          "deeplabv3plus_roi": {
+            "name": "DeepLabV3+-ROI",
+            "aggregate": {
+              "clean": {
+                "rows_per_seed": 151,
+                "nmae_percent_fs": {
+                  "mean": 8.85496105741152,
+                  "sample_sd": 2.0809098125274814,
+                  "per_seed": {
+                    "20262020": 10.429956023521681,
+                    "20262021": 9.63900065327596,
+                    "20262022": 6.49592649543692
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 83.6644591611479,
+                  "sample_sd": 0.38235117164875615,
+                  "per_seed": {
+                    "20262020": 84.10596026490066,
+                    "20262021": 83.44370860927152,
+                    "20262022": 83.44370860927152
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 88.30022075055187,
+                  "sample_sd": 3.2668098425935397,
+                  "per_seed": {
+                    "20262020": 86.75496688741723,
+                    "20262021": 86.09271523178808,
+                    "20262022": 92.05298013245033
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 95.5849889624724,
+                  "sample_sd": 1.9117558582437888,
+                  "per_seed": {
+                    "20262020": 93.37748344370861,
+                    "20262021": 96.6887417218543,
+                    "20262022": 96.6887417218543
+                  }
+                }
+              },
+              "all_conditions": {
+                "rows_per_seed": 906,
+                "nmae_percent_fs": {
+                  "mean": 15.853202908378755,
+                  "sample_sd": 4.08131540054935,
+                  "per_seed": {
+                    "20262020": 19.264032436579942,
+                    "20262021": 16.964136284321302,
+                    "20262022": 11.331440004235022
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 60.77998528329655,
+                  "sample_sd": 1.371202733891406,
+                  "per_seed": {
+                    "20262020": 59.93377483443709,
+                    "20262021": 60.04415011037528,
+                    "20262022": 62.36203090507726
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 74.9448123620309,
+                  "sample_sd": 4.454842399693279,
+                  "per_seed": {
+                    "20262020": 71.30242825607064,
+                    "20262021": 73.62030905077263,
+                    "20262022": 79.91169977924945
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 94.40765268579838,
+                  "sample_sd": 2.551396386694015,
+                  "per_seed": {
+                    "20262020": 91.72185430463576,
+                    "20262021": 94.70198675496688,
+                    "20262022": 96.7991169977925
+                  }
+                }
+              }
+            },
+            "per_seed": [
+              {
+                "seed": 20262020,
+                "clean": {
+                  "rows": 151,
+                  "failures": 10,
+                  "nmae_percent_fs": 10.429956023521681,
+                  "acc_at_2_percent": 84.10596026490066,
+                  "acc_at_5_percent": 86.75496688741723,
+                  "coverage_percent": 93.37748344370861
+                },
+                "all_conditions": {
+                  "rows": 906,
+                  "failures": 75,
+                  "nmae_percent_fs": 19.264032436579942,
+                  "acc_at_2_percent": 59.93377483443709,
+                  "acc_at_5_percent": 71.30242825607064,
+                  "coverage_percent": 91.72185430463576
+                }
+              },
+              {
+                "seed": 20262021,
+                "clean": {
+                  "rows": 151,
+                  "failures": 5,
+                  "nmae_percent_fs": 9.63900065327596,
+                  "acc_at_2_percent": 83.44370860927152,
+                  "acc_at_5_percent": 86.09271523178808,
+                  "coverage_percent": 96.6887417218543
+                },
+                "all_conditions": {
+                  "rows": 906,
+                  "failures": 48,
+                  "nmae_percent_fs": 16.964136284321302,
+                  "acc_at_2_percent": 60.04415011037528,
+                  "acc_at_5_percent": 73.62030905077263,
+                  "coverage_percent": 94.70198675496688
+                }
+              },
+              {
+                "seed": 20262022,
+                "clean": {
+                  "rows": 151,
+                  "failures": 5,
+                  "nmae_percent_fs": 6.49592649543692,
+                  "acc_at_2_percent": 83.44370860927152,
+                  "acc_at_5_percent": 92.05298013245033,
+                  "coverage_percent": 96.6887417218543
+                },
+                "all_conditions": {
+                  "rows": 906,
+                  "failures": 29,
+                  "nmae_percent_fs": 11.331440004235022,
+                  "acc_at_2_percent": 62.36203090507726,
+                  "acc_at_5_percent": 79.91169977924945,
+                  "coverage_percent": 96.7991169977925
+                }
+              }
+            ]
+          },
+          "vdn": {
+            "name": "VDN",
+            "aggregate": {
+              "clean": {
+                "rows_per_seed": 151,
+                "nmae_percent_fs": {
+                  "mean": 11.61351476763049,
+                  "sample_sd": 4.661997101608269,
+                  "per_seed": {
+                    "20262020": 11.455862394674886,
+                    "20262021": 16.35233840822562,
+                    "20262022": 7.032343499990959
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 46.35761589403973,
+                  "sample_sd": 9.800429527780622,
+                  "per_seed": {
+                    "20262020": 39.735099337748345,
+                    "20262021": 41.72185430463576,
+                    "20262022": 57.615894039735096
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 66.88741721854304,
+                  "sample_sd": 9.389037668051541,
+                  "per_seed": {
+                    "20262020": 63.57615894039735,
+                    "20262021": 59.602649006622514,
+                    "20262022": 77.48344370860927
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 100.0,
+                  "sample_sd": 0.0,
+                  "per_seed": {
+                    "20262020": 100.0,
+                    "20262021": 100.0,
+                    "20262022": 100.0
+                  }
+                }
+              },
+              "all_conditions": {
+                "rows_per_seed": 906,
+                "nmae_percent_fs": {
+                  "mean": 13.012858692740261,
+                  "sample_sd": 3.2760852955966113,
+                  "per_seed": {
+                    "20262020": 12.858629272987343,
+                    "20262021": 16.36333479858056,
+                    "20262022": 9.816612006652878
+                  }
+                },
+                "acc_at_2_percent": {
+                  "mean": 40.32376747608536,
+                  "sample_sd": 6.279114832432779,
+                  "per_seed": {
+                    "20262020": 36.86534216335541,
+                    "20262021": 36.53421633554084,
+                    "20262022": 47.571743929359826
+                  }
+                },
+                "acc_at_5_percent": {
+                  "mean": 62.36203090507726,
+                  "sample_sd": 5.191159389097062,
+                  "per_seed": {
+                    "20262020": 59.93377483443709,
+                    "20262021": 58.83002207505519,
+                    "20262022": 68.32229580573951
+                  }
+                },
+                "coverage_percent": {
+                  "mean": 100.0,
+                  "sample_sd": 0.0,
+                  "per_seed": {
+                    "20262020": 100.0,
+                    "20262021": 100.0,
+                    "20262022": 100.0
+                  }
+                }
+              }
+            },
+            "per_seed": [
+              {
+                "seed": 20262020,
+                "clean": {
+                  "rows": 151,
+                  "failures": 0,
+                  "nmae_percent_fs": 11.455862394674886,
+                  "acc_at_2_percent": 39.735099337748345,
+                  "acc_at_5_percent": 63.57615894039735,
+                  "coverage_percent": 100.0
+                },
+                "all_conditions": {
+                  "rows": 906,
+                  "failures": 0,
+                  "nmae_percent_fs": 12.858629272987343,
+                  "acc_at_2_percent": 36.86534216335541,
+                  "acc_at_5_percent": 59.93377483443709,
+                  "coverage_percent": 100.0
+                }
+              },
+              {
+                "seed": 20262021,
+                "clean": {
+                  "rows": 151,
+                  "failures": 0,
+                  "nmae_percent_fs": 16.35233840822562,
+                  "acc_at_2_percent": 41.72185430463576,
+                  "acc_at_5_percent": 59.602649006622514,
+                  "coverage_percent": 100.0
+                },
+                "all_conditions": {
+                  "rows": 906,
+                  "failures": 0,
+                  "nmae_percent_fs": 16.36333479858056,
+                  "acc_at_2_percent": 36.53421633554084,
+                  "acc_at_5_percent": 58.83002207505519,
+                  "coverage_percent": 100.0
+                }
+              },
+              {
+                "seed": 20262022,
+                "clean": {
+                  "rows": 151,
+                  "failures": 0,
+                  "nmae_percent_fs": 7.032343499990959,
+                  "acc_at_2_percent": 57.615894039735096,
+                  "acc_at_5_percent": 77.48344370860927,
+                  "coverage_percent": 100.0
+                },
+                "all_conditions": {
+                  "rows": 906,
+                  "failures": 0,
+                  "nmae_percent_fs": 9.816612006652878,
+                  "acc_at_2_percent": 47.571743929359826,
+                  "acc_at_5_percent": 68.32229580573951,
+                  "coverage_percent": 100.0
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "roi_comparator_efficiency": {
+    "updated_date": "2026-09-07",
+    "results_file": "data/roi_comparison_efficiency_public.json",
+    "table_file": "data/roi_comparison_efficiency.csv",
+    "reports": {
+      "yolo11s_pose4kp": {
+        "method": "yolo11s_pose4kp",
+        "display_name": "YOLO11s-Pose-4KP",
+        "protocol": "matched_roi_comparator_batch1_efficiency_v1",
+        "environment": {
+          "cuda_runtime": "12.8",
+          "cudnn": 91900,
+          "device": "cuda:0",
+          "device_name": "NVIDIA GeForce RTX 4060",
+          "platform": "Windows-10-10.0.19045-SP0",
+          "python": "3.11.15",
+          "torch": "2.11.0+cu128"
+        },
+        "configuration": {
+          "seed": 20262020,
+          "precision": "float32; no autocast; YOLO quantize=None",
+          "condition": "clean",
+          "image_size": 384,
+          "preprocessing": "OpenCV bilinear square resize, then Ultralytics native preprocessing",
+          "evaluation_scope": "provided ROI to normalized reading; four predicted keypoints",
+          "success_definition": "valid decoded normalized reading; no accuracy labels read",
+          "observed_precision": {
+            "failure_code": null,
+            "model_input_dtypes": {
+              "YOLO11s-Pose-4KP": [
+                "torch.float32"
+              ]
+            },
+            "scope": "one additional real input inference after timing; empty component list means early geometry failure skipped that component"
+          }
+        },
+        "input": {
+          "manifest_rows": 1395,
+          "selected_rows": 100,
+          "selection": "first_n_manifest_rows_in_file_order",
+          "ground_truth_read": false
+        },
+        "parameters": {
+          "counting_rule": "unique torch.nn.Parameter objects reachable from the loaded inference predictor; shared tensors counted once",
+          "learned_component_roots": [
+            {
+              "declared_parameters": 9715447,
+              "type": "ultralytics.nn.tasks.PoseModel"
+            }
+          ],
+          "parameter_bytes": 38861788,
+          "scope": "loaded checkpoint neural modules before native inference fusion; automatic-geometry arms include reference detector",
+          "total_parameters": 9715447,
+          "trainable_parameters": 0,
+          "unique_parameter_tensors": 280
+        },
+        "measurement": {
+          "batch_size": 1,
+          "cuda_memory": {
+            "baseline_allocated_mib": 69.05224609375,
+            "baseline_reserved_mib": 98.0,
+            "incremental_peak_allocated_mib": 15.1875,
+            "measurement_api": "torch.cuda.reset_peak_memory_stats/max_memory_allocated",
+            "peak_allocated_mib": 84.23974609375,
+            "peak_reserved_mib": 100.0,
+            "supported": true
+          },
+          "failure_codes": {},
+          "latency": {
+            "max_ms": 7.9775,
+            "mean_ms": 6.537221,
+            "min_ms": 5.7643,
+            "p50_ms": 6.39825,
+            "p90_ms": 7.4305,
+            "p95_ms": 7.65623,
+            "sample_sd_ms": 0.5868746079991376,
+            "throughput_images_per_second": 152.97019941654116
+          },
+          "model_reported_failure_calls": 0,
+          "success_definition": "valid decoded normalized reading; no accuracy labels read",
+          "successful_calls": 100,
+          "timed_calls": 100,
+          "timing_scope": {
+            "excluded": [
+              "model/checkpoint construction",
+              "PNG file read and decode",
+              "ground-truth loading and accuracy scoring"
+            ],
+            "included": [
+              "model-native CPU preprocessing",
+              "host-to-device transfer",
+              "all learned forward passes",
+              "analytic postprocessing and result validation",
+              "CUDA synchronization"
+            ]
+          },
+          "warmup_calls": 20,
+          "warmup_failure_codes": {}
+        },
+        "flops": {
+          "components": [
+            {
+              "component": "YOLO11s-Pose-4KP",
+              "flops": 8038176768,
+              "gflops": 8.038176768,
+              "input_shape": [
+                1,
+                3,
+                384,
+                384
+              ],
+              "status": "measured_supported_aten_ops"
+            }
+          ],
+          "counting_rule": "PyTorch aten FlopCounterMode supported operators; multiply-add counts as two FLOPs",
+          "gflops": 8.038176768,
+          "pipeline_limitation": "not end-to-end FLOPs; each reference module is counted at its listed square resolution (legacy reference timed letterbox shapes may vary); automatic-geometry failures omit the direction forward during timing",
+          "scope": "one fixed-shape forward per listed neural module; excludes preprocessing, NMS, CPU geometry and unsupported operations",
+          "status": "fixed_shape_neural_components",
+          "value": 8038176768
+        }
+      },
+      "deeplab_component": {
+        "method": "deeplab_component",
+        "display_name": "DeepLabV3+-ROI (native component)",
+        "protocol": "matched_roi_comparator_batch1_efficiency_v1",
+        "environment": {
+          "cuda_runtime": "12.8",
+          "cudnn": 91900,
+          "device": "cuda:0",
+          "device_name": "NVIDIA GeForce RTX 4060",
+          "platform": "Windows-10-10.0.19045-SP0",
+          "python": "3.11.15",
+          "torch": "2.11.0+cu128"
+        },
+        "configuration": {
+          "seed": 20262020,
+          "precision": "float32; no autocast; YOLO quantize=None",
+          "condition": "clean",
+          "image_size": 256,
+          "preprocessing": "OpenCV bilinear square resize; ImageNet-normalized RGB",
+          "evaluation_scope": "ROI to pointer probability map",
+          "success_definition": "valid native component output only; successful_calls is NOT reading coverage",
+          "observed_precision": {
+            "failure_code": null,
+            "model_input_dtypes": {
+              "DeepLabV3+-ROI": [
+                "torch.float32"
+              ]
+            },
+            "scope": "one additional real input inference after timing; empty component list means early geometry failure skipped that component"
+          },
+          "reference_detector_kind": null,
+          "reference_configuration": null,
+          "geometry_failure_behavior": null
+        },
+        "input": {
+          "manifest_rows": 1395,
+          "selected_rows": 100,
+          "selection": "first_n_manifest_rows_in_file_order",
+          "ground_truth_read": false
+        },
+        "parameters": {
+          "counting_rule": "unique torch.nn.Parameter objects reachable from the loaded inference predictor; shared tensors counted once",
+          "learned_component_roots": [
+            {
+              "declared_parameters": 40347041,
+              "type": "experiments.deeplabv3plus_roi.DeepLabV3PlusROI"
+            }
+          ],
+          "parameter_bytes": 161388164,
+          "scope": "loaded checkpoint neural modules before native inference fusion; automatic-geometry arms include reference detector",
+          "total_parameters": 40347041,
+          "trainable_parameters": 40347041,
+          "unique_parameter_tensors": 188
+        },
+        "measurement": {
+          "batch_size": 1,
+          "cuda_memory": {
+            "baseline_allocated_mib": 155.9765625,
+            "baseline_reserved_mib": 172.0,
+            "incremental_peak_allocated_mib": 45.7509765625,
+            "measurement_api": "torch.cuda.reset_peak_memory_stats/max_memory_allocated",
+            "peak_allocated_mib": 201.7275390625,
+            "peak_reserved_mib": 262.0,
+            "supported": true
+          },
+          "failure_codes": {},
+          "latency": {
+            "max_ms": 13.1607,
+            "mean_ms": 11.742275999999999,
+            "min_ms": 10.5849,
+            "p50_ms": 11.94165,
+            "p90_ms": 12.595509999999999,
+            "p95_ms": 12.689125,
+            "sample_sd_ms": 0.745946591518441,
+            "throughput_images_per_second": 85.16236545623694
+          },
+          "model_reported_failure_calls": 0,
+          "success_definition": "valid native component output only; successful_calls is NOT reading coverage",
+          "successful_calls": 100,
+          "timed_calls": 100,
+          "timing_scope": {
+            "excluded": [
+              "model/checkpoint construction",
+              "PNG file read and decode",
+              "ground-truth loading and accuracy scoring"
+            ],
+            "included": [
+              "model-native CPU preprocessing",
+              "host-to-device transfer",
+              "all learned forward passes",
+              "analytic postprocessing and result validation",
+              "CUDA synchronization"
+            ]
+          },
+          "warmup_calls": 20,
+          "warmup_failure_codes": {}
+        },
+        "flops": {
+          "components": [
+            {
+              "component": "DeepLabV3+-ROI",
+              "flops": 91243937792,
+              "gflops": 91.243937792,
+              "input_shape": [
+                1,
+                3,
+                256,
+                256
+              ],
+              "status": "measured_supported_aten_ops"
+            }
+          ],
+          "counting_rule": "PyTorch aten FlopCounterMode supported operators; multiply-add counts as two FLOPs",
+          "gflops": 91.243937792,
+          "pipeline_limitation": "not end-to-end FLOPs; each reference module is counted at its listed square resolution (legacy reference timed letterbox shapes may vary); automatic-geometry failures omit the direction forward during timing",
+          "scope": "one fixed-shape forward per listed neural module; excludes preprocessing, NMS, CPU geometry and unsupported operations",
+          "status": "fixed_shape_neural_components",
+          "value": 91243937792
+        }
+      },
+      "vdn_component": {
+        "method": "vdn_component",
+        "display_name": "VDN (native component)",
+        "protocol": "matched_roi_comparator_batch1_efficiency_v1",
+        "environment": {
+          "cuda_runtime": "12.8",
+          "cudnn": 91900,
+          "device": "cuda:0",
+          "device_name": "NVIDIA GeForce RTX 4060",
+          "platform": "Windows-10-10.0.19045-SP0",
+          "python": "3.11.15",
+          "torch": "2.11.0+cu128"
+        },
+        "configuration": {
+          "seed": 20262020,
+          "precision": "float32; no autocast; YOLO quantize=None",
+          "condition": "clean",
+          "image_size": 384,
+          "preprocessing": "OpenCV bilinear square resize; ImageNet-normalized BGR",
+          "evaluation_scope": "ROI to normalized direction vector",
+          "success_definition": "valid native component output only; successful_calls is NOT reading coverage",
+          "observed_precision": {
+            "failure_code": null,
+            "model_input_dtypes": {
+              "VDN": [
+                "torch.float32"
+              ]
+            },
+            "scope": "one additional real input inference after timing; empty component list means early geometry failure skipped that component"
+          },
+          "reference_detector_kind": null,
+          "reference_configuration": null,
+          "geometry_failure_behavior": null
+        },
+        "input": {
+          "manifest_rows": 1395,
+          "selected_rows": 100,
+          "selection": "first_n_manifest_rows_in_file_order",
+          "ground_truth_read": false
+        },
+        "parameters": {
+          "counting_rule": "unique torch.nn.Parameter objects reachable from the loaded inference predictor; shared tensors counted once",
+          "learned_component_roots": [
+            {
+              "declared_parameters": 15377219,
+              "type": "external_vdn_model_68afe1e.VDNModel"
+            }
+          ],
+          "parameter_bytes": 61508876,
+          "scope": "loaded checkpoint neural modules before native inference fusion; automatic-geometry arms include reference detector",
+          "total_parameters": 15377219,
+          "trainable_parameters": 15377219,
+          "unique_parameter_tensors": 73
+        },
+        "measurement": {
+          "batch_size": 1,
+          "cuda_memory": {
+            "baseline_allocated_mib": 58.71923828125,
+            "baseline_reserved_mib": 84.0,
+            "incremental_peak_allocated_mib": 28.78173828125,
+            "measurement_api": "torch.cuda.reset_peak_memory_stats/max_memory_allocated",
+            "peak_allocated_mib": 87.5009765625,
+            "peak_reserved_mib": 106.0,
+            "supported": true
+          },
+          "failure_codes": {},
+          "latency": {
+            "max_ms": 9.7515,
+            "mean_ms": 5.736602,
+            "min_ms": 5.015,
+            "p50_ms": 5.6112,
+            "p90_ms": 6.254580000000001,
+            "p95_ms": 6.76293,
+            "sample_sd_ms": 0.6442977506643268,
+            "throughput_images_per_second": 174.31922242470375
+          },
+          "model_reported_failure_calls": 0,
+          "success_definition": "valid native component output only; successful_calls is NOT reading coverage",
+          "successful_calls": 100,
+          "timed_calls": 100,
+          "timing_scope": {
+            "excluded": [
+              "model/checkpoint construction",
+              "PNG file read and decode",
+              "ground-truth loading and accuracy scoring"
+            ],
+            "included": [
+              "model-native CPU preprocessing",
+              "host-to-device transfer",
+              "all learned forward passes",
+              "analytic postprocessing and result validation",
+              "CUDA synchronization"
+            ]
+          },
+          "warmup_calls": 20,
+          "warmup_failure_codes": {}
+        },
+        "flops": {
+          "components": [
+            {
+              "component": "VDN",
+              "flops": 17392730112,
+              "gflops": 17.392730112,
+              "input_shape": [
+                1,
+                3,
+                384,
+                384
+              ],
+              "status": "measured_supported_aten_ops"
+            }
+          ],
+          "counting_rule": "PyTorch aten FlopCounterMode supported operators; multiply-add counts as two FLOPs",
+          "gflops": 17.392730112,
+          "pipeline_limitation": "not end-to-end FLOPs; each reference module is counted at its listed square resolution (legacy reference timed letterbox shapes may vary); automatic-geometry failures omit the direction forward during timing",
+          "scope": "one fixed-shape forward per listed neural module; excludes preprocessing, NMS, CPU geometry and unsupported operations",
+          "status": "fixed_shape_neural_components",
+          "value": 17392730112
+        }
+      },
+      "deeplab_auto_geometry": {
+        "method": "deeplab_auto_geometry",
+        "display_name": "DeepLabV3+-ROI + source pose references",
+        "protocol": "matched_roi_comparator_batch1_efficiency_v1",
+        "environment": {
+          "cuda_runtime": "12.8",
+          "cudnn": 91900,
+          "device": "cuda:0",
+          "device_name": "NVIDIA GeForce RTX 4060",
+          "platform": "Windows-10-10.0.19045-SP0",
+          "python": "3.11.15",
+          "torch": "2.11.0+cu128"
+        },
+        "configuration": {
+          "seed": 20262020,
+          "precision": "float32; no autocast; YOLO quantize=None",
+          "condition": "clean",
+          "image_size": 256,
+          "preprocessing": "OpenCV bilinear square resize; ImageNet-normalized RGB",
+          "evaluation_scope": "provided ROI to normalized reading with Industrial automatic geometry",
+          "success_definition": "valid decoded normalized reading; no accuracy labels read",
+          "observed_precision": {
+            "failure_code": null,
+            "model_input_dtypes": {
+              "DeepLabV3+-ROI": [
+                "torch.float32"
+              ],
+              "source pose reference detector": [
+                "torch.float32"
+              ]
+            },
+            "scope": "one additional real input inference after timing; empty component list means early geometry failure skipped that component"
+          },
+          "reference_detector_kind": "source_pose4kp",
+          "reference_configuration": {
+            "conf": 0.05,
+            "grayscale_three_channel": false,
+            "imgsz": 384,
+            "iou": 0.7,
+            "keypoint_confidence": 0.05,
+            "letterbox": "square training input",
+            "max_det": 5,
+            "pointer_tip_used": false
+          },
+          "geometry_failure_behavior": "record timed failure before direction-model inference"
+        },
+        "input": {
+          "manifest_rows": 1395,
+          "selected_rows": 100,
+          "selection": "first_n_manifest_rows_in_file_order",
+          "ground_truth_read": false
+        },
+        "parameters": {
+          "counting_rule": "unique torch.nn.Parameter objects reachable from the loaded inference predictor; shared tensors counted once",
+          "learned_component_roots": [
+            {
+              "declared_parameters": 40347041,
+              "type": "experiments.deeplabv3plus_roi.DeepLabV3PlusROI"
+            },
+            {
+              "declared_parameters": 9715447,
+              "type": "ultralytics.nn.tasks.PoseModel"
+            }
+          ],
+          "parameter_bytes": 200249952,
+          "scope": "loaded checkpoint neural modules before native inference fusion; automatic-geometry arms include reference detector",
+          "total_parameters": 50062488,
+          "trainable_parameters": 40347041,
+          "unique_parameter_tensors": 468
+        },
+        "measurement": {
+          "batch_size": 1,
+          "cuda_memory": {
+            "baseline_allocated_mib": 225.65380859375,
+            "baseline_reserved_mib": 248.0,
+            "incremental_peak_allocated_mib": 45.7509765625,
+            "measurement_api": "torch.cuda.reset_peak_memory_stats/max_memory_allocated",
+            "peak_allocated_mib": 271.40478515625,
+            "peak_reserved_mib": 336.0,
+            "supported": true
+          },
+          "failure_codes": {
+            "pointer_component_too_short": 3
+          },
+          "latency": {
+            "max_ms": 22.9002,
+            "mean_ms": 19.556746,
+            "min_ms": 18.0973,
+            "p50_ms": 19.5576,
+            "p90_ms": 20.402589999999996,
+            "p95_ms": 20.762794999999997,
+            "sample_sd_ms": 0.7810342794918891,
+            "throughput_images_per_second": 51.133250899715115
+          },
+          "model_reported_failure_calls": 3,
+          "success_definition": "valid decoded normalized reading; no accuracy labels read",
+          "successful_calls": 97,
+          "timed_calls": 100,
+          "timing_scope": {
+            "excluded": [
+              "model/checkpoint construction",
+              "PNG file read and decode",
+              "ground-truth loading and accuracy scoring"
+            ],
+            "included": [
+              "model-native CPU preprocessing",
+              "host-to-device transfer",
+              "all learned forward passes",
+              "analytic postprocessing and result validation",
+              "CUDA synchronization"
+            ]
+          },
+          "warmup_calls": 20,
+          "warmup_failure_codes": {}
+        },
+        "flops": {
+          "components": [
+            {
+              "component": "DeepLabV3+-ROI",
+              "flops": 91243937792,
+              "gflops": 91.243937792,
+              "input_shape": [
+                1,
+                3,
+                256,
+                256
+              ],
+              "status": "measured_supported_aten_ops"
+            },
+            {
+              "component": "source pose reference detector",
+              "flops": 8038176768,
+              "gflops": 8.038176768,
+              "input_shape": [
+                1,
+                3,
+                384,
+                384
+              ],
+              "status": "measured_supported_aten_ops"
+            }
+          ],
+          "counting_rule": "PyTorch aten FlopCounterMode supported operators; multiply-add counts as two FLOPs",
+          "gflops": 99.28211456,
+          "pipeline_limitation": "not end-to-end FLOPs; each reference module is counted at its listed square resolution (legacy reference timed letterbox shapes may vary); automatic-geometry failures omit the direction forward during timing",
+          "scope": "one fixed-shape forward per listed neural module; excludes preprocessing, NMS, CPU geometry and unsupported operations",
+          "status": "fixed_shape_neural_components",
+          "value": 99282114560
+        }
+      },
+      "vdn_auto_geometry": {
+        "method": "vdn_auto_geometry",
+        "display_name": "VDN + source pose references",
+        "protocol": "matched_roi_comparator_batch1_efficiency_v1",
+        "environment": {
+          "cuda_runtime": "12.8",
+          "cudnn": 91900,
+          "device": "cuda:0",
+          "device_name": "NVIDIA GeForce RTX 4060",
+          "platform": "Windows-10-10.0.19045-SP0",
+          "python": "3.11.15",
+          "torch": "2.11.0+cu128"
+        },
+        "configuration": {
+          "seed": 20262020,
+          "precision": "float32; no autocast; YOLO quantize=None",
+          "condition": "clean",
+          "image_size": 384,
+          "preprocessing": "OpenCV bilinear square resize; ImageNet-normalized BGR",
+          "evaluation_scope": "provided ROI to normalized reading with Industrial automatic geometry",
+          "success_definition": "valid decoded normalized reading; no accuracy labels read",
+          "observed_precision": {
+            "failure_code": null,
+            "model_input_dtypes": {
+              "VDN": [
+                "torch.float32"
+              ],
+              "source pose reference detector": [
+                "torch.float32"
+              ]
+            },
+            "scope": "one additional real input inference after timing; empty component list means early geometry failure skipped that component"
+          },
+          "reference_detector_kind": "source_pose4kp",
+          "reference_configuration": {
+            "conf": 0.05,
+            "grayscale_three_channel": false,
+            "imgsz": 384,
+            "iou": 0.7,
+            "keypoint_confidence": 0.05,
+            "letterbox": "square training input",
+            "max_det": 5,
+            "pointer_tip_used": false
+          },
+          "geometry_failure_behavior": "record timed failure before direction-model inference"
+        },
+        "input": {
+          "manifest_rows": 1395,
+          "selected_rows": 100,
+          "selection": "first_n_manifest_rows_in_file_order",
+          "ground_truth_read": false
+        },
+        "parameters": {
+          "counting_rule": "unique torch.nn.Parameter objects reachable from the loaded inference predictor; shared tensors counted once",
+          "learned_component_roots": [
+            {
+              "declared_parameters": 15377219,
+              "type": "external_vdn_model_68afe1e.VDNModel"
+            },
+            {
+              "declared_parameters": 9715447,
+              "type": "ultralytics.nn.tasks.PoseModel"
+            }
+          ],
+          "parameter_bytes": 100370664,
+          "scope": "loaded checkpoint neural modules before native inference fusion; automatic-geometry arms include reference detector",
+          "total_parameters": 25092666,
+          "trainable_parameters": 15377219,
+          "unique_parameter_tensors": 353
+        },
+        "measurement": {
+          "batch_size": 1,
+          "cuda_memory": {
+            "baseline_allocated_mib": 128.396484375,
+            "baseline_reserved_mib": 162.0,
+            "incremental_peak_allocated_mib": 30.03125,
+            "measurement_api": "torch.cuda.reset_peak_memory_stats/max_memory_allocated",
+            "peak_allocated_mib": 158.427734375,
+            "peak_reserved_mib": 180.0,
+            "supported": true
+          },
+          "failure_codes": {},
+          "latency": {
+            "max_ms": 13.7866,
+            "mean_ms": 12.495693000000001,
+            "min_ms": 11.6645,
+            "p50_ms": 12.380199999999999,
+            "p90_ms": 13.1702,
+            "p95_ms": 13.34911,
+            "sample_sd_ms": 0.48764424071864165,
+            "throughput_images_per_second": 80.02757430100115
+          },
+          "model_reported_failure_calls": 0,
+          "success_definition": "valid decoded normalized reading; no accuracy labels read",
+          "successful_calls": 100,
+          "timed_calls": 100,
+          "timing_scope": {
+            "excluded": [
+              "model/checkpoint construction",
+              "PNG file read and decode",
+              "ground-truth loading and accuracy scoring"
+            ],
+            "included": [
+              "model-native CPU preprocessing",
+              "host-to-device transfer",
+              "all learned forward passes",
+              "analytic postprocessing and result validation",
+              "CUDA synchronization"
+            ]
+          },
+          "warmup_calls": 20,
+          "warmup_failure_codes": {}
+        },
+        "flops": {
+          "components": [
+            {
+              "component": "VDN",
+              "flops": 17392730112,
+              "gflops": 17.392730112,
+              "input_shape": [
+                1,
+                3,
+                384,
+                384
+              ],
+              "status": "measured_supported_aten_ops"
+            },
+            {
+              "component": "source pose reference detector",
+              "flops": 8038176768,
+              "gflops": 8.038176768,
+              "input_shape": [
+                1,
+                3,
+                384,
+                384
+              ],
+              "status": "measured_supported_aten_ops"
+            }
+          ],
+          "counting_rule": "PyTorch aten FlopCounterMode supported operators; multiply-add counts as two FLOPs",
+          "gflops": 25.43090688,
+          "pipeline_limitation": "not end-to-end FLOPs; each reference module is counted at its listed square resolution (legacy reference timed letterbox shapes may vary); automatic-geometry failures omit the direction forward during timing",
+          "scope": "one fixed-shape forward per listed neural module; excludes preprocessing, NMS, CPU geometry and unsupported operations",
+          "status": "fixed_shape_neural_components",
+          "value": 25430906880
+        }
+      }
+    }
   }
 }

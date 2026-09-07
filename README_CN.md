@@ -1,5 +1,7 @@
 # GeoPRR-Net / Electronics Overleaf 上传包
 
+2026-09-07 数据更新：已补充 YOLO、DeepLab、VDN 的效率及 source-only 迁移结果，并用 SyncG 训练的参考点模型重评 Industrial 的 DeepLab/VDN。数据与协议见 [公开结果说明](data/README.md#source-reference-update-2026-09-07)。
+
 直接将本目录整体上传至 Overleaf，并把 `manuscript.tex` 设为 Main document。
 
 目录内容：

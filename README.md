@@ -6,6 +6,11 @@ Polar-Relational Routing for Robust Analog Gauge Reading**.
 The implementation and reproducibility scripts are maintained in the companion
 [GeoPRR-Net code repository](https://github.com/KongyueX/GeoPRR-Net).
 
+The [2026-09-07 ROI data update](data/README.md#source-reference-update-2026-09-07)
+adds YOLO, DeepLab and VDN efficiency and source-only transfer results.
+Industrial DeepLab/VDN were reevaluated with SyncG-trained reference geometry;
+their complete-reader efficiency includes that additional network.
+
 ## Contents
 
 - `manuscript.tex`: MDPI *Electronics* manuscript source.

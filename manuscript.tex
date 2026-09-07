@@ -328,7 +328,7 @@ At evaluation, all methods use the same sample roster, condition roster, target,
 
 A separate same-pixel evaluation compares \modelname with the public Vector Detection Network (VDN) direction component \cite{dong2021vdn}. Its official ResNet-18 and three-deconvolution-head architecture is initialized from ImageNet and retrained on the same outer fitting population, using the fixed inner scene split of 12,866 training and 1,576 validation images. Each of seeds 20262020, 20262021, and 20262022 is trained at $384\times384$ resolution for 200 epochs with batch size 8, Adam at an initial learning rate of 0.001, zero weight decay, learning-rate milestones at epochs 140 and 190, and mixed precision. Formal evaluation uses the terminal epoch-200 checkpoint from every seed and the complete 1,558-image, six-condition SyncG roster. VDN predicts a direction vector; normalized progress is therefore computed offline using the annotated pivot and ordered scale endpoints. It is consequently a structured, annotation-assisted component comparator rather than an input-equivalent automatic end-to-end system. Section~\ref{subsec:structured_readers} reports this distinction explicitly.
 
-Two additional ROI-level controls cover segmentation and keypoint-pose reading. DeepLabV3+-ROI segments the pointer before analytic progress conversion \cite{chen2018deeplabv3plus}; YOLO11s-Pose-4KP predicts the dial center, ordered scale endpoints, and pointer tip before the same directed conversion \cite{jocher2023ultralytics}. For SyncG and RF100-VL, the VDN and DeepLabV3+-ROI conversions use annotation-derived dial geometry; on Industrial-1395, their geometry is estimated automatically. YOLO11s-Pose-4KP predicts all four geometric points in every domain. The three checkpoints use seeds 20262020--20262022 and the complete six-condition ROI rosters; coverage records the fraction of rows returning a valid structured output.
+Two additional ROI-level controls cover segmentation and keypoint-pose reading. DeepLabV3+-ROI segments the pointer before analytic progress conversion \cite{chen2018deeplabv3plus}; YOLO11s-Pose-4KP predicts the dial center, ordered scale endpoints, and pointer tip before the same directed conversion \cite{jocher2023ultralytics}. For SyncG and RF100-VL, the VDN and DeepLabV3+-ROI conversions use annotation-derived dial geometry. On Industrial-1395, each uses the same-seed YOLO11s-Pose-4KP trained on the 12,866-image SyncG training split with 1,576 validation images to estimate only the center and ordered scale endpoints; the reference detector's predicted pointer tip is discarded. The audited source-trained detector replaces the earlier legacy reference detector. YOLO11s-Pose-4KP predicts all four geometric points in every domain. The three checkpoints use seeds 20262020--20262022 and the complete six-condition ROI rosters; coverage records the fraction of rows returning a valid structured output. All three Industrial comparators are evaluated without target-domain fitting inside supplied ROIs, whereas the \modelname Industrial result uses supervised target-domain group-wise OOF adaptation. Thus, the Industrial comparison describes these distinct training protocols and is not a matched zero-shot comparison. On RF100-VL, VDN and DeepLab remain annotation-assisted component-transfer evaluations; only YOLO supplies all geometry automatically. These field tests are retrospective, and full-frame ROI acquisition is outside their scope.
 
 \subsection{Expert-Mixture and Structural Ablations}
 \label{subsec:ablation_protocol}
@@ -376,6 +376,8 @@ Routing weights and oracle-best expert frequencies are mechanism diagnostics fro
 \label{subsec:efficiency_protocol}
 
 Efficiency is measured in independent processes on one NVIDIA GeForce RTX 4060 with CUDA 12.8 and PyTorch 2.11, batch size 1, and FP32 inference. Each method receives 20 warm-up calls followed by 100 CUDA-synchronized timed calls. The scope includes model-native CPU preprocessing, host-to-device transfer, all learned forward passes, analytic postprocessing, and, for \modelname, support detection/crop/resize. File decoding, checkpoint construction, degradation synthesis, and accuracy scoring are excluded. We report unique reachable parameters, P50 and P95 latency, inverse-mean throughput, and peak allocated CUDA memory. A profiler-supported value of 1.487 GMAC is reported only as a lower bound because grid sampling, tensor-only moment transport, softmax, and unsupported operations are omitted.
+
+The additional structured-reader timing uses seed 20262020 and the first 100 clean Industrial-1395 ROIs in manifest order under the same device, precision, warm-up, and synchronization settings. Complete ROI-to-reading timing includes the SyncG-trained reference detector for DeepLab and VDN, with ground-truth labels excluded. Native pointer-probability-map and direction-vector timings are recorded separately because they do not produce complete readings. Reported latency includes failed calls; valid-output counts on this timing subset are distinct from six-condition accuracy-evaluation coverage.
 
 \section{Results}
 \label{sec:results}
@@ -535,10 +537,10 @@ Figure~\ref{fig:cross_domain} brings the three principal evaluation cohorts into
 \subsection{Comparisons with Structured Readers}
 \label{subsec:structured_readers}
 
-Table~\ref{tab:vdn} and Figure~\ref{fig:vdn} present the complete $3\times4$ comparison of progress prediction, vector estimation, pointer segmentation, and four-keypoint pose reading. \modelname pairs the lowest pooled NMAE with the highest Acc@5\% in every domain: $1.0013\pm0.0382$\%FS and $98.08\pm0.08$\% on SyncG, 2.3262\%FS and 86.99\% on Industrial-1395, and $5.0098\pm1.5344$\%FS and $76.16\pm5.13$\% on RF100-VL. This consistent two-metric lead spans all three structured-reader families.
+Table~\ref{tab:vdn} and Figure~\ref{fig:vdn} present the complete $3\times4$ comparison of progress prediction, vector estimation, pointer segmentation, and four-keypoint pose reading. Under the disclosed domain-specific protocols, \modelname pairs the lowest pooled NMAE with the highest Acc@5\% in every domain: $1.0013\pm0.0382$\%FS and $98.08\pm0.08$\% on SyncG, 2.3262\%FS and 86.99\% on Industrial-1395, and $5.0098\pm1.5344$\%FS and $76.16\pm5.13$\% on RF100-VL. The Industrial values compare supervised OOF adaptation for \modelname with source-only transfer for the three structured readers and therefore cannot isolate an architecture-only or matched zero-shot advantage.
 
 \begin{table}[H]
-\caption{Complete structured-reader comparison on the three six-condition ROI rosters. NMAE is in \%FS; Acc@5\% and coverage are percentages. Values are mean $\pm$ sample SD over three seeds or terminal checkpoints; the Industrial-1395 \modelname value is a single equal-weight three-encoder OOF aggregate. Bold marks the lowest pooled NMAE in each dataset.}
+\caption{Complete structured-reader comparison on the three six-condition ROI rosters. NMAE is in \%FS; Acc@5\% and coverage are percentages. Values are mean $\pm$ sample SD over three seeds or terminal checkpoints. Industrial-1395 uses one supervised equal-weight three-encoder OOF aggregate for \modelname and source-only transfer for the comparators; DeepLab and VDN use SyncG-trained pose references. Their SyncG and RF100-VL conversions use annotated geometry. Bold marks the lowest pooled NMAE under these distinct protocols.}
 \label{tab:vdn}
 \centering
 \small
@@ -552,10 +554,10 @@ VDN & $1.6620\pm0.0878$ & $95.82\pm0.40$ & $100.00\pm0.00$ \\
 DeepLabV3+-ROI & $1.7076\pm0.4078$ & $95.18\pm0.44$ & $99.70\pm0.27$ \\
 YOLO11s-Pose-4KP & $5.5666\pm2.9705$ & $72.51\pm17.02$ & $99.82\pm0.09$ \\
 \addlinespace
-\multicolumn{4}{@{}l}{\textit{Industrial-1395: 1,395 images, 52 acquisition groups, 8,370 OOF rows}} \\
+\multicolumn{4}{@{}l}{\textit{Industrial-1395: 1,395 images, 52 acquisition groups, 8,370 rows per predictor}} \\
 \modelname & $\mathbf{2.3262}$ & $86.99$ & $100.00$ \\
-VDN & $54.7987\pm2.8860$ & $33.89\pm2.56$ & $52.59\pm0.00$ \\
-DeepLabV3+-ROI & $54.2308\pm1.4463$ & $40.71\pm2.32$ & $50.12\pm0.40$ \\
+VDN & $25.3840\pm6.7070$ & $42.51\pm5.38$ & $99.67\pm0.24$ \\
+DeepLabV3+-ROI & $32.9356\pm4.0842$ & $40.39\pm4.80$ & $85.20\pm0.81$ \\
 YOLO11s-Pose-4KP & $31.0045\pm7.6146$ & $27.74\pm5.89$ & $99.67\pm0.24$ \\
 \addlinespace
 \multicolumn{4}{@{}l}{\textit{RF100-VL: 151 images, 35 source groups, 906 rows per seed}} \\
@@ -570,16 +572,16 @@ YOLO11s-Pose-4KP & $16.1632\pm4.6280$ & $42.53\pm12.62$ & $99.71\pm0.42$ \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig6_vdn_comparison.png}
-\caption{Absolute performance for the complete $3\times4$ structured-reader comparison across the six-condition ROI rosters. Panels (\textbf{a}--\textbf{c}) report pooled NMAE for scene-disjoint SyncG, Industrial-1395, and RF100-VL; panels (\textbf{d}--\textbf{f}) report Acc@5\% for the same domains and method order. Bars show mean $\pm$ sample SD over three seeds or terminal checkpoints; the Industrial-1395 \modelname value is a single equal-weight three-encoder OOF aggregate.}
+\caption{Absolute performance for the complete $3\times4$ structured-reader comparison across the six-condition ROI rosters. Panels (\textbf{a}--\textbf{c}) report pooled NMAE for scene-disjoint SyncG, Industrial-1395, and RF100-VL; panels (\textbf{d}--\textbf{f}) report Acc@5\% for the same domains and method order. Bars show mean $\pm$ sample SD over three seeds or terminal checkpoints. The Industrial-1395 \modelname bar is one supervised equal-weight three-encoder OOF aggregate without seed variability; its comparators use source-only transfer, with SyncG-trained pose references for DeepLab and VDN. DeepLab and VDN use annotated geometry on SyncG and RF100-VL. The Industrial comparison is not matched zero-shot evaluation.}
 \label{fig:vdn}
 \end{figure}
 
-Figure~\ref{fig:reader_advantage} converts the absolute results into pairwise effect sizes and output reliability. Relative to VDN, DeepLabV3+-ROI, and YOLO11s-Pose-4KP, \modelname reduces NMAE by 39.8--82.0\% on SyncG, 92.5--95.8\% on Industrial-1395, and 61.5--69.0\% on RF100-VL. Its Acc@5\% gains are positive in all nine comparisons, ranging from 1.2 to 59.2 percentage points. \modelname also returns a valid output for 100\% of rows in every domain; this combines lower error and a larger high-accuracy fraction with complete prediction coverage.
+Figure~\ref{fig:reader_advantage} converts the absolute results into descriptive pairwise effect sizes and output reliability under these protocols. Relative to VDN, DeepLabV3+-ROI, and YOLO11s-Pose-4KP, \modelname reduces NMAE by 39.8--82.0\% on SyncG, 90.8--92.9\% on Industrial-1395, and 61.5--69.0\% on RF100-VL. Its Acc@5\% gains are positive in all nine comparisons, ranging from 1.2 to 59.2 percentage points. \modelname also returns a valid output for 100\% of rows in every domain; this combines lower error and a larger high-accuracy fraction with complete prediction coverage. The Industrial effect sizes include the difference between supervised OOF adaptation and source-only transfer.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig7_reader_advantage.png}
-\caption{Effect-size and reliability view of the complete structured-reader matrix. (\textbf{a}) Relative NMAE reduction of \modelname against each comparator, computed as $(\mathrm{NMAE}_{\mathrm{comparison}}-\mathrm{NMAE}_{\mathrm{GeoPRR}})/\mathrm{NMAE}_{\mathrm{comparison}}$. (\textbf{b}) Acc@5\% gain in percentage points. (\textbf{c}) Valid-output coverage for all four methods. Each cell uses the complete six-condition roster of the corresponding domain.}
+\caption{Effect-size and reliability view of the complete structured-reader matrix. (\textbf{a}) Relative NMAE reduction of \modelname against each comparator, computed as $(\mathrm{NMAE}_{\mathrm{comparison}}-\mathrm{NMAE}_{\mathrm{GeoPRR}})/\mathrm{NMAE}_{\mathrm{comparison}}$. (\textbf{b}) Acc@5\% gain in percentage points. (\textbf{c}) Valid-output coverage for all four methods. Each cell is a descriptive summary of the complete six-condition roster, without an uncertainty interval; seed variability is shown in Figure~\ref{fig:vdn}. Industrial-1395 compares supervised OOF \modelname with source-only comparators, with SyncG-trained pose references for DeepLab and VDN. Their SyncG and RF100-VL results use annotated geometry. These cells do not establish matched zero-shot superiority.}
 \label{fig:reader_advantage}
 \end{figure}
 
@@ -601,6 +603,24 @@ Table~\ref{tab:efficiency} and Figure~\ref{fig:efficiency} show a compact 4.885-
 Raw ResNet-18 & 11.177 & 3.137 & 4.552 & 302.13 & 61.4 \\
 Raw EfficientNet-B0 & 4.009 & 6.052 & 11.065 & 150.78 & 37.4 \\
 Raw MobileNetV3-Large & 4.203 & 4.659 & 6.366 & 204.65 & 35.1 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The three complete structured readers have P50 latencies of 6.398 ms for YOLO11s-Pose-4KP, 19.558 ms for DeepLab plus source-trained references, and 12.380 ms for VDN plus source-trained references (Table~\ref{tab:structured_efficiency}). Valid readings were returned for 100/100, 97/100, and 100/100 timed clean ROIs, respectively; the three DeepLab failures were pointer components that were too short. Native DeepLab probability-map and VDN direction-vector P50 timings are 11.942 and 5.611 ms, respectively, and are not complete-reading latencies. This additional timing uses a clean Industrial subset rather than the six-condition accuracy roster.
+
+\begin{table}[H]
+\caption{Complete ROI-to-reading efficiency of the structured comparators on the first 100 clean Industrial-1395 ROIs, seed 20262020, RTX 4060, FP32, batch size 1, with 20 warm-up calls. DeepLab and VDN include the SyncG-trained reference detector in parameter counts, latency, and peak allocated CUDA memory. File decoding and accuracy labels are excluded; failed calls remain in timing summaries.}
+\label{tab:structured_efficiency}
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}Xccccc@{}}
+\toprule
+\textbf{Method} & \textbf{Params (M)} & \textbf{P50 (ms)} & \textbf{P95 (ms)} & \textbf{Images/s} & \textbf{Peak MiB} \\
+\midrule
+YOLO11s-Pose-4KP & 9.715 & 6.398 & 7.656 & 152.97 & 84.2 \\
+DeepLabV3+-ROI + references & 50.062 & 19.558 & 20.763 & 51.13 & 271.4 \\
+VDN + references & 25.093 & 12.380 & 13.349 & 80.03 & 158.4 \\
 \bottomrule
 \end{tabularx}
 \end{table}
