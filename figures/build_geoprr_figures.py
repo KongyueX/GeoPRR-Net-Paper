@@ -1900,15 +1900,22 @@ def structured_reader_summary() -> tuple[
     acc5_sd = np.zeros(shape, dtype=float)
     coverage = np.zeros(shape, dtype=float)
     coverage_sd = np.zeros(shape, dtype=float)
+
+    def plot_sd(row: dict[str, str], key: str) -> float:
+        if row.get("evaluation_setting") == "supervised_target_domain_group_oof" and row[key] == "":
+            # One OOF ensemble has no seed SD; zero only suppresses its error bar.
+            return 0.0
+        return number(row, key)
+
     for domain_index, domain in enumerate(domains):
         for method_index, method in enumerate(methods):
             row = indexed[(domain, method)]
             nmae[domain_index, method_index] = 100.0 * number(row, "nmae_mean")
-            nmae_sd[domain_index, method_index] = 100.0 * number(row, "nmae_sample_sd")
+            nmae_sd[domain_index, method_index] = 100.0 * plot_sd(row, "nmae_sample_sd")
             acc5[domain_index, method_index] = 100.0 * number(row, "acc_at_5_mean")
-            acc5_sd[domain_index, method_index] = 100.0 * number(row, "acc_at_5_sample_sd")
+            acc5_sd[domain_index, method_index] = 100.0 * plot_sd(row, "acc_at_5_sample_sd")
             coverage[domain_index, method_index] = 100.0 * number(row, "coverage_mean")
-            coverage_sd[domain_index, method_index] = 100.0 * number(row, "coverage_sample_sd")
+            coverage_sd[domain_index, method_index] = 100.0 * plot_sd(row, "coverage_sample_sd")
 
     for values, label in (
         (nmae, "NMAE"),

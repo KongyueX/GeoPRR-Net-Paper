@@ -67,6 +67,13 @@ comparison table. Its Industrial delta column is a descriptive point
 difference against that OOF aggregate; confidence intervals remain unreported.
 The frozen source-only GeoPRR result of 12.3664%FS is a different setting.
 
+For the Industrial GeoPRR OOF row, `seeds` identifies the three source encoders,
+not three independently evaluated ensembles. Seed SD is not applicable to this
+single ensemble and is empty in the comparison CSV and `null` in the summary
+JSON. Its single-value `per_seed` lists retain the ensemble result for compatibility;
+they do not represent an estimate of variation across seeds. Plotting uses zero
+only to omit its error bar.
+
 Efficiency uses RTX 4060 / PyTorch 2.11 / CUDA 12.8, FP32, batch 1, seed
 20262020, 20 warmups and 100 timed clean ROIs. Complete reader arms include
 reference detection, preprocessing, transfers, decoding and synchronization.

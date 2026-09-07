@@ -330,7 +330,7 @@
             0.6058542413381123
           ],
           "range": 0.0,
-          "sample_sd": 0.0
+          "sample_sd": null
         },
         "nmae": {
           "maximum": 0.023262000730589677,
@@ -340,7 +340,7 @@
             0.023262000730589677
           ],
           "range": 0.0,
-          "sample_sd": 0.0
+          "sample_sd": null
         },
         "aggregation": "supervised group-wise five-fold OOF; three-encoder equal-weight aggregate"
       },

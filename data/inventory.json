@@ -37,22 +37,22 @@
       "rows": 112176
     },
     {
-      "bytes": 1053,
+      "bytes": 1040,
       "path": "data/figure3/geometry_routing_seed_metrics.csv",
       "rows": 12
     },
     {
-      "bytes": 831,
+      "bytes": 826,
       "path": "data/figure3/geometry_routing_summary.csv",
       "rows": 4
     },
     {
-      "bytes": 4263,
+      "bytes": 4238,
       "path": "data/figure3/geometry_routing_conditions.csv",
       "rows": 24
     },
     {
-      "bytes": 959,
+      "bytes": 936,
       "path": "data/figure3/geometry_routing_interaction.json",
       "rows": null
     },
@@ -87,7 +87,7 @@
       "rows": null
     },
     {
-      "bytes": 2619,
+      "bytes": 2598,
       "path": "data/figure3/README.md",
       "rows": null
     },
@@ -132,34 +132,34 @@
       "rows": 8370
     },
     {
-      "bytes": 4225,
+      "bytes": 4208,
       "path": "data/roi_geometry_comparison_three_seed.csv",
       "rows": 12
     },
     {
-      "bytes": 220635,
+      "bytes": 214442,
       "path": "data/public_results_summary.json",
       "rows": null
     },
     {
       "path": "data/roi_comparison_zero_shot_public.json",
       "rows": null,
-      "bytes": 35974
+      "bytes": 34998
     },
     {
       "path": "data/roi_comparison_efficiency_public.json",
       "rows": null,
-      "bytes": 25937
+      "bytes": 25275
     },
     {
       "path": "data/roi_comparison_zero_shot.csv",
       "rows": 12,
-      "bytes": 5358
+      "bytes": 5345
     },
     {
       "path": "data/roi_comparison_efficiency.csv",
       "rows": 5,
-      "bytes": 1050
+      "bytes": 1044
     }
   ],
   "publication_model": "GeoPRR-Net",
