@@ -6527,22 +6527,22 @@
           "method": "VDN",
           "seed": 20262020,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.4,
-          "prediction": 0.16858546435832977,
-          "absolute_error": 0.23141453564167025,
+          "prediction": 0.15628443658351898,
+          "absolute_error": 0.24371556341648104,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_010",
           "head_fit_seed": null,
           "display_row": true,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262020/vdn/field/field_gauge_external_roi/predictions.jsonl",
-          "source_locator": "line:373",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/vdn/field/field_gauge_external_roi/predictions.jsonl",
+          "source_locator": "line:337",
           "metadata_pointer": "/cases/4/prediction_records/4",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.23141453564167025,
+            "absolute_error": 0.24371556341648104,
             "condition": "clean",
             "dataset": "FieldGauge-External-ROI",
             "dataset_slug": "field_gauge_external_roi",
@@ -6552,17 +6552,17 @@
             "group_id": "real_group_010",
             "method": "VDN_matched_terminal_auto_geometry_seed_20262020",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.16858546435832977,
+            "normalized_progress": 0.15628443658351898,
             "normalized_target": 0.4,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_001150",
             "schema_version": 1,
             "seed": 20262020,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 272.0210876464844,
+              "arc_degrees": 279.75787353515625,
               "heatmap_peak": 0.76513671875,
-              "offset_degrees": 45.85879898071289
+              "offset_degrees": 43.7218017578125
             }
           },
           "configuration": {
@@ -6582,13 +6582,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "provisional capture session",
             "groups": 21,
             "image_size": 384,
             "mask_threshold": null,
             "method_family": "vdn",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262020/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262020
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262020/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 147
           }
         },
@@ -6600,22 +6608,22 @@
           "method": "VDN",
           "seed": 20262021,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.4,
-          "prediction": 0.18818801641464233,
-          "absolute_error": 0.2118119835853577,
+          "prediction": 0.7532835602760315,
+          "absolute_error": 0.35328356027603147,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_010",
           "head_fit_seed": null,
           "display_row": false,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262021/vdn/field/field_gauge_external_roi/predictions.jsonl",
-          "source_locator": "line:373",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262021/vdn/field/field_gauge_external_roi/predictions.jsonl",
+          "source_locator": "line:337",
           "metadata_pointer": "/cases/4/prediction_records/5",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.2118119835853577,
+            "absolute_error": 0.35328356027603147,
             "condition": "clean",
             "dataset": "FieldGauge-External-ROI",
             "dataset_slug": "field_gauge_external_roi",
@@ -6625,17 +6633,17 @@
             "group_id": "real_group_010",
             "method": "VDN_matched_terminal_auto_geometry_seed_20262021",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.18818801641464233,
+            "normalized_progress": 0.7532835602760315,
             "normalized_target": 0.4,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_001150",
             "schema_version": 1,
             "seed": 20262021,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 272.0210876464844,
-              "heatmap_peak": 0.0677490234375,
-              "offset_degrees": 51.19110870361328
+              "arc_degrees": 59.32367706298828,
+              "heatmap_peak": 0.06781005859375,
+              "offset_degrees": 44.68754959106445
             }
           },
           "configuration": {
@@ -6655,13 +6663,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262021/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "provisional capture session",
             "groups": 21,
             "image_size": 384,
             "mask_threshold": null,
             "method_family": "vdn",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262021/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262021
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262021/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 147
           }
         },
@@ -6673,22 +6689,22 @@
           "method": "VDN",
           "seed": 20262022,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.4,
-          "prediction": 0.19030028581619263,
-          "absolute_error": 0.2096997141838074,
+          "prediction": 0.16084881126880646,
+          "absolute_error": 0.23915118873119356,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_010",
           "head_fit_seed": null,
           "display_row": false,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262022/vdn/field/field_gauge_external_roi/predictions.jsonl",
-          "source_locator": "line:373",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262022/vdn/field/field_gauge_external_roi/predictions.jsonl",
+          "source_locator": "line:337",
           "metadata_pointer": "/cases/4/prediction_records/6",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.2096997141838074,
+            "absolute_error": 0.23915118873119356,
             "condition": "clean",
             "dataset": "FieldGauge-External-ROI",
             "dataset_slug": "field_gauge_external_roi",
@@ -6698,17 +6714,17 @@
             "group_id": "real_group_010",
             "method": "VDN_matched_terminal_auto_geometry_seed_20262022",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.19030028581619263,
+            "normalized_progress": 0.16084881126880646,
             "normalized_target": 0.4,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_001150",
             "schema_version": 1,
             "seed": 20262022,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 272.0210876464844,
-              "heatmap_peak": 0.72412109375,
-              "offset_degrees": 51.765689849853516
+              "arc_degrees": 194.87661743164062,
+              "heatmap_peak": 0.7236328125,
+              "offset_degrees": 31.345670700073242
             }
           },
           "configuration": {
@@ -6728,13 +6744,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262022/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "provisional capture session",
             "groups": 21,
             "image_size": 384,
             "mask_threshold": null,
             "method_family": "vdn",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262022/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262022
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262022/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 147
           }
         },
@@ -6962,22 +6986,22 @@
           "method": "DeepLabV3+-ROI",
           "seed": 20262020,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.4,
-          "prediction": 0.19597342610359192,
-          "absolute_error": 0.2040265738964081,
+          "prediction": 0.17430642247200012,
+          "absolute_error": 0.2256935775279999,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_010",
           "head_fit_seed": null,
           "display_row": true,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262020/deeplabv3plus_roi_auto_geometry/field/field_gauge_external_roi/predictions.jsonl",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/deeplabv3plus_roi_auto_geometry/field/field_gauge_external_roi/predictions.jsonl",
           "source_locator": "line:337",
           "metadata_pointer": "/cases/4/prediction_records/10",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.2040265738964081,
+            "absolute_error": 0.2256935775279999,
             "condition": "clean",
             "dataset": "FieldGauge-External-ROI",
             "dataset_slug": "field_gauge_external_roi",
@@ -6987,20 +7011,20 @@
             "group_id": "real_group_010",
             "method": "DeepLabV3+-ResNet50-ROI_auto_geometry_seed_20262020",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.19597342610359192,
+            "normalized_progress": 0.17430642247200012,
             "normalized_target": 0.4,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_001150",
             "schema_version": 1,
             "seed": 20262020,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 272.0210876464844,
-              "component_gap": 0.02132166177034378,
+              "arc_degrees": 279.7578430175781,
+              "component_gap": 0.36866384744644165,
               "component_pixels": 952.0,
-              "maximum_radius": 86.5581283569336,
+              "maximum_radius": 87.53834533691406,
               "mean_probability": 0.9690117239952087,
-              "offset_degrees": 53.308902740478516
+              "offset_degrees": 48.763587951660156
             }
           },
           "configuration": {
@@ -7020,13 +7044,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "provisional capture session",
             "groups": 21,
             "image_size": 256,
             "mask_threshold": 0.5,
             "method_family": "deeplab",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262020/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262020
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262020/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 147
           }
         },
@@ -7038,22 +7070,22 @@
           "method": "DeepLabV3+-ROI",
           "seed": 20262021,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.4,
-          "prediction": 0.1943708062171936,
-          "absolute_error": 0.20562919378280642,
+          "prediction": 0.8371300101280212,
+          "absolute_error": 0.4371300101280212,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_010",
           "head_fit_seed": null,
           "display_row": false,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262021/deeplabv3plus_roi_auto_geometry/field/field_gauge_external_roi/predictions.jsonl",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262021/deeplabv3plus_roi_auto_geometry/field/field_gauge_external_roi/predictions.jsonl",
           "source_locator": "line:337",
           "metadata_pointer": "/cases/4/prediction_records/11",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.20562919378280642,
+            "absolute_error": 0.4371300101280212,
             "condition": "clean",
             "dataset": "FieldGauge-External-ROI",
             "dataset_slug": "field_gauge_external_roi",
@@ -7063,20 +7095,20 @@
             "group_id": "real_group_010",
             "method": "DeepLabV3+-ResNet50-ROI_auto_geometry_seed_20262021",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.1943708062171936,
+            "normalized_progress": 0.8371300101280212,
             "normalized_target": 0.4,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_001150",
             "schema_version": 1,
             "seed": 20262021,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 272.0210876464844,
-              "component_gap": 0.02132166177034378,
+              "arc_degrees": 59.32366943359375,
+              "component_gap": 0.4854070544242859,
               "component_pixels": 964.0,
-              "maximum_radius": 88.54503631591797,
+              "maximum_radius": 92.40581512451172,
               "mean_probability": 0.9629077911376953,
-              "offset_degrees": 52.87295913696289
+              "offset_degrees": 49.661624908447266
             }
           },
           "configuration": {
@@ -7096,13 +7128,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262021/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "provisional capture session",
             "groups": 21,
             "image_size": 256,
             "mask_threshold": 0.5,
             "method_family": "deeplab",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262021/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262021
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262021/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 147
           }
         },
@@ -7114,22 +7154,22 @@
           "method": "DeepLabV3+-ROI",
           "seed": 20262022,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.4,
-          "prediction": 0.19763262569904327,
-          "absolute_error": 0.20236737430095675,
+          "prediction": 0.09397467970848083,
+          "absolute_error": 0.3060253202915192,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_010",
           "head_fit_seed": null,
           "display_row": false,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262022/deeplabv3plus_roi_auto_geometry/field/field_gauge_external_roi/predictions.jsonl",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262022/deeplabv3plus_roi_auto_geometry/field/field_gauge_external_roi/predictions.jsonl",
           "source_locator": "line:337",
           "metadata_pointer": "/cases/4/prediction_records/12",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.20236737430095675,
+            "absolute_error": 0.3060253202915192,
             "condition": "clean",
             "dataset": "FieldGauge-External-ROI",
             "dataset_slug": "field_gauge_external_roi",
@@ -7139,20 +7179,20 @@
             "group_id": "real_group_010",
             "method": "DeepLabV3+-ResNet50-ROI_auto_geometry_seed_20262022",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.19763262569904327,
+            "normalized_progress": 0.09397467970848083,
             "normalized_target": 0.4,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_001150",
             "schema_version": 1,
             "seed": 20262022,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 272.0210876464844,
-              "component_gap": 0.02132166177034378,
+              "arc_degrees": 194.87660217285156,
+              "component_gap": 0.4572618901729584,
               "component_pixels": 948.0,
-              "maximum_radius": 86.5581283569336,
+              "maximum_radius": 80.95198059082031,
               "mean_probability": 0.9724209308624268,
-              "offset_degrees": 53.7602424621582
+              "offset_degrees": 18.313465118408203
             }
           },
           "configuration": {
@@ -7172,13 +7212,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262022/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "provisional capture session",
             "groups": 21,
             "image_size": 256,
             "mask_threshold": 0.5,
             "method_family": "deeplab",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262022/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262022
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262022/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 147
           }
         }
@@ -7312,27 +7360,27 @@
       },
       "intermediate_outputs": {
         "automatic_reference_geometry": {
-          "source_path": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
+          "source_path": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/geometry.jsonl",
           "source_line": 7825,
           "record": {
             "condition": "clean",
             "dataset": "FieldGauge-External-ROI",
             "dataset_slug": "field_gauge_external_roi",
             "failure_code": null,
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_id": "real_group_010",
             "points_pivot_start_end": [
               [
-                269.5455017089844,
-                264.9954833984375
+                271.9097900390625,
+                262.2012634277344
               ],
               [
-                163.70880126953125,
-                377.3086853027344
+                155.30589294433594,
+                377.056396484375
               ],
               [
-                367.6802062988281,
-                362.3900451660156
+                354.1911315917969,
+                378.27532958984375
               ]
             ],
             "sample_id": "real_001150",
@@ -7343,20 +7391,138 @@
             ],
             "status": "pass",
             "telemetry": {
-              "detections": 3,
-              "selected_confidence": {
-                "0": 0.8964229822158813,
-                "1": 0.8243513703346252,
-                "2": 0.6313455104827881
+              "box_confidence": 0.999174177646637,
+              "detections": 1,
+              "minimum_reference_confidence": 0.9999997615814209,
+              "pointer_tip_used": false
+            }
+          }
+        },
+        "automatic_reference_geometry_role": "Same-seed SyncG-trained YOLO11s-Pose-4KP predicted pivot/start/end only (indices 0,2,3); pointer-tip coordinates and confidence excluded, including detection selection; not manually labeled GT. The singular geometry entry is the display seed.",
+        "VDN_direction_vector": "not saved",
+        "YOLO11s_four_keypoint_array": "not saved",
+        "DeepLab_mask": "not saved",
+        "telemetry": "retained verbatim in each comparator source_record",
+        "automatic_reference_geometry_by_seed": {
+          "20262020": {
+            "source_path": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/geometry.jsonl",
+            "source_line": 7825,
+            "record": {
+              "condition": "clean",
+              "dataset": "FieldGauge-External-ROI",
+              "dataset_slug": "field_gauge_external_roi",
+              "failure_code": null,
+              "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
+              "group_id": "real_group_010",
+              "points_pivot_start_end": [
+                [
+                  271.9097900390625,
+                  262.2012634277344
+                ],
+                [
+                  155.30589294433594,
+                  377.056396484375
+                ],
+                [
+                  354.1911315917969,
+                  378.27532958984375
+                ]
+              ],
+              "sample_id": "real_001150",
+              "schema_version": 1,
+              "source_shape": [
+                530,
+                535
+              ],
+              "status": "pass",
+              "telemetry": {
+                "box_confidence": 0.999174177646637,
+                "detections": 1,
+                "minimum_reference_confidence": 0.9999997615814209,
+                "pointer_tip_used": false
+              }
+            }
+          },
+          "20262021": {
+            "source_path": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262021/geometry.jsonl",
+            "source_line": 7825,
+            "record": {
+              "condition": "clean",
+              "dataset": "FieldGauge-External-ROI",
+              "dataset_slug": "field_gauge_external_roi",
+              "failure_code": null,
+              "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
+              "group_id": "real_group_010",
+              "points_pivot_start_end": [
+                [
+                  276.87353515625,
+                  271.2329406738281
+                ],
+                [
+                  167.3456573486328,
+                  363.7910461425781
+                ],
+                [
+                  204.59689331054688,
+                  246.776611328125
+                ]
+              ],
+              "sample_id": "real_001150",
+              "schema_version": 1,
+              "source_shape": [
+                530,
+                535
+              ],
+              "status": "pass",
+              "telemetry": {
+                "box_confidence": 0.999051034450531,
+                "detections": 1,
+                "minimum_reference_confidence": 0.9999990463256836,
+                "pointer_tip_used": false
+              }
+            }
+          },
+          "20262022": {
+            "source_path": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262022/geometry.jsonl",
+            "source_line": 7825,
+            "record": {
+              "condition": "clean",
+              "dataset": "FieldGauge-External-ROI",
+              "dataset_slug": "field_gauge_external_roi",
+              "failure_code": null,
+              "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
+              "group_id": "real_group_010",
+              "points_pivot_start_end": [
+                [
+                  258.6331787109375,
+                  255.91656494140625
+                ],
+                [
+                  156.509765625,
+                  306.4853820800781
+                ],
+                [
+                  305.45867919921875,
+                  246.3258514404297
+                ]
+              ],
+              "sample_id": "real_001150",
+              "schema_version": 1,
+              "source_shape": [
+                530,
+                535
+              ],
+              "status": "pass",
+              "telemetry": {
+                "box_confidence": 0.9764127731323242,
+                "detections": 1,
+                "minimum_reference_confidence": 0.9999816417694092,
+                "pointer_tip_used": false
               }
             }
           }
         },
-        "automatic_reference_geometry_role": "real cached auxiliary detector pivot/start/end, not YOLO11s four-keypoint outputs and not manually labeled GT",
-        "VDN_direction_vector": "not saved",
-        "YOLO11s_four_keypoint_array": "not saved",
-        "DeepLab_mask": "not saved",
-        "telemetry": "retained verbatim in each comparator source_record"
+        "automatic_reference_geometry_display_seed": 20262020
       },
       "visible_difficulty": "现场温度盘，细针朝左，盘面低对比、数字与刻度模糊、颗粒明显，金属边缘反光。clean 只表示没有额外合成退化，原始拍摄并不清晰。",
       "three_seed_absolute_errors": {
@@ -7366,9 +7532,9 @@
           0.0044529378414154275
         ],
         "VDN": [
-          0.23141453564167025,
-          0.2118119835853577,
-          0.2096997141838074
+          0.24371556341648104,
+          0.35328356027603147,
+          0.23915118873119356
         ],
         "YOLO11s-Pose-4KP": [
           0.22028003036975863,
@@ -7376,9 +7542,9 @@
           0.3510257363319397
         ],
         "DeepLabV3+-ROI": [
-          0.2040265738964081,
-          0.20562919378280642,
-          0.20236737430095675
+          0.2256935775279999,
+          0.4371300101280212,
+          0.3060253202915192
         ]
       },
       "geo_all_seeds_error_le_0_02": true,
@@ -7729,22 +7895,22 @@
           "method": "VDN",
           "seed": 20262020,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.11249999999999999,
-          "prediction": 0.10643209517002106,
-          "absolute_error": 0.006067904829978932,
+          "prediction": 0.07174533605575562,
+          "absolute_error": 0.040754663944244374,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_041",
           "head_fit_seed": null,
           "display_row": true,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262020/vdn/field/field_gauge_roi_test_b/predictions.jsonl",
-          "source_locator": "line:2553",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/vdn/field/field_gauge_roi_test_b/predictions.jsonl",
+          "source_locator": "line:2453",
           "metadata_pointer": "/cases/5/prediction_records/4",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.006067904829978932,
+            "absolute_error": 0.040754663944244374,
             "condition": "perspective_severe",
             "dataset": "FieldGauge-ROI Test-B",
             "dataset_slug": "field_gauge_roi_test_b",
@@ -7754,17 +7920,17 @@
             "group_id": "real_group_041",
             "method": "VDN_matched_terminal_auto_geometry_seed_20262020",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.10643209517002106,
+            "normalized_progress": 0.07174533605575562,
             "normalized_target": 0.11249999999999999,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_000267",
             "schema_version": 1,
             "seed": 20262020,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 282.6156311035156,
-              "heatmap_peak": 0.2213134765625,
-              "offset_degrees": 30.079374313354492
+              "arc_degrees": 265.9234313964844,
+              "heatmap_peak": 0.2210693359375,
+              "offset_degrees": 19.078767776489258
             }
           },
           "configuration": {
@@ -7784,13 +7950,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "source-directory group",
             "groups": 20,
             "image_size": 384,
             "mask_threshold": null,
             "method_family": "vdn",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262020/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262020
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262020/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 814
           }
         },
@@ -7802,22 +7976,22 @@
           "method": "VDN",
           "seed": 20262021,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.11249999999999999,
-          "prediction": 0.791623055934906,
-          "absolute_error": 0.679123055934906,
+          "prediction": 0.9008895754814148,
+          "absolute_error": 0.7883895754814148,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_041",
           "head_fit_seed": null,
           "display_row": false,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262021/vdn/field/field_gauge_roi_test_b/predictions.jsonl",
-          "source_locator": "line:2553",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262021/vdn/field/field_gauge_roi_test_b/predictions.jsonl",
+          "source_locator": "line:2453",
           "metadata_pointer": "/cases/5/prediction_records/5",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.679123055934906,
+            "absolute_error": 0.7883895754814148,
             "condition": "perspective_severe",
             "dataset": "FieldGauge-ROI Test-B",
             "dataset_slug": "field_gauge_roi_test_b",
@@ -7827,17 +8001,17 @@
             "group_id": "real_group_041",
             "method": "VDN_matched_terminal_auto_geometry_seed_20262021",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.791623055934906,
+            "normalized_progress": 0.9008895754814148,
             "normalized_target": 0.11249999999999999,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_000267",
             "schema_version": 1,
             "seed": 20262021,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 282.6156311035156,
-              "heatmap_peak": 0.46484375,
-              "offset_degrees": 223.7250518798828
+              "arc_degrees": 257.4240417480469,
+              "heatmap_peak": 0.464599609375,
+              "offset_degrees": 231.91062927246094
             }
           },
           "configuration": {
@@ -7857,13 +8031,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262021/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "source-directory group",
             "groups": 20,
             "image_size": 384,
             "mask_threshold": null,
             "method_family": "vdn",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262021/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262021
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262021/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 814
           }
         },
@@ -7875,22 +8057,22 @@
           "method": "VDN",
           "seed": 20262022,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.11249999999999999,
-          "prediction": 0.7797833681106567,
-          "absolute_error": 0.6672833681106567,
+          "prediction": 0.8497999310493469,
+          "absolute_error": 0.7372999310493469,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_041",
           "head_fit_seed": null,
           "display_row": false,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262022/vdn/field/field_gauge_roi_test_b/predictions.jsonl",
-          "source_locator": "line:2553",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262022/vdn/field/field_gauge_roi_test_b/predictions.jsonl",
+          "source_locator": "line:2453",
           "metadata_pointer": "/cases/5/prediction_records/6",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.6672833681106567,
+            "absolute_error": 0.7372999310493469,
             "condition": "perspective_severe",
             "dataset": "FieldGauge-ROI Test-B",
             "dataset_slug": "field_gauge_roi_test_b",
@@ -7900,17 +8082,17 @@
             "group_id": "real_group_041",
             "method": "VDN_matched_terminal_auto_geometry_seed_20262022",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.7797833681106567,
+            "normalized_progress": 0.8497999310493469,
             "normalized_target": 0.11249999999999999,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_000267",
             "schema_version": 1,
             "seed": 20262022,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 282.6156311035156,
-              "heatmap_peak": 0.10308837890625,
-              "offset_degrees": 220.3789825439453
+              "arc_degrees": 213.9073028564453,
+              "heatmap_peak": 0.10321044921875,
+              "offset_degrees": 181.77841186523438
             }
           },
           "configuration": {
@@ -7930,13 +8112,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262022/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "source-directory group",
             "groups": 20,
             "image_size": 384,
             "mask_threshold": null,
             "method_family": "vdn",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262022/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262022
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262022/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 814
           }
         },
@@ -8164,22 +8354,22 @@
           "method": "DeepLabV3+-ROI",
           "seed": 20262020,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.11249999999999999,
-          "prediction": 0.11437836289405823,
-          "absolute_error": 0.0018783628940582386,
+          "prediction": 1.0,
+          "absolute_error": 0.8875,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_041",
           "head_fit_seed": null,
           "display_row": true,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262020/deeplabv3plus_roi_auto_geometry/field/field_gauge_roi_test_b/predictions.jsonl",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/deeplabv3plus_roi_auto_geometry/field/field_gauge_roi_test_b/predictions.jsonl",
           "source_locator": "line:2453",
           "metadata_pointer": "/cases/5/prediction_records/10",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.0018783628940582386,
+            "absolute_error": 0.8875,
             "condition": "perspective_severe",
             "dataset": "FieldGauge-ROI Test-B",
             "dataset_slug": "field_gauge_roi_test_b",
@@ -8189,20 +8379,20 @@
             "group_id": "real_group_041",
             "method": "DeepLabV3+-ResNet50-ROI_auto_geometry_seed_20262020",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.11437836289405823,
+            "normalized_progress": 1.0,
             "normalized_target": 0.11249999999999999,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_000267",
             "schema_version": 1,
             "seed": 20262020,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 282.6156311035156,
-              "component_gap": 0.479189395904541,
+              "arc_degrees": 265.9234619140625,
+              "component_gap": 18.568763732910156,
               "component_pixels": 379.0,
-              "maximum_radius": 46.415061950683594,
+              "maximum_radius": 50.455169677734375,
               "mean_probability": 0.9390885233879089,
-              "offset_degrees": 32.32511520385742
+              "offset_degrees": 312.7253112792969
             }
           },
           "configuration": {
@@ -8222,13 +8412,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "source-directory group",
             "groups": 20,
             "image_size": 256,
             "mask_threshold": 0.5,
             "method_family": "deeplab",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262020/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262020
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262020/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 814
           }
         },
@@ -8240,22 +8438,22 @@
           "method": "DeepLabV3+-ROI",
           "seed": 20262021,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.11249999999999999,
-          "prediction": 0.13376586139202118,
-          "absolute_error": 0.02126586139202119,
+          "prediction": 0.8795496225357056,
+          "absolute_error": 0.7670496225357055,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_041",
           "head_fit_seed": null,
           "display_row": false,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262021/deeplabv3plus_roi_auto_geometry/field/field_gauge_roi_test_b/predictions.jsonl",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262021/deeplabv3plus_roi_auto_geometry/field/field_gauge_roi_test_b/predictions.jsonl",
           "source_locator": "line:2453",
           "metadata_pointer": "/cases/5/prediction_records/11",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.02126586139202119,
+            "absolute_error": 0.7670496225357055,
             "condition": "perspective_severe",
             "dataset": "FieldGauge-ROI Test-B",
             "dataset_slug": "field_gauge_roi_test_b",
@@ -8265,20 +8463,20 @@
             "group_id": "real_group_041",
             "method": "DeepLabV3+-ResNet50-ROI_auto_geometry_seed_20262021",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.13376586139202118,
+            "normalized_progress": 0.8795496225357056,
             "normalized_target": 0.11249999999999999,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_000267",
             "schema_version": 1,
             "seed": 20262021,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 282.6156311035156,
-              "component_gap": 0.479189395904541,
+              "arc_degrees": 257.4240417480469,
+              "component_gap": 4.604816436767578,
               "component_pixels": 348.0,
-              "maximum_radius": 36.958160400390625,
+              "maximum_radius": 53.41725158691406,
               "mean_probability": 0.9204222559928894,
-              "offset_degrees": 37.804325103759766
+              "offset_degrees": 226.41722106933594
             }
           },
           "configuration": {
@@ -8298,13 +8496,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262021/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "source-directory group",
             "groups": 20,
             "image_size": 256,
             "mask_threshold": 0.5,
             "method_family": "deeplab",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262021/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262021
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262021/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 814
           }
         },
@@ -8316,22 +8522,22 @@
           "method": "DeepLabV3+-ROI",
           "seed": 20262022,
           "fold_id": null,
-          "prediction_type": "frozen_source_trained_external_test",
+          "prediction_type": "source_only_supplied_roi_source_pose_reference",
           "target": 0.11249999999999999,
-          "prediction": 0.11503594368696213,
-          "absolute_error": 0.002535943686962139,
+          "prediction": 0.8367985486984253,
+          "absolute_error": 0.7242985486984252,
           "status": "pass",
           "failure_code": null,
           "absolute_error_kind": "absolute_difference",
           "acquisition_group": "real_group_041",
           "head_fit_seed": null,
           "display_row": false,
-          "source_file": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/seed_20262022/deeplabv3plus_roi_auto_geometry/field/field_gauge_roi_test_b/predictions.jsonl",
+          "source_file": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262022/deeplabv3plus_roi_auto_geometry/field/field_gauge_roi_test_b/predictions.jsonl",
           "source_locator": "line:2453",
           "metadata_pointer": "/cases/5/prediction_records/12",
           "status_source": "original prediction row",
           "source_record": {
-            "absolute_error": 0.002535943686962139,
+            "absolute_error": 0.7242985486984252,
             "condition": "perspective_severe",
             "dataset": "FieldGauge-ROI Test-B",
             "dataset_slug": "field_gauge_roi_test_b",
@@ -8341,20 +8547,20 @@
             "group_id": "real_group_041",
             "method": "DeepLabV3+-ResNet50-ROI_auto_geometry_seed_20262022",
             "model_input": "conditioned real-photo ROI pixels only",
-            "normalized_progress": 0.11503594368696213,
+            "normalized_progress": 0.8367985486984253,
             "normalized_target": 0.11249999999999999,
-            "offline_geometry": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "offline_geometry": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "sample_id": "real_000267",
             "schema_version": 1,
             "seed": 20262022,
             "status": "pass",
             "telemetry": {
-              "arc_degrees": 282.6156311035156,
-              "component_gap": 0.479189395904541,
+              "arc_degrees": 213.9073028564453,
+              "component_gap": 4.78260612487793,
               "component_pixels": 386.0,
-              "maximum_radius": 48.60299301147461,
+              "maximum_radius": 55.068206787109375,
               "mean_probability": 0.9322434067726135,
-              "offset_degrees": 32.510955810546875
+              "offset_degrees": 178.997314453125
             }
           },
           "configuration": {
@@ -8374,13 +8580,21 @@
             "evaluation_role": "automatic-geometry real-photo direction component",
             "field_photos_role": "retrospective test only",
             "geometry_audit": null,
-            "geometry_cache": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_cache": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262022/geometry.jsonl",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_unit": "source-directory group",
             "groups": 20,
             "image_size": 256,
             "mask_threshold": 0.5,
             "method_family": "deeplab",
+            "reference_detector_kind": "source_pose4kp",
+            "reference_detector_training": {
+              "data": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262022/yolo11s_pose4kp/dataset/data.yaml",
+              "epochs": 30,
+              "imgsz": 384,
+              "seed": 20262022
+            },
+            "reference_detector_weights": "code_repository/artifacts/runs/roi_comparison_pilot/seed_20262022/yolo11s_pose4kp/ultralytics/weights/best.pt",
             "samples": 814
           }
         }
@@ -8594,27 +8808,27 @@
       },
       "intermediate_outputs": {
         "automatic_reference_geometry": {
-          "source_path": "code_repository/artifacts/runs/roi_missing_baselines_three_seed/industrial_auto_geometry.jsonl",
+          "source_path": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/geometry.jsonl",
           "source_line": 5057,
           "record": {
             "condition": "perspective_severe",
             "dataset": "FieldGauge-ROI Test-B",
             "dataset_slug": "field_gauge_roi_test_b",
             "failure_code": null,
-            "geometry_role": "frozen automatic pivot/start/end detector on conditioned ROI pixels",
+            "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
             "group_id": "real_group_041",
             "points_pivot_start_end": [
               [
-                185.767822265625,
-                177.52606201171875
+                176.6907196044922,
+                148.47657775878906
               ],
               [
-                135.92959594726562,
-                229.47235107421875
+                121.55072021484375,
+                187.4130859375
               ],
               [
-                221.8626708984375,
-                230.6453857421875
+                235.01754760742188,
+                218.16128540039062
               ]
             ],
             "sample_id": "real_000267",
@@ -8625,22 +8839,140 @@
             ],
             "status": "pass",
             "telemetry": {
-              "detections": 4,
-              "selected_confidence": {
-                "0": 0.8490561246871948,
-                "1": 0.5415098667144775,
-                "2": 0.779425323009491
+              "box_confidence": 0.8301712274551392,
+              "detections": 1,
+              "minimum_reference_confidence": 0.9999997615814209,
+              "pointer_tip_used": false
+            }
+          }
+        },
+        "automatic_reference_geometry_role": "Same-seed SyncG-trained YOLO11s-Pose-4KP predicted pivot/start/end only (indices 0,2,3); pointer-tip coordinates and confidence excluded, including detection selection; not manually labeled GT. The singular geometry entry is the display seed.",
+        "VDN_direction_vector": "not saved",
+        "YOLO11s_four_keypoint_array": "not saved",
+        "DeepLab_mask": "not saved",
+        "telemetry": "retained verbatim in each comparator source_record",
+        "automatic_reference_geometry_by_seed": {
+          "20262020": {
+            "source_path": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262020/geometry.jsonl",
+            "source_line": 5057,
+            "record": {
+              "condition": "perspective_severe",
+              "dataset": "FieldGauge-ROI Test-B",
+              "dataset_slug": "field_gauge_roi_test_b",
+              "failure_code": null,
+              "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
+              "group_id": "real_group_041",
+              "points_pivot_start_end": [
+                [
+                  176.6907196044922,
+                  148.47657775878906
+                ],
+                [
+                  121.55072021484375,
+                  187.4130859375
+                ],
+                [
+                  235.01754760742188,
+                  218.16128540039062
+                ]
+              ],
+              "sample_id": "real_000267",
+              "schema_version": 1,
+              "source_shape": [
+                351,
+                355
+              ],
+              "status": "pass",
+              "telemetry": {
+                "box_confidence": 0.8301712274551392,
+                "detections": 1,
+                "minimum_reference_confidence": 0.9999997615814209,
+                "pointer_tip_used": false
+              }
+            }
+          },
+          "20262021": {
+            "source_path": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262021/geometry.jsonl",
+            "source_line": 5057,
+            "record": {
+              "condition": "perspective_severe",
+              "dataset": "FieldGauge-ROI Test-B",
+              "dataset_slug": "field_gauge_roi_test_b",
+              "failure_code": null,
+              "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
+              "group_id": "real_group_041",
+              "points_pivot_start_end": [
+                [
+                  142.2284393310547,
+                  180.18338012695312
+                ],
+                [
+                  103.37684631347656,
+                  234.39898681640625
+                ],
+                [
+                  230.73263549804688,
+                  216.86561584472656
+                ]
+              ],
+              "sample_id": "real_000267",
+              "schema_version": 1,
+              "source_shape": [
+                351,
+                355
+              ],
+              "status": "pass",
+              "telemetry": {
+                "box_confidence": 0.7566989064216614,
+                "detections": 1,
+                "minimum_reference_confidence": 0.9999996423721313,
+                "pointer_tip_used": false
+              }
+            }
+          },
+          "20262022": {
+            "source_path": "code_repository/artifacts/runs/roi_source_pose_reference_20260907/seed_20262022/geometry.jsonl",
+            "source_line": 5057,
+            "record": {
+              "condition": "perspective_severe",
+              "dataset": "FieldGauge-ROI Test-B",
+              "dataset_slug": "field_gauge_roi_test_b",
+              "failure_code": null,
+              "geometry_role": "SyncG-trained YOLO11s-Pose-4KP pivot/start/end on conditioned ROI pixels; predicted pointer tip excluded",
+              "group_id": "real_group_041",
+              "points_pivot_start_end": [
+                [
+                  141.02340698242188,
+                  181.29571533203125
+                ],
+                [
+                  91.34888458251953,
+                  188.10382080078125
+                ],
+                [
+                  216.2256622314453,
+                  217.5858917236328
+                ]
+              ],
+              "sample_id": "real_000267",
+              "schema_version": 1,
+              "source_shape": [
+                351,
+                355
+              ],
+              "status": "pass",
+              "telemetry": {
+                "box_confidence": 0.6855257153511047,
+                "detections": 1,
+                "minimum_reference_confidence": 0.9999613761901855,
+                "pointer_tip_used": false
               }
             }
           }
         },
-        "automatic_reference_geometry_role": "real cached auxiliary detector pivot/start/end, not YOLO11s four-keypoint outputs and not manually labeled GT",
-        "VDN_direction_vector": "not saved",
-        "YOLO11s_four_keypoint_array": "not saved",
-        "DeepLab_mask": "not saved",
-        "telemetry": "retained verbatim in each comparator source_record"
+        "automatic_reference_geometry_display_seed": 20262020
       },
-      "visible_difficulty": "现场红指针压力盘，低读数、密集刻度，原图已有侧视、不均匀照明与线缆背景；正式 yaw -45° 再次压缩表盘。展示种子的 VDN 和 DeepLab 都有较小误差，主要差异来自 YOLO。",
+      "visible_difficulty": "现场红指针压力盘，低读数、密集刻度，原图已有侧视、不均匀照明与线缆背景；正式 yaw -45° 再次压缩表盘。新版源域参考点下，展示种子的 VDN 误差为 0.040755，DeepLab 读数为 1.0、误差为 0.887500；DeepLab 该输出为有效记录，不是失败计分。",
       "three_seed_absolute_errors": {
         "GeoPRR-Net": [
           0.005127106606960308,
@@ -8648,9 +8980,9 @@
           0.006882783770561229
         ],
         "VDN": [
-          0.006067904829978932,
-          0.679123055934906,
-          0.6672833681106567
+          0.040754663944244374,
+          0.7883895754814148,
+          0.7372999310493469
         ],
         "YOLO11s-Pose-4KP": [
           0.5294917941093444,
@@ -8658,14 +8990,15 @@
           0.36369381546974183
         ],
         "DeepLabV3+-ROI": [
-          0.0018783628940582386,
-          0.02126586139202119,
-          0.002535943686962139
+          0.8875,
+          0.7670496225357055,
+          0.7242985486984252
         ]
       },
       "geo_all_seeds_error_le_0_02": true,
       "structured_comparator_bad_all_seeds": [
-        "YOLO11s-Pose-4KP"
+        "YOLO11s-Pose-4KP",
+        "DeepLabV3+-ROI"
       ]
     }
   ],
@@ -8693,10 +9026,10 @@
   },
   "method_protocols": {
     "GeoPRR-Net": "Shared EfficientNet-B0 dual view, image-derived SARN-v2 support normalization, geometry/polar/relational routing; full fixed-epoch EMA per encoder. SyncG scene-disjoint test; RF100 frozen external transfer. Industrial adds supervised row_weighted residual feature heads with group-isolated five-fold OOF, frozen encoders, then equal weights across three encoder predictions.",
-    "VDN": "Public ResNet-18 VDN direction component retrained on matched SyncG, terminal epoch 200. SyncG/RF100 annotation pivot/start/end conversion. Industrial cached automatic reference detector. No Industrial OOF fitting is claimed.",
+    "VDN": "Public ResNet-18 VDN direction component retrained on matched SyncG, terminal epoch 200. SyncG/RF100 annotation pivot/start/end conversion. Industrial uses the same-seed SyncG-trained YOLO11s-Pose-4KP pivot/start/end reference points; supplied ROI source-only evaluation. No Industrial OOF fitting is claimed.",
     "YOLO11s-Pose-4KP": "Ultralytics YOLO11s four predicted points, best inner SyncG validation checkpoint within 30 epochs; no annotated reference geometry used at inference in any dataset; no target-domain adaptation.",
-    "DeepLabV3+-ROI": "Pointer segmentation, best inner SyncG validation Dice checkpoint within 20 epochs. SyncG/RF100 annotation pivot/start/end; Industrial cached automatic geometry. No Industrial OOF fitting is claimed.",
-    "automatic_reference_detector": "utils/angleDetect/yoloDetection/result/yolo_pointbest.pt, fixed auxiliary detector for Industrial VDN/DeepLab. Its training-data provenance is unresolved; strict end-to-end target-unseen status cannot be inferred."
+    "DeepLabV3+-ROI": "Pointer segmentation, best inner SyncG validation Dice checkpoint within 20 epochs. SyncG/RF100 annotation pivot/start/end; Industrial uses the same-seed SyncG-trained YOLO11s-Pose-4KP pivot/start/end reference points; supplied ROI source-only evaluation. No Industrial OOF fitting is claimed.",
+    "automatic_reference_detector": "Same-seed SyncG-trained YOLO11s-Pose-4KP best inner-validation checkpoint (code_repository/artifacts/runs/roi_comparison_pilot/seed_<seed>/yolo11s_pose4kp/ultralytics/weights/best.pt). Industrial VDN/DeepLab consume indices [0,2,3] (pivot/start/end). Pointer-tip coordinates and confidence are excluded, including detection selection. No Industrial training or tuning; supplied ROI only."
   },
   "missing_materials": [
     "No selected scalar prediction records are missing: 74 rows include four methods and all required seeds/OOF components.",
@@ -8714,5 +9047,27 @@
     "Fold IDs are the original zero-based IDs. Comparator fold_id is blank because the comparator was not fitted via Industrial OOF."
   ],
   "publication_status": "Selected six-case release for KongyueX/GeoPRR-Net-Paper; no ZIP created",
-  "image_scope": "Selected full-dial conditioned ROIs only, plus optional pointer crops. Industrial filenames and table identifiers reuse the existing anonymous IDs. This package conveys no license for the complete source collections."
+  "image_scope": "Selected full-dial conditioned ROIs only, plus optional pointer crops. Industrial filenames and table identifiers reuse the existing anonymous IDs. This package conveys no license for the complete source collections.",
+  "industrial_reference_update": {
+    "date": "2026-09-07",
+    "source_run": "code_repository/artifacts/runs/roi_source_pose_reference_20260907",
+    "cases": [
+      "industrial_01",
+      "industrial_02"
+    ],
+    "methods": [
+      "VDN",
+      "DeepLabV3+-ROI"
+    ],
+    "seeds": [
+      20262020,
+      20262021,
+      20262022
+    ],
+    "updated_prediction_rows": 12,
+    "scope": "Existing stored predictions and per-seed reference geometry; no new inference or case reselection.",
+    "aggregate_data": "../data/roi_comparison_zero_shot_public.json",
+    "prior_revision": "d942155",
+    "protocol_note": "Industrial GeoPRR retains supervised group-isolated OOF; VDN/DeepLab are source-only supplied-ROI transfer."
+  }
 }

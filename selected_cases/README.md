@@ -6,7 +6,7 @@
 
 ## 展示读数
 
-SyncG、RF100 的四种方法统一展示 seed **20262020**。Industrial 的 GeoPRR 显示论文对应的三编码器 **OOF 等权聚合**，其他方法显示 seed 20262020。三种子以及每个 OOF 编码器的完整精度值保存在 CSV 和 JSON。
+SyncG、RF100 的四种方法统一展示 seed **20262020**。Industrial 的 GeoPRR 显示论文对应的三编码器 **OOF 等权聚合**，其他方法显示 seed 20262020。三种子以及每个 OOF 编码器的完整精度值保存在 CSV 和 JSON。两例 Industrial 的 VDN / DeepLab 已同步至 `roi_source_pose_reference_20260907` 新版逐图结果，与新版汇总使用同一来源。
 
 | 案例 / 图片 | sample_id | 条件 | GT | GeoPRR-Net | VDN | YOLO11s-Pose-4KP | DeepLabV3+-ROI |
 |---|---|---|---:|---:|---:|---:|---:|
@@ -14,8 +14,8 @@ SyncG、RF100 的四种方法统一展示 seed **20262020**。Industrial 的 Geo
 | [syncg_02](images/syncg_02.png) | sync_3924 | perspective_severe | 0.208067 | 0.203240 | 0.250173 | 0.277260 | 0.256570 |
 | [rf100_01](images/rf100_01.png) | rf100_test_000104 | perspective_severe | 0.601138 | 0.583916 | 0.578842 | 0.533713 | 无有效输出 |
 | [rf100_02](images/rf100_02.png) | rf100_test_000058 | combined_severe | 0.027078 | 0.026490 | 0.025000 | 0.542900 | 0.723486 |
-| [industrial_01](images/industrial_01.png) | real_001150 | clean | 0.400000 | 0.399704 | 0.168585 | 0.179720 | 0.195973 |
-| [industrial_02](images/industrial_02.png) | real_000267 | perspective_severe | 0.112500 | 0.112200 | 0.106432 | 0.641992 | 0.114378 |
+| [industrial_01](images/industrial_01.png) | real_001150 | clean | 0.400000 | 0.399704 | 0.156284 | 0.179720 | 0.174306 |
+| [industrial_02](images/industrial_02.png) | real_000267 | perspective_severe | 0.112500 | 0.112200 | 0.071745 | 0.641992 | 1.000000 |
 
 ## 绝对误差与种子稳定性
 
@@ -25,11 +25,11 @@ SyncG、RF100 的四种方法统一展示 seed **20262020**。Industrial 的 Geo
 | syncg_02 | 0.004827 | 0.042106 | 0.069193 | 0.048503 | 0.004827–0.010013 | YOLO11s-Pose-4KP |
 | rf100_01 | 0.017222 | 0.022296 | 0.067425 | 1.0（失败计分） | 0.001071–0.017222 | 无同一对照满足；按种子检查 |
 | rf100_02 | 0.000588 | 0.002078 | 0.515822 | 0.696409 | 0.000154–0.007319 | YOLO11s-Pose-4KP, DeepLabV3+-ROI |
-| industrial_01 | 0.000296 | 0.231415 | 0.220280 | 0.204027 | 0.003234–0.006800 | VDN, YOLO11s-Pose-4KP, DeepLabV3+-ROI |
-| industrial_02 | 0.000300 | 0.006068 | 0.529492 | 0.001878 | 0.005127–0.012911 | YOLO11s-Pose-4KP |
+| industrial_01 | 0.000296 | 0.243716 | 0.220280 | 0.225694 | 0.003234–0.006800 | VDN, YOLO11s-Pose-4KP, DeepLabV3+-ROI |
+| industrial_02 | 0.000300 | 0.040755 | 0.529492 | 0.887500 | 0.005127–0.012911 | YOLO11s-Pose-4KP, DeepLabV3+-ROI |
 
 六例的 GeoPRR 三种子/编码器单独误差均 ≤0.02。RF100-01 的 seed20 DeepLab 为真实 `fail / pointer_component_too_short`，其 `prediction` 留空，正式误差计分为 1.0；seed21 DeepLab 是有效的 **0.0** 预测，不能混作缺失或失败。该例 GeoPRR 每个种子都优于同种子的各对照，但没有同一个对照连续三个种子误差都 >0.05。
-RF100-02 的 VDN seed20 误差仅 0.002078；Industrial-02 的 VDN / DeepLab seed20 误差仅 0.006068 / 0.001878。它们均如实保留，不能把六例描述成所有对照均失败。
+RF100-02 的 VDN seed20 误差仅 0.002078；新版 Industrial-02 的 VDN seed20 误差为 0.040755，另两种子误差为 0.788390 / 0.737300。Industrial-02 的 DeepLab 三种子误差为 0.887500 / 0.767050 / 0.724299；seed20 的 1.0 是有效预测，误差为 0.8875，不能混作失败计分。所有结果均如实保留，不能把六例描述成所有对照均失败。
 
 ## 图片逐例检查
 
@@ -85,7 +85,7 @@ RF100-02 的 VDN seed20 误差仅 0.002078；Industrial-02 的 VDN / DeepLab see
 
 ### industrial_02 — real_000267
 
-现场红指针压力盘，低读数、密集刻度，原图已有侧视、不均匀照明与线缆背景；正式 yaw -45° 再次压缩表盘。展示种子的 VDN 和 DeepLab 都有较小误差，主要差异来自 YOLO。
+现场红指针压力盘，低读数、密集刻度，原图已有侧视、不均匀照明与线缆背景；正式 yaw -45° 再次压缩表盘。新版源域参考点下，展示种子的 VDN 误差为 0.040755，DeepLab 读数为 1.0、误差为 0.887500；DeepLab 该输出为有效记录，不是失败计分。
 
 来源组：`real_group_041`。采集集合：`photo_collection_03`；GeoPRR OOF fold：`4`（原始 0-based ID）。
 
@@ -117,8 +117,8 @@ CSV 的关联键为 `(case_id, method, seed, fold_id, prediction_type)`。每行
 ## 比较协议与真实中间输出
 
 GeoPRR 的 SyncG 是场景互斥源域留出，RF100 是冻结外域测试。Industrial 采用有监督目标域特征头适配，按采集组进行五折 OOF，冻结三个源域编码器，最终使用 `row_weighted` 分量的固定 1/3 均值；与论文远程版本 `4b4f854` 对应的 OOF 文件一致。不能把这两例工业结果称为 zero-shot，也不能给其他方法虚填 OOF 身份。
-VDN 是在匹配 SyncG 划分上重训的公开方向组件，使用 200 epoch 终点；YOLO 使用 30 epoch 内源域验证 best；DeepLab 使用 20 epoch 内源域验证 Dice best。SyncG/RF100 的 VDN 与 DeepLab 使用标注中心、量程起止点离线换算；YOLO 在三个数据集均预测四点。Industrial 的 VDN/DeepLab 使用同一旧自动三点检测器，其权重训练来源尚未明确。各方法的目标域适配和辅助信息不同。
-JSON 导出 SyncG 三种子真实 VDN 方向角，及两例 Industrial 已缓存的自动 pivot/start/end 点和真实遥测。这些自动三点不是 YOLO11s 四关键点输出。正式目录没有保存 YOLO 预测坐标、DeepLab mask/概率图；RF100/Industrial 没有保存 VDN 向量。此类内容列为材料缺失，未从读数反推或生成伪中间输出。
+VDN 是在匹配 SyncG 划分上重训的公开方向组件，使用 200 epoch 终点；YOLO 使用 30 epoch 内源域验证 best；DeepLab 使用 20 epoch 内源域验证 Dice best。SyncG/RF100 的 VDN 与 DeepLab 使用标注中心、量程起止点离线换算；YOLO 在三个数据集均预测四点。Industrial 的 VDN/DeepLab 已替换旧自动三点检测器，使用各自同种子的 SyncG 源域训练 YOLO11s-Pose-4KP 检查点，仅取 pivot/start/end 三点（索引 0/2/3），不使用针尖坐标或置信度。对应逐图预测来自 `artifacts/runs/roi_source_pose_reference_20260907/seed_<seed>/<vdn|deeplabv3plus_roi_auto_geometry>/field/<cohort>/predictions.jsonl`，三种子参考几何来自各 seed 的 `geometry.jsonl`。这两例的 VDN/DeepLab 为 source-only 推理，GeoPRR 为有监督 Industrial OOF；各方法的目标域适配和辅助信息不同。
+JSON 导出 SyncG 三种子真实 VDN 方向角，及两例 Industrial 新版三种子已缓存的自动 pivot/start/end 点和真实遥测。这些自动三点取自同种子的源域 YOLO11s-Pose-4KP 参考检测器，不包含针尖输出。正式目录没有保存 YOLO 预测坐标、DeepLab mask/概率图；RF100/Industrial 没有保存 VDN 向量。此类内容列为材料缺失，未从读数反推或生成伪中间输出。
 针区框仅供查看：公共数据的框由真实标注经过正式矩阵变换并留上下文确定，工业框为看图后的人工裁剪。针区图未叠加预测，不作锐化或修复。
 
 ## 使用范围
