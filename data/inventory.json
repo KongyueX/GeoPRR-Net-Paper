@@ -380,6 +380,86 @@
       "path": "data/official_syncg_fulltrain_20260908/details/scan_group_comparisons.csv.gz",
       "bytes": 51730,
       "rows": 1740
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/README.md",
+      "bytes": 6630,
+      "rows": null
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/RESULTS.md",
+      "bytes": 4442,
+      "rows": null
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/export_validation.json",
+      "bytes": 384,
+      "rows": null
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/full_three_seed_mean_sample_sd.csv",
+      "bytes": 14737,
+      "rows": 81
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/full_three_seed_paired_comparisons.csv",
+      "bytes": 1673,
+      "rows": 12
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/full_three_seed_per_seed_metrics.csv",
+      "bytes": 27964,
+      "rows": 243
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/full_three_seed_summary.json",
+      "bytes": 138412,
+      "rows": null
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/group_comparisons.csv.gz",
+      "bytes": 123616,
+      "rows": 4176
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/group_metrics.csv.gz",
+      "bytes": 160868,
+      "rows": 8352
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/manifest.json",
+      "bytes": 6525,
+      "rows": null
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/per_sample/industrial.csv.gz",
+      "bytes": 2327275,
+      "rows": 25110
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/per_sample/rf100.csv.gz",
+      "bytes": 273181,
+      "rows": 2718
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/per_sample/syncg.csv.gz",
+      "bytes": 7202381,
+      "rows": 72000
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/protocol.json",
+      "bytes": 2359,
+      "rows": null
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/training_epochs.csv",
+      "bytes": 271801,
+      "rows": 1005
+    },
+    {
+      "path": "data/geoprr_shared_full_20260911/training_stages.csv",
+      "bytes": 1503,
+      "rows": 15
     }
   ],
   "publication_model": "GeoPRR-Net",

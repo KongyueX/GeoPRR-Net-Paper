@@ -4,13 +4,30 @@ This directory contains the public, machine-readable result tables underlying
 the current GeoPRR-Net manuscript. Values are normalized to full scale in
 `[0, 1]`; multiply errors by 100 to obtain `%FS`. The new
 `roi_comparison_zero_shot*` files and the `*_pct` / `*_pct_fs` fields in
-`official_syncg_fulltrain_20260908/` explicitly use percentage units; do not
+`official_syncg_fulltrain_20260908/` and `geoprr_shared_full_20260911/` explicitly use percentage units; do not
 multiply those values by 100 again.
 
 The release contains predictions and training/evaluation metrics only,
 including an anonymized Industrial-1395 adapted-OOF prediction ledger. It does
 not redistribute source images, model checkpoints, third-party weights, local
 paths, runtime logs, or non-public Industrial-1395 source records.
+
+## Shared full-source GeoPRR: 2026-09-11
+
+[geoprr_shared_full_20260911](geoprr_shared_full_20260911/README.md) contains
+three completed seeds (20262020, 20262021, 20262022) with a same-seed full-16k
+RawEff foundation and full-16k downstream training. Its 16 files include
+99,828 per-sample predictions, 8,352 group-metric rows, 4,176 group differences,
+1,005 training-epoch rows, mean/sample-SD tables and paired group intervals.
+
+The shared reader's six-condition NMAE is 0.741 ± 0.022%FS on SyncG,
+3.205 ± 0.254%FS on RF100-VL and 11.624 ± 1.603%FS on Industrial-1395.
+Original GeoPRR and RawEff references come from the official full-training
+package below. Sample/group aliases were verified to match that package.
+
+The files match the [code-repository release](https://github.com/KongyueX/GeoPRR-Net/tree/3fa8c7deae182f491d97e7a64389db45d240159e/docs/data/geoprr_shared_full_20260911).
+This is a separate training protocol; the manuscript and existing figure
+builders have not been switched to this dataset package.
 
 ## Official full-training results
 
