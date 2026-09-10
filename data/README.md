@@ -12,20 +12,26 @@ including an anonymized Industrial-1395 adapted-OOF prediction ledger. It does
 not redistribute source images, model checkpoints, third-party weights, local
 paths, runtime logs, or non-public Industrial-1395 source records.
 
-## Official full-training aggregate results
+## Official full-training results
 
 [official_syncg_fulltrain_20260908](official_syncg_fulltrain_20260908/README.md)
-contains the verified aggregate results from the complete official
-16,000-image source-training / 4,000-image source-test protocol. It includes
-22 files covering the main comparisons, SARN and annotation diagnostics,
-ablations, sensitivity, angle scans, OOF adaptation, ensembles, training costs
-and full-path efficiency. The package records 21 source model-seed combinations
-and 65 optimization stages.
+contains the complete official 16,000-image source-training / 4,000-image
+source-test results. The package records 21 source model-seed combinations
+and 65 optimization stages. Its 44 files cover main comparisons, SARN and
+annotation diagnostics, ablations, sensitivity, angle scans, OOF adaptation,
+ensembles, training costs and full-path efficiency.
 
-The files match the [code-repository data publication](https://github.com/KongyueX/GeoPRR-Net/tree/a6b05799a699f1eb178364befbbd0ed88bff938d/docs/data/official_syncg_fulltrain_20260908).
-See its `protocol.json` for the dataset roles and metric units, and
-`manifest.json` for the included tables. This package contains aggregate
-results and protocol metadata only.
+The [detailed tables](official_syncg_fulltrain_20260908/details/README.md)
+include 2,762,352 per-sample prediction rows, 215,424 group-metric rows and
+39,558 group-comparison rows. The manifest identifies repeated fold-alignment
+and default-sensitivity outputs. Industrial sample identities and all group
+identities use consistent aliases within this release.
+
+The files match the [code-repository publication](https://github.com/KongyueX/GeoPRR-Net/tree/c8d249ba78aeb8f7c3f07dca32e3a5a90207687d/docs/data/official_syncg_fulltrain_20260908).
+See `protocol.json` for dataset roles and metric units and `manifest.json`
+for the included tables. Earlier files listed below belong to older experiment
+versions; the existing manuscript and figure builders have not been switched
+to this full-training package.
 
 ## Inventory
 

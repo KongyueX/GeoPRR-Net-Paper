@@ -162,114 +162,224 @@
       "bytes": 1044
     },
     {
-      "bytes": 88713,
       "path": "data/official_syncg_fulltrain_20260908/alpha_prior_sensitivity.csv",
+      "bytes": 88713,
       "rows": 567
     },
     {
-      "bytes": 4160,
       "path": "data/official_syncg_fulltrain_20260908/annotation_assisted_comparison.csv",
+      "bytes": 4160,
       "rows": 9
     },
     {
-      "bytes": 1090,
       "path": "data/official_syncg_fulltrain_20260908/completion_counts.json",
+      "bytes": 1090,
       "rows": null
     },
     {
-      "bytes": 3805,
       "path": "data/official_syncg_fulltrain_20260908/efficiency.csv",
+      "bytes": 3805,
       "rows": 18
     },
     {
-      "bytes": 8595,
       "path": "data/official_syncg_fulltrain_20260908/ensemble_metrics.csv",
+      "bytes": 8595,
       "rows": 72
     },
     {
-      "bytes": 176283,
       "path": "data/official_syncg_fulltrain_20260908/error_distribution_summaries.json",
+      "bytes": 176283,
       "rows": null
     },
     {
-      "bytes": 6256,
       "path": "data/official_syncg_fulltrain_20260908/factorial_interactions.json",
+      "bytes": 6256,
       "rows": null
     },
     {
-      "bytes": 431892,
       "path": "data/official_syncg_fulltrain_20260908/geoprr_diagnostics.json",
+      "bytes": 431892,
       "rows": null
     },
     {
-      "bytes": 3259,
       "path": "data/official_syncg_fulltrain_20260908/manifest.json",
+      "bytes": 5785,
       "rows": null
     },
     {
-      "bytes": 129948,
       "path": "data/official_syncg_fulltrain_20260908/paired_comparisons.csv",
+      "bytes": 129948,
       "rows": 486
     },
     {
-      "bytes": 90266,
       "path": "data/official_syncg_fulltrain_20260908/paired_group_consistency.csv",
+      "bytes": 90266,
       "rows": 486
     },
     {
-      "bytes": 173022,
       "path": "data/official_syncg_fulltrain_20260908/per_seed_metrics.csv",
+      "bytes": 173022,
       "rows": 1368
     },
     {
-      "bytes": 5120,
       "path": "data/official_syncg_fulltrain_20260908/perspective_scan.csv",
+      "bytes": 5120,
       "rows": 54
     },
     {
-      "bytes": 12614,
       "path": "data/official_syncg_fulltrain_20260908/perspective_scan_comparisons.json",
+      "bytes": 12614,
       "rows": null
     },
     {
-      "bytes": 23388,
       "path": "data/official_syncg_fulltrain_20260908/perspective_scan_seed_summaries.json",
+      "bytes": 23388,
       "rows": null
     },
     {
-      "bytes": 2356,
       "path": "data/official_syncg_fulltrain_20260908/protocol.json",
+      "bytes": 2356,
       "rows": null
     },
     {
-      "bytes": 4126,
       "path": "data/official_syncg_fulltrain_20260908/README.md",
+      "bytes": 4549,
       "rows": null
     },
     {
-      "bytes": 79942,
       "path": "data/official_syncg_fulltrain_20260908/seed_mean_sample_sd.csv",
+      "bytes": 79942,
       "rows": 432
     },
     {
-      "bytes": 1221,
       "path": "data/official_syncg_fulltrain_20260908/supported_operation_count.json",
+      "bytes": 1221,
       "rows": null
     },
     {
-      "bytes": 623071,
       "path": "data/official_syncg_fulltrain_20260908/training_epochs.csv",
+      "bytes": 623071,
       "rows": 3985
     },
     {
-      "bytes": 2612572,
       "path": "data/official_syncg_fulltrain_20260908/training_loss_curves.csv",
+      "bytes": 2612572,
       "rows": 36350
     },
     {
-      "bytes": 9917,
       "path": "data/official_syncg_fulltrain_20260908/training_stages.csv",
+      "bytes": 9917,
       "rows": 65
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/README.md",
+      "bytes": 5961,
+      "rows": null
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/group_comparisons.csv.gz",
+      "bytes": 1274261,
+      "rows": 37818
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/group_metrics.csv.gz",
+      "bytes": 4386836,
+      "rows": 215424
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/manifest.json",
+      "bytes": 113085,
+      "rows": null
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/industrial_adapted.csv.gz",
+      "bytes": 2125037,
+      "rows": 100440
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/industrial_ensemble_adapted.csv.gz",
+      "bytes": 716483,
+      "rows": 33480
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/industrial_ensemble_frozen_fold_aligned.csv.gz",
+      "bytes": 682538,
+      "rows": 33480
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/industrial_frozen_fold_aligned.csv.gz",
+      "bytes": 2035037,
+      "rows": 100440
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/industrial_main.csv.gz",
+      "bytes": 3220634,
+      "rows": 175770
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/industrial_sarn_v2.csv.gz",
+      "bytes": 1526638,
+      "rows": 75330
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/industrial_sensitivity.csv.gz",
+      "bytes": 3617951,
+      "rows": 175770
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/rf100_annotation.csv.gz",
+      "bytes": 140056,
+      "rows": 5436
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/rf100_main.csv.gz",
+      "bytes": 513518,
+      "rows": 19026
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/rf100_sarn_v2.csv.gz",
+      "bytes": 231181,
+      "rows": 8154
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/rf100_sensitivity.csv.gz",
+      "bytes": 541944,
+      "rows": 19026
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/syncg_ablation.csv.gz",
+      "bytes": 12318635,
+      "rows": 432000
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/syncg_annotation.csv.gz",
+      "bytes": 4055893,
+      "rows": 144000
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/syncg_main.csv.gz",
+      "bytes": 14187388,
+      "rows": 504000
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/syncg_perspective_scan.csv.gz",
+      "bytes": 7856380,
+      "rows": 216000
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/syncg_sarn_v2.csv.gz",
+      "bytes": 6151009,
+      "rows": 216000
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/per_sample/syncg_sensitivity.csv.gz",
+      "bytes": 14473120,
+      "rows": 504000
+    },
+    {
+      "path": "data/official_syncg_fulltrain_20260908/details/scan_group_comparisons.csv.gz",
+      "bytes": 51730,
+      "rows": 1740
     }
   ],
   "publication_model": "GeoPRR-Net",
