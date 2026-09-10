@@ -3,13 +3,29 @@
 This directory contains the public, machine-readable result tables underlying
 the current GeoPRR-Net manuscript. Values are normalized to full scale in
 `[0, 1]`; multiply errors by 100 to obtain `%FS`. The new
-`roi_comparison_zero_shot*` files explicitly use percentage units in their
-column names and JSON metadata; do not multiply those values by 100 again.
+`roi_comparison_zero_shot*` files and the `*_pct` / `*_pct_fs` fields in
+`official_syncg_fulltrain_20260908/` explicitly use percentage units; do not
+multiply those values by 100 again.
 
 The release contains predictions and training/evaluation metrics only,
 including an anonymized Industrial-1395 adapted-OOF prediction ledger. It does
 not redistribute source images, model checkpoints, third-party weights, local
 paths, runtime logs, or non-public Industrial-1395 source records.
+
+## Official full-training aggregate results
+
+[official_syncg_fulltrain_20260908](official_syncg_fulltrain_20260908/README.md)
+contains the verified aggregate results from the complete official
+16,000-image source-training / 4,000-image source-test protocol. It includes
+22 files covering the main comparisons, SARN and annotation diagnostics,
+ablations, sensitivity, angle scans, OOF adaptation, ensembles, training costs
+and full-path efficiency. The package records 21 source model-seed combinations
+and 65 optimization stages.
+
+The files match the [code-repository data publication](https://github.com/KongyueX/GeoPRR-Net/tree/a6b05799a699f1eb178364befbbd0ed88bff938d/docs/data/official_syncg_fulltrain_20260908).
+See its `protocol.json` for the dataset roles and metric units, and
+`manifest.json` for the included tables. This package contains aggregate
+results and protocol metadata only.
 
 ## Inventory
 

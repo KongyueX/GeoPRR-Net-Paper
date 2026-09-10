@@ -160,6 +160,116 @@
       "path": "data/roi_comparison_efficiency.csv",
       "rows": 5,
       "bytes": 1044
+    },
+    {
+      "bytes": 88713,
+      "path": "data/official_syncg_fulltrain_20260908/alpha_prior_sensitivity.csv",
+      "rows": 567
+    },
+    {
+      "bytes": 4160,
+      "path": "data/official_syncg_fulltrain_20260908/annotation_assisted_comparison.csv",
+      "rows": 9
+    },
+    {
+      "bytes": 1090,
+      "path": "data/official_syncg_fulltrain_20260908/completion_counts.json",
+      "rows": null
+    },
+    {
+      "bytes": 3805,
+      "path": "data/official_syncg_fulltrain_20260908/efficiency.csv",
+      "rows": 18
+    },
+    {
+      "bytes": 8595,
+      "path": "data/official_syncg_fulltrain_20260908/ensemble_metrics.csv",
+      "rows": 72
+    },
+    {
+      "bytes": 176283,
+      "path": "data/official_syncg_fulltrain_20260908/error_distribution_summaries.json",
+      "rows": null
+    },
+    {
+      "bytes": 6256,
+      "path": "data/official_syncg_fulltrain_20260908/factorial_interactions.json",
+      "rows": null
+    },
+    {
+      "bytes": 431892,
+      "path": "data/official_syncg_fulltrain_20260908/geoprr_diagnostics.json",
+      "rows": null
+    },
+    {
+      "bytes": 3259,
+      "path": "data/official_syncg_fulltrain_20260908/manifest.json",
+      "rows": null
+    },
+    {
+      "bytes": 129948,
+      "path": "data/official_syncg_fulltrain_20260908/paired_comparisons.csv",
+      "rows": 486
+    },
+    {
+      "bytes": 90266,
+      "path": "data/official_syncg_fulltrain_20260908/paired_group_consistency.csv",
+      "rows": 486
+    },
+    {
+      "bytes": 173022,
+      "path": "data/official_syncg_fulltrain_20260908/per_seed_metrics.csv",
+      "rows": 1368
+    },
+    {
+      "bytes": 5120,
+      "path": "data/official_syncg_fulltrain_20260908/perspective_scan.csv",
+      "rows": 54
+    },
+    {
+      "bytes": 12614,
+      "path": "data/official_syncg_fulltrain_20260908/perspective_scan_comparisons.json",
+      "rows": null
+    },
+    {
+      "bytes": 23388,
+      "path": "data/official_syncg_fulltrain_20260908/perspective_scan_seed_summaries.json",
+      "rows": null
+    },
+    {
+      "bytes": 2356,
+      "path": "data/official_syncg_fulltrain_20260908/protocol.json",
+      "rows": null
+    },
+    {
+      "bytes": 4126,
+      "path": "data/official_syncg_fulltrain_20260908/README.md",
+      "rows": null
+    },
+    {
+      "bytes": 79942,
+      "path": "data/official_syncg_fulltrain_20260908/seed_mean_sample_sd.csv",
+      "rows": 432
+    },
+    {
+      "bytes": 1221,
+      "path": "data/official_syncg_fulltrain_20260908/supported_operation_count.json",
+      "rows": null
+    },
+    {
+      "bytes": 623071,
+      "path": "data/official_syncg_fulltrain_20260908/training_epochs.csv",
+      "rows": 3985
+    },
+    {
+      "bytes": 2612572,
+      "path": "data/official_syncg_fulltrain_20260908/training_loss_curves.csv",
+      "rows": 36350
+    },
+    {
+      "bytes": 9917,
+      "path": "data/official_syncg_fulltrain_20260908/training_stages.csv",
+      "rows": 65
     }
   ],
   "publication_model": "GeoPRR-Net",
@@ -218,5 +328,19 @@
     "efficiency_arms": 5,
     "readout_seed_count": 3,
     "industrial_reference_geometry": "source-trained YOLO pose; pivot/start/end only"
+  },
+  "official_syncg_fulltrain_20260908": {
+    "scope": "aggregate_results",
+    "directory": "data/official_syncg_fulltrain_20260908",
+    "source_repository": "KongyueX/GeoPRR-Net",
+    "source_commit": "a6b05799a699f1eb178364befbbd0ed88bff938d",
+    "files": 22,
+    "bytes": 4491616,
+    "source_training_images": 16000,
+    "source_test_images": 4000,
+    "source_model_seed_combinations": 21,
+    "optimization_stages": 65,
+    "protocol": "data/official_syncg_fulltrain_20260908/protocol.json",
+    "manifest": "data/official_syncg_fulltrain_20260908/manifest.json"
   }
 }
