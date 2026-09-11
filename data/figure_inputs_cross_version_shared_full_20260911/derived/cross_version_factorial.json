@@ -1,0 +1,63 @@
+{
+  "scope": "all_conditions",
+  "comparison_type": "cross_training_protocol_not_matched_factorial",
+  "definition": "(new_shared_full - old_fixed_routing) - (old_no_geometry_fusion - old_no_geometry_fixed_routing)",
+  "cell_order": [
+    "geometry_on_dynamic_new_shared_full",
+    "geometry_on_fixed_old_fixed_routing",
+    "geometry_off_dynamic_old_no_geometry_fusion",
+    "geometry_off_fixed_old_no_geometry_fixed_routing"
+  ],
+  "cell_seed_nmae_pct_fs": [
+    [
+      0.755681396661673,
+      0.7509757009158884,
+      0.7153924478328951
+    ],
+    [
+      1.0110245752349665,
+      1.0399865762652822,
+      0.9802238803540867
+    ],
+    [
+      1.3475447671647904,
+      1.3766569605499863,
+      1.311451683274327
+    ],
+    [
+      1.484953284799168,
+      1.494418668467291,
+      1.4421364003951622
+    ]
+  ],
+  "cell_mean_nmae_pct_fs": [
+    0.7406831818034855,
+    1.0104116772847787,
+    1.3452178036630345,
+    1.4738361178872073
+  ],
+  "new_interaction_pct_fs": -0.14111018125712027,
+  "new_interaction_seed_values_pct_fs": [
+    -0.11793466093891597,
+    -0.17124916743208882,
+    -0.13414671540035603
+  ],
+  "new_interaction_sample_sd_pct_fs": 0.02733087161446527,
+  "new_ci95_pct_fs": [
+    -0.1600431005763447,
+    -0.12359468754985055
+  ],
+  "original_matched_interaction_pct_fs": -0.009185696671821515,
+  "original_matched_ci95_pct_fs": [
+    -0.015495205847752698,
+    -0.00292391105204549
+  ],
+  "full_replacement_mean_shift_pct_fs": -0.13192448458529876,
+  "rows_per_seed": 24000,
+  "groups": 145,
+  "source_seed_count": 3,
+  "bootstrap_replicates": 20000,
+  "bootstrap_seed": 20260907,
+  "resampling": "average each cell error across source seeds per original row, then retain complete source groups while resampling with replacement",
+  "inference": "descriptive cross-protocol contrast; cannot attribute the difference to a single removed component or to geometry-routing synergy"
+}

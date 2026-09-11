@@ -1,0 +1,37 @@
+{
+  "candidate": "GeoPRR adapted equal-weight three-source-seed ensemble",
+  "reference": "Raw CNN frozen per-row errors averaged over three source seeds",
+  "rows": 8370,
+  "groups": 52,
+  "replicates": 20000,
+  "pooled_bootstrap_seeds": {
+    "Raw ResNet-18": 20260927,
+    "Raw EfficientNet-B0": 20260928,
+    "Raw MobileNetV3-Large": 20260929
+  },
+  "condition_bootstrap_seeds": {
+    "clean": 20260928,
+    "blur_moderate": 20260929,
+    "blur_severe": 20260930,
+    "perspective_moderate": 20260931,
+    "perspective_severe": 20260932,
+    "combined_severe": 20260933
+  },
+  "group_consistency": {
+    "Raw ResNet-18": {
+      "better": 52,
+      "tied": 0,
+      "worse": 0
+    },
+    "Raw EfficientNet-B0": {
+      "better": 51,
+      "tied": 0,
+      "worse": 1
+    },
+    "Raw MobileNetV3-Large": {
+      "better": 51,
+      "tied": 0,
+      "worse": 1
+    }
+  }
+}

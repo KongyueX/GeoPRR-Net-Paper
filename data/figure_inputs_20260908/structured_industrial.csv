@@ -1,0 +1,4 @@
+dataset,method,condition_scope,nmae_percent_fs_mean,nmae_percent_fs_sample_sd
+Industrial-1395,VDN,all_conditions,33.051908245997346,8.63035016214499
+Industrial-1395,DeepLabV3+-ROI,all_conditions,39.475250675254394,1.8137643658620766
+Industrial-1395,YOLO11s-Pose-4KP,all_conditions,32.69751352784665,6.458351130938141

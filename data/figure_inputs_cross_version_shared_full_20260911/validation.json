@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "new_industrial_prediction_rows": 25110,
+  "new_frozen_ensemble_rows": 8370,
+  "new_frozen_ensemble_rule": "arithmetic mean of three normalized predictions before absolute error",
+  "paired_roster_target_group_alignment": true,
+  "old_adapted_and_ablation_per_seed_fields_unchanged": true,
+  "per_seed_metrics_rows": 1368,
+  "seed_mean_sample_sd_rows": 432,
+  "ensemble_metrics_rows": 72,
+  "cross_version_ablation_comparisons": 21,
+  "cross_version_adaptation_scope_rows": 18,
+  "cross_version_adaptation_bootstrap_intervals": 4,
+  "paired_comparisons_rows": 25,
+  "paired_comparison_keys_unique": true,
+  "all_18_adaptation_point_differences_reconciled": true,
+  "new_frozen_ensemble_scope_rows": 9,
+  "paired_comparison_scope": "21 cross-version SyncG ablation plus 4 cross-version Industrial adaptation contrasts; Tables/Figures 6 and 7 only",
+  "source_seed_count_represents_training_seeds": true,
+  "ensemble_members": 3,
+  "ensemble_scored_prediction_sets": 1,
+  "seed_metadata_clarification_preserved_all_metrics_and_intervals": true
+}

@@ -1,0 +1,43 @@
+{
+  "new_prediction_rows": 99828,
+  "reference_error_comparisons": 199656,
+  "target_group_checks_against_all_seven_readers": 698796,
+  "max_prediction_error_residual": 0.0,
+  "max_reference_error_residual": 0.0,
+  "new_per_seed_metric_rows_checked": 243,
+  "new_mean_sd_metric_rows_checked": 81,
+  "baseline_output_rows_unchanged": 598968,
+  "cohorts": {
+    "syncg": {
+      "shared_predictions": 72000,
+      "composite_predictions": 504000,
+      "images_per_seed": 4000,
+      "source_groups": 145,
+      "new_inference_failures": 0
+    },
+    "rf100": {
+      "shared_predictions": 2718,
+      "composite_predictions": 19026,
+      "images_per_seed": 151,
+      "source_groups": 35,
+      "new_inference_failures": 0
+    },
+    "industrial": {
+      "shared_predictions": 25110,
+      "composite_predictions": 175770,
+      "images_per_seed": 1395,
+      "source_groups": 52,
+      "new_inference_failures": 0
+    }
+  },
+  "per_seed_metrics_rows": 567,
+  "seed_mean_sample_sd_rows": 189,
+  "paired_comparisons_rows": 36,
+  "target_group_comparison_rows": 4698,
+  "status": "passed",
+  "manifest_files_verified": 15,
+  "package_files_including_manifest": 16,
+  "manifest_table_rows_and_columns_verified": 10,
+  "mean_sd_json_csv_values_checked": 810,
+  "manifest_export_summary_consistent": true
+}

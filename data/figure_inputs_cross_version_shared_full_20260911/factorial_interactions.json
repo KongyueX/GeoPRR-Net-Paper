@@ -1,0 +1,54 @@
+{
+  "status": "cross_training_protocol",
+  "definition": "(new_shared_full - old_fixed_routing) - (old_no_geometry_fusion - old_no_geometry_fixed_routing)",
+  "cell_order": [
+    [
+      "main",
+      "geoprr"
+    ],
+    [
+      "ablation",
+      "fixed_routing"
+    ],
+    [
+      "ablation",
+      "no_geometry_fusion"
+    ],
+    [
+      "ablation",
+      "no_geometry_fixed_routing"
+    ]
+  ],
+  "scopes": {
+    "all_conditions": {
+      "interaction_pct_fs": -0.14111018125712027,
+      "ci95_pct_fs": [
+        -0.1600431005763447,
+        -0.12359468754985055
+      ],
+      "cell_seed_nmae_pct_fs": [
+        [
+          0.755681396661673,
+          0.7509757009158884,
+          0.7153924478328951
+        ],
+        [
+          1.0110245752349665,
+          1.0399865762652822,
+          0.9802238803540867
+        ],
+        [
+          1.3475447671647904,
+          1.3766569605499863,
+          1.311451683274327
+        ],
+        [
+          1.484953284799168,
+          1.494418668467291,
+          1.4421364003951622
+        ]
+      ]
+    }
+  },
+  "comparison_type": "cross_training_protocol_not_matched_factorial"
+}
