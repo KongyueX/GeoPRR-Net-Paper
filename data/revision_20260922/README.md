@@ -1,23 +1,21 @@
 # Revision supplementary figure data
 
-`supplementary_experiment_figure_data.csv` is a compact long-format table for
-the 2026-09-22 revision supplementary experiment suite. It contains aggregate
-records only; it does not include source images, model checkpoints, local paths
-or per-sample predictions.
+`figure_plot_data.csv` is a compact long-format table for the 2026-09-22
+revision supplementary experiment suite. It contains the values used for
+manuscript tables and plots. It does not include source images, model
+checkpoints, local paths or per-sample predictions.
 
 ## Record groups
 
 | `section` | Contents |
 |---|---|
-| `main_results` | Three-seed per-cohort metrics and seed-mean/sample-SD summaries. |
-| `paired_effect` | Whole-group paired bootstrap estimates and pointwise 95% intervals. |
-| `routing_diagnostic` | Candidate-weight, routing-entropy and moment-residual summaries. |
-| `industrial_target_supervised_oof` | Five-fold Industrial-1395 target-supervised OOF aggregate metrics. |
-| `efficiency` | Complete native-ROI batch-1 timing and executed-parameter summaries. |
-| `figure3_condition_curve` | Six-condition Geometry × Routing summaries. |
-| `figure3_factorial_interaction` | Difference-in-differences statistics for the four Geometry × Routing cells. |
-| `figure3_perspective_curve` | Metrics for 0°, 15°, 25°, 35°, 45° and 60° perspective scans. |
-| `figure3_perspective_paired` | Paired perspective-scan comparison statistics. |
+| `table_main` | Three-seed frozen-transfer metrics for the main comparison table. |
+| `table_paired` | All-condition whole-group paired bootstrap estimates and pointwise intervals. |
+| `figure_ablation` | SyncG component-ablation values. |
+| `figure3` | Six-condition, factorial and perspective-scan values for Figure 3. |
+| `figure_routing` | Candidate-weight, routing-entropy and moment-residual values. |
+| `table_industrial_oof` | Five-fold Industrial-1395 target-supervised OOF aggregate metrics. |
+| `table_efficiency` | Complete native-ROI batch-1 timing and executed-parameter values. |
 
 ## Columns
 
