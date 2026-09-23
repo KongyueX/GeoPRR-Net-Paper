@@ -1,30 +1,29 @@
 # Revision supplementary figure data
 
-`figure_plot_data.csv` is a compact long-format table for the 2026-09-22
-revision supplementary experiment suite. It contains the values used for
-manuscript tables and plots. It does not include source images, model
-checkpoints, local paths or per-sample predictions.
+`supplementary_experiment_results.csv` is a compact wide-format table for the
+2026-09-22 revision supplementary experiment suite. Each row represents one
+experiment setting, cohort, seed, aggregation, condition or paired comparison.
+It does not include source images, model checkpoints, local paths or
+per-sample predictions.
 
 ## Record groups
 
 | `section` | Contents |
 |---|---|
-| `table_main` | Three-seed frozen-transfer metrics for the main comparison table. |
-| `table_paired` | All-condition whole-group paired bootstrap estimates and pointwise intervals. |
-| `figure_ablation` | SyncG component-ablation values. |
-| `figure3` | Six-condition, factorial and perspective-scan values for Figure 3. |
-| `figure_routing` | Candidate-weight, routing-entropy and moment-residual values. |
-| `table_industrial_oof` | Five-fold Industrial-1395 target-supervised OOF aggregate metrics. |
-| `table_efficiency` | Complete native-ROI batch-1 timing and executed-parameter values. |
+| `E14_E20_E27_C4` | Independent-warm, gate, dual-view, matched Raw B0, main metrics and paired bootstrap results. |
+| `C13_refresh` | Five-fold Industrial-1395 target-supervised OOF results. |
+| `A_expert_A_moment` | Routing diagnostics and moment-consistency values. |
+| `A_moment` | Complete native-ROI timing and executed-parameter values. |
+| `A_Fig3` | Six-condition, factorial and perspective-scan results for Figure 3. |
 
 ## Columns
 
 - `source_table` identifies the aggregate source table used to create the row.
-- `cohort`, `method`, `candidate`, `reference`, `seed`, `aggregation`, `scope`,
-  `condition`, and `angle_degrees` identify the experimental comparison.
-- `metric`, `statistic`, and `value` hold the reported measurement.
-- `sample_sd`, `ci95_low`, and `ci95_high` are present when the source table
-  supplies a seed sample standard deviation or a paired bootstrap interval.
+- `experiment_id`, `result_type`, `cohort`, `method`, `candidate`, `reference`,
+  `seed`, `aggregation`, `scope`, `condition`, and `angle_degrees` identify the
+  experimental comparison.
+- NMAE, RMSE, accuracy, coverage, routing, efficiency and paired-comparison
+  values are stored in their corresponding named columns.
 - `images`, `rows`, `groups`, `source_seeds`, and `ensemble_members` describe
   the included evaluation population.
 
