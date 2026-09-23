@@ -1,18 +1,18 @@
 # Revision supplementary figure data
 
-`supplementary_experiment_results.csv` is a compact wide-format table for the
+`supplementary_experiment_results.csv` is a compact normal-format table for the
 2026-09-22 revision supplementary experiment suite. Each row represents one
 experiment setting, cohort, seed, aggregation, condition or paired comparison.
 It does not include source images, model checkpoints, local paths or
 per-sample predictions.
 
-The standard comparison rows use `aggregation=seed_mean`: each metric is first
-computed independently for the three source seeds and then averaged. The
-associated `_sample_sd` columns report the sample standard deviation across
-those three seed-level metrics. `aggregation=equal_ensemble` rows are stored
-separately: the three same-row predictions are averaged before a metric is
-computed. Main comparison, paired bootstrap, routing and condition-curve rows
-use `scope=all_conditions`, which pools the complete six-condition roster.
+Per-seed rows, `aggregation=seed_mean` rows, and `aggregation=equal_ensemble`
+rows are all retained. For `seed_mean`, each metric is first computed
+independently for the three source seeds and then averaged; the associated
+`_sample_sd` columns report the sample standard deviation across those three
+seed-level metrics. For `equal_ensemble`, the three same-row predictions are
+averaged before a metric is computed. `scope=all_conditions` pools the complete
+six-condition roster; the six individual condition rows are also retained.
 Perspective scans remain angle-specific because their independent variable is
 projection angle.
 
@@ -32,6 +32,8 @@ projection angle.
 - `experiment_id`, `result_type`, `cohort`, `method`, `candidate`, `reference`,
   `seed`, `aggregation`, `scope`, `condition`, and `angle_degrees` identify the
   experimental comparison.
+- `measurement` identifies the measured quantity for one-measurement-per-row
+  Figure 3 and paired-comparison source tables.
 - NMAE, RMSE, accuracy, coverage, routing, efficiency and paired-comparison
   values are stored in their corresponding named columns.
 - `images`, `rows`, `groups`, `source_seeds`, and `ensemble_members` describe
