@@ -6,6 +6,15 @@ experiment setting, cohort, seed, aggregation, condition or paired comparison.
 It does not include source images, model checkpoints, local paths or
 per-sample predictions.
 
+The standard comparison rows use `aggregation=seed_mean`: each metric is first
+computed independently for the three source seeds and then averaged. The
+associated `_sample_sd` columns report the sample standard deviation across
+those three seed-level metrics. The table excludes `equal_ensemble` rows, where
+the three predictions are averaged before computing a metric. Main comparison,
+paired bootstrap, routing and condition-curve rows use `scope=all_conditions`,
+which pools the complete six-condition roster. Perspective scans remain
+angle-specific because their independent variable is projection angle.
+
 ## Record groups
 
 | `section` | Contents |
